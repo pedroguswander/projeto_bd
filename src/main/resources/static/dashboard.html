@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Gêneros Mais Assistidos</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .dashboard-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 90%;
+            max-width: 800px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <h1>Top 5 Gêneros Mais Assistidos em Streaming</h1>
+    <canvas id="graficoGeneros"></canvas>
+</div>
+
+<script>
+    // 3. Registrando o plugin de datalabels globalmente
+    Chart.register(ChartDataLabels);
+
+    // 4. Dados extraídos do seu gráfico
+    const generosLabels = ['Comédia', 'Ação', 'Romance', 'Drama', 'Ficção'];
+    const dadosValores = [29, 23, 21, 15, 12];
+    const coresBarras = [
+        'rgba(255, 189, 137, 0.8)', // Comédia (Laranja)
+        'rgba(163, 221, 153, 0.8)', // Ação (Verde)
+        'rgba(199, 185, 232, 0.8)', // Romance (Roxo)
+        'rgba(253, 253, 150, 0.8)', // Drama (Amarelo)
+        'rgba(174, 198, 207, 0.8)'  // Ficção (Azul)
+    ];
+    const coresBordas = [
+        'rgb(255, 189, 137)',
+        'rgb(163, 221, 153)',
+        'rgb(199, 185, 232)',
+        'rgb(253, 253, 150)',
+        'rgb(174, 198, 207)'
+    ];
+
+    // 5. Configuração do Gráfico
+    const config = {
+        type: 'bar', // Tipo de gráfico
+        data: {
+            labels: generosLabels,
+            datasets: [{
+                label: 'Quantidade', // Este rótulo aparece no tooltip (ao passar o mouse)
+                data: dadosValores,
+                backgroundColor: coresBarras,
+                borderColor: coresBordas,
+                borderWidth: 2,
+                borderRadius: 5,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 5 // Define o intervalo do eixo Y
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false // Remove as linhas de grade do eixo X
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false // Oculta a legenda, já que os eixos são autoexplicativos
+                },
+                datalabels: {
+                    anchor: 'end', // Posição do rótulo do dado
+                    align: 'top', // Alinhamento do rótulo
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    color: '#444' // Cor do texto do rótulo
+                }
+            }
+        }
+    };
+
+    // 6. Criando o gráfico no canvas
+    const meuGrafico = new Chart(
+        document.getElementById('graficoGeneros'),
+        config
+    );
+</script>
+
+</body>
+</html>
