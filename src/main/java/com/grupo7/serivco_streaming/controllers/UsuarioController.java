@@ -11,7 +11,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/usuario")
+@RequestMapping("/api/usuarios")
 public class UsuarioController {
 
     @Autowired
@@ -21,7 +21,7 @@ public class UsuarioController {
         this.usuarioRepository = usuarioRepository;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<Map<String, Object>> getUsuarios()
     {
         return usuarioRepository.getUsuarios();
