@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Gêneros Mais Assistidos</title>
+    <title>Dashboard - Streaming Analytics</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 
     <style>
@@ -14,10 +13,13 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             background-color: #f4f7f9;
             display: flex;
+            flex-direction: column; /* Para empilhar os dashboards verticalmente */
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh; /* Para garantir que o body ocupe a altura total */
             margin: 0;
+            padding: 20px 0; /* Espaçamento superior e inferior */
+            box-sizing: border-box; /* Inclui padding e borda no tamanho total */
         }
         .dashboard-container {
             background-color: #ffffff;
@@ -26,10 +28,12 @@
             padding: 25px;
             width: 90%;
             max-width: 800px;
+            margin-bottom: 30px; /* Espaço entre os dashboards */
         }
-        h1 {
+        h1, h2 {
             text-align: center;
             color: #333;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -40,21 +44,26 @@
     <canvas id="graficoGeneros"></canvas>
 </div>
 
+<div class="dashboard-container">
+    <h2>Nível de Satisfação de Streaming por Gênero</h2>
+    <canvas id="graficoSatisfacao"></canvas>
+</div>
+
 <script>
-    // 3. Registrando o plugin de datalabels globalmente
+    // Registrar o plugin de datalabels globalmente para ambos os gráficos
     Chart.register(ChartDataLabels);
 
-    // 4. Dados extraídos do seu gráfico
+    // --- Dados e Configuração do Primeiro Gráfico (Gêneros Mais Assistidos) ---
     const generosLabels = ['Comédia', 'Ação', 'Romance', 'Drama', 'Ficção'];
-    const dadosValores = [29, 23, 21, 15, 12];
-    const coresBarras = [
+    const dadosValoresGeneros = [29, 23, 21, 15, 12];
+    const coresBarrasGeneros = [
         'rgba(255, 189, 137, 0.8)', // Comédia (Laranja)
         'rgba(163, 221, 153, 0.8)', // Ação (Verde)
         'rgba(199, 185, 232, 0.8)', // Romance (Roxo)
         'rgba(253, 253, 150, 0.8)', // Drama (Amarelo)
         'rgba(174, 198, 207, 0.8)'  // Ficção (Azul)
     ];
-    const coresBordas = [
+    const coresBordasGeneros = [
         'rgb(255, 189, 137)',
         'rgb(163, 221, 153)',
         'rgb(199, 185, 232)',
@@ -62,16 +71,15 @@
         'rgb(174, 198, 207)'
     ];
 
-    // 5. Configuração do Gráfico
-    const config = {
-        type: 'bar', // Tipo de gráfico
+    const configGeneros = {
+        type: 'bar',
         data: {
             labels: generosLabels,
             datasets: [{
-                label: 'Quantidade', // Este rótulo aparece no tooltip (ao passar o mouse)
-                data: dadosValores,
-                backgroundColor: coresBarras,
-                borderColor: coresBordas,
+                label: 'Quantidade',
+                data: dadosValoresGeneros,
+                backgroundColor: coresBarrasGeneros,
+                borderColor: coresBordasGeneros,
                 borderWidth: 2,
                 borderRadius: 5,
             }]
@@ -82,36 +90,120 @@
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 5 // Define o intervalo do eixo Y
+                        stepSize: 5
                     }
                 },
                 x: {
                     grid: {
-                        display: false // Remove as linhas de grade do eixo X
+                        display: false
                     }
                 }
             },
             plugins: {
                 legend: {
-                    display: false // Oculta a legenda, já que os eixos são autoexplicativos
+                    display: false
                 },
                 datalabels: {
-                    anchor: 'end', // Posição do rótulo do dado
-                    align: 'top', // Alinhamento do rótulo
+                    anchor: 'end',
+                    align: 'top',
                     font: {
                         size: 14,
                         weight: 'bold'
                     },
-                    color: '#444' // Cor do texto do rótulo
+                    color: '#444'
                 }
             }
         }
     };
 
-    // 6. Criando o gráfico no canvas
-    const meuGrafico = new Chart(
+    // --- Dados e Configuração do Segundo Gráfico (Nível de Satisfação) ---
+    const satisfacaoLabels = ['Feminino', 'Masculino'];
+    const dadosValoresSatisfacao = [3.45, 3.7]; // Valores aproximados do seu gráfico
+    const corSatisfacao = 'rgba(173, 216, 230, 0.8)'; // Azul claro, similar ao do seu gráfico
+    const bordaSatisfacao = 'rgb(173, 216, 230)';
+
+    const configSatisfacao = {
+        type: 'bar',
+        data: {
+            labels: satisfacaoLabels,
+            datasets: [{
+                label: 'Nível de satisfação',
+                data: dadosValoresSatisfacao,
+                backgroundColor: corSatisfacao,
+                borderColor: bordaSatisfacao,
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 4.5, // Definir um máximo para o eixo Y para se assemelhar ao gráfico original
+                    ticks: {
+                        stepSize: 0.5, // Intervalo do eixo Y
+                        callback: function(value) {
+                            return value.toFixed(1); // Formata os ticks para uma casa decimal
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Nível de Satisfação',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Gênero',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true, // Manter a legenda para "Nível de satisfação"
+                    position: 'top',
+                    align: 'end'
+                },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    offset: 4, // Pequeno deslocamento para o rótulo
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    color: '#444',
+                    formatter: function(value) {
+                        return value.toFixed(2); // Formata o valor com 2 casas decimais
+                    }
+                }
+            }
+        }
+    };
+
+    // --- Renderizar os Gráficos ---
+    // Primeiro Gráfico
+    const meuGraficoGeneros = new Chart(
         document.getElementById('graficoGeneros'),
-        config
+        configGeneros
+    );
+
+    // Segundo Gráfico
+    const meuGraficoSatisfacao = new Chart(
+        document.getElementById('graficoSatisfacao'),
+        configSatisfacao
     );
 </script>
 

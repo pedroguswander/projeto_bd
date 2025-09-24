@@ -4,6 +4,10 @@ import com.grupo7.serivco_streaming.dto.Obra;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class ObraRepository {
@@ -44,5 +48,23 @@ public class ObraRepository {
     public int deleteById(int codigo) {
         String sql = "DELETE FROM obra WHERE codigo = ?";
         return jdbcTemplate.update(sql, codigo);
+    }
+
+    public List<Map<String, Object>> getObrasPorGenero()
+    {
+        String sql = "select o.nome, g.nome from obra o join genero g on o.fk_genero_genero_PK=g.genero_PK";
+        return jdbcTemplate.queryForList(sql);
+    }
+
+    public List<Map<String, Object>> getObraWithLike(String busca)
+    {
+        String sql = "select nome from obra where nome like ?";
+        return jdbcTemplate.queryForList(sql, busca);
+    }
+
+    public List<Map<String, Object>> getObraWhereDateIs(String busca)
+    {
+        String sql = "select nome, data_lancamento from obra where data_lancamento=?";
+        return jdbcTemplate.queryForList(sql, busca);
     }
 }

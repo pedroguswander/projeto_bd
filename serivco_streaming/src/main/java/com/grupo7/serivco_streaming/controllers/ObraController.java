@@ -66,4 +66,22 @@ public class ObraController {
             return new ResponseEntity<>("Erro interno do servidor: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/obras-por-genero")
+    public List<Map<String, Object>> getObrasPorGenero()
+    {
+        return obraRepository.getObrasPorGenero();
+    }
+
+    @GetMapping("/like/{busca}")
+    public List<Map<String, Object>> getObraWithLike(@PathVariable String busca)
+    {
+        return obraRepository.getObraWithLike(busca + "%");
+    }
+
+    @GetMapping("/where/data-lancamento/{busca}")
+    public List<Map<String, Object>> getObraWhereDateIs(@PathVariable String busca)
+    {
+        return obraRepository.getObraWhereDateIs(busca);
+    }
 }
