@@ -43,7 +43,7 @@
 
     try {
       // 2. Executa a requisição GET
-      const response = await fetch(`/api/obras/like/${busca}`, {
+      const response = await fetch(`/api/obras/buscar?nome=${busca}`, {
         method: 'GET'
       });
 

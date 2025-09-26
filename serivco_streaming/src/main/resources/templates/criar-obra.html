@@ -159,13 +159,13 @@
         // correspondam exatamente aos nomes dos atributos da sua classe Java `Obra`.
         obra.nome = formData.get('nome');
         obra.sinopse = formData.get('sinopse');
-        obra.data_lancamento = formData.get('data_lancamento');
-        obra.fk_genero_genero_PK = parseInt(formData.get('fk_genero_genero_PK'), 10);
-        obra.obra_TIPO = parseInt(formData.get('obra_TIPO'), 10);
+        obra.dataLancamento = formData.get('data_lancamento');
+        obra.fkGeneroGeneroPK = parseInt(formData.get('fk_genero_genero_PK'), 10);
+        obra.obraTIPO = parseInt(formData.get('obra_TIPO'), 10);
 
         // Tratar campos que podem ser nulos
         const qntTemporadas = formData.get('qnt_temporadas');
-        obra.qnt_temporadas = qntTemporadas ? parseInt(qntTemporadas, 10) : null;
+        obra.qntTemporadas = qntTemporadas ? parseInt(qntTemporadas, 10) : null;
 
         const duracao = formData.get('duracao');
         obra.duracao = duracao ? duracao : null;
