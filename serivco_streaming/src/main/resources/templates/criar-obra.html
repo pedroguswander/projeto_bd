@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Nova Obra</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            margin: 0;
+            padding: 2rem;
+            background-color: #f4f5f7;
+            color: #172b4d;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #091e42;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #dfe1e6;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #0052cc;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #0052cc;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0065ff;
+        }
+
+        .message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background-color: #e3fcef;
+            color: #064;
+        }
+
+        .message.error {
+            background-color: #ffeded;
+            color: #de350b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Cadastrar Nova Obra</h1>
+    <form id="obraForm">
+        <div class="form-group">
+            <label for="nome">Nome da Obra:</label>
+            <input type="text" id="nome" name="nome" required>
+        </div>
+
+        <div class="form-group">
+            <label for="sinopse">Sinopse:</label>
+            <textarea id="sinopse" name="sinopse"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="data_lancamento">Data de Lançamento:</label>
+            <input type="date" id="data_lancamento" name="data_lancamento">
+        </div>
+
+        <div class="form-group">
+            <label for="fk_genero_genero_PK">ID do Gênero (fk_genero_genero_PK):</label>
+            <input type="number" id="fk_genero_genero_PK" name="fk_genero_genero_PK" required>
+        </div>
+
+        <div class="form-group">
+            <label for="obra_TIPO">Tipo da Obra (Ex: 1 para Filme, 2 para Série):</label>
+            <input type="number" id="obra_TIPO" name="obra_TIPO">
+        </div>
+
+        <div class="form-group">
+            <label for="qnt_temporadas">Quantidade de Temporadas (se aplicável):</label>
+            <input type="number" id="qnt_temporadas" name="qnt_temporadas">
+        </div>
+
+        <div class="form-group">
+            <label for="duracao">Duração (hh:mm:ss):</label>
+            <input type="time" id="duracao" name="duracao" step="1">
+        </div>
+
+        <button type="submit">Criar Obra</button>
+    </form>
+
+    <div id="responseMessage" class="message" style="display: none;"></div>
+</div>
+
+<script>
+    document.getElementById('obraForm').addEventListener('submit', async function(event) {
+        // Prevenir o envio padrão do formulário
+        event.preventDefault();
+
+        const messageDiv = document.getElementById('responseMessage');
+        messageDiv.style.display = 'none'; // Oculta a mensagem anterior
+
+        // Coletar dados do formulário
+        const formData = new FormData(this);
+        const obra = {};
+
+        // É crucial que as chaves do objeto (ex: 'fk_genero_genero_PK')
+        // correspondam exatamente aos nomes dos atributos da sua classe Java `Obra`.
+        obra.nome = formData.get('nome');
+        obra.sinopse = formData.get('sinopse');
+        obra.data_lancamento = formData.get('data_lancamento');
+        obra.fk_genero_genero_PK = parseInt(formData.get('fk_genero_genero_PK'), 10);
+        obra.obra_TIPO = parseInt(formData.get('obra_TIPO'), 10);
+
+        // Tratar campos que podem ser nulos
+        const qntTemporadas = formData.get('qnt_temporadas');
+        obra.qnt_temporadas = qntTemporadas ? parseInt(qntTemporadas, 10) : null;
+
+        const duracao = formData.get('duracao');
+        obra.duracao = duracao ? duracao : null;
+
+        try {
+            // Enviar a requisição para o endpoint
+            const response = await fetch('/api/obras', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(obra)
+            });
+
+            const responseText = await response.text();
+
+            if (response.ok) { // Status na faixa 200-299
+                messageDiv.textContent = responseText || "Obra criada com sucesso!";
+                messageDiv.className = 'message success';
+                document.getElementById('obraForm').reset(); // Limpa o formulário
+            } else {
+                messageDiv.textContent = "Erro: " + (responseText || response.statusText);
+                messageDiv.className = 'message error';
+            }
+        } catch (error) {
+            messageDiv.textContent = 'Erro de rede ou ao conectar com o servidor: ' + error.message;
+            messageDiv.className = 'message error';
+        }
+
+        messageDiv.style.display = 'block'; // Exibe a mensagem
+    });
+</script>
+
+</body>
+</html>

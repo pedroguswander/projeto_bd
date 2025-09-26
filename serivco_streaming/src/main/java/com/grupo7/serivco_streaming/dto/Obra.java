@@ -7,11 +7,11 @@ import java.time.LocalDate;
 
 public class Obra {
     public int codigo;
-    public int fkGeneroGeneroPK;
+    public int fk_genero_genero_PK;
     public String nome;
     public String sinopse;
-    public String dataLancamento;
-    public int qntTemporadas;
+    public String data_lancamento;
+    public int qnt_temporadas;
     public String duracao;
-    public int obraTIPO;
+    public int obra_TIPO;
 }

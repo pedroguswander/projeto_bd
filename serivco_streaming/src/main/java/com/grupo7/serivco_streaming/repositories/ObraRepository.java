@@ -20,13 +20,13 @@ public class ObraRepository {
         String sql = "INSERT INTO obra (fk_genero_genero_PK, nome, sinopse, data_lancamento, qnt_temporadas, duracao, obra_TIPO) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql,
-                obra.fkGeneroGeneroPK,
+                obra.fk_genero_genero_PK,
                 obra.nome,
                 obra.sinopse,
-                obra.dataLancamento,
-                obra.qntTemporadas,
+                obra.data_lancamento,
+                obra.qnt_temporadas,
                 obra.duracao,
-                obra.obraTIPO);
+                obra.obra_TIPO);
     }
 
     // Método para atualizar uma obra existente (PUT)
@@ -34,13 +34,13 @@ public class ObraRepository {
         String sql = "UPDATE obra SET fk_genero_genero_PK = ?, nome = ?, sinopse = ?, data_lancamento = ?, qnt_temporadas = ?, duracao = ?, obra_TIPO = ? " +
                 "WHERE codigo = ?";
         return jdbcTemplate.update(sql,
-                obra.fkGeneroGeneroPK,
+                obra.fk_genero_genero_PK,
                 obra.nome,
                 obra.sinopse,
-                obra.dataLancamento,
-                obra.qntTemporadas,
+                obra.data_lancamento,
+                obra.qnt_temporadas,
                 obra.duracao,
-                obra.obraTIPO,
+                obra.obra_TIPO,
                 obra.codigo);
     }
 
@@ -52,7 +52,7 @@ public class ObraRepository {
 
     public List<Map<String, Object>> getObrasPorGenero()
     {
-        String sql = "select o.nome, g.nome from obra o join genero g on o.fk_genero_genero_PK=g.genero_PK";
+        String sql = "SELECT o.nome, g.nome from obra o join genero g on o.fk_genero_genero_PK=g.genero_PK";
         return jdbcTemplate.queryForList(sql);
     }
 
