@@ -2,86 +2,72 @@ package com.grupo7.serivco_streaming.controllers;
 
 import com.grupo7.serivco_streaming.dto.Obra;
 import com.grupo7.serivco_streaming.repositories.ObraRepository;
-import com.grupo7.serivco_streaming.repositories.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/obras")
+@RequestMapping("/obras")
 public class ObraController {
 
-    @Autowired
-    private ObraRepository obraRepository;
+    private final ObraRepository obraRepository;
+
+    public ObraController(ObraRepository obraRepository) {
+        this.obraRepository = obraRepository;
+    }
 
     @PostMapping
-    public ResponseEntity<String> createObra(@RequestBody Obra obra) {
-        try {
-            int result = obraRepository.insert(obra);
-            if (result > 0) {
-                return new ResponseEntity<>("Obra criada com sucesso.", HttpStatus.CREATED);
-            } else {
-                return new ResponseEntity<>("Erro ao criar a obra.", HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>("Erro interno do servidor: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Obra> createObra(@RequestBody Obra body) {
+        obraRepository.insert(body);
+        return ResponseEntity.created(URI.create("/obras/")).body(body);
+    }
+
+    @GetMapping
+    public List<Obra> listObras() {
+        return obraRepository.findAll();
+    }
+
+    @GetMapping("/{codigo}")
+    public ResponseEntity<Obra> getObraById(@PathVariable int codigo) {
+        return obraRepository.findById(codigo)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{codigo}")
-    public ResponseEntity<String> updateObra(@PathVariable int codigo, @RequestBody Obra obra) {
-        try {
-            obra.codigo = codigo; // Garante que o código do path seja usado
-            int result = obraRepository.update(obra);
-            if (result > 0) {
-                return new ResponseEntity<>("Obra atualizada com sucesso.", HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Obra não encontrada ou erro na atualização.", HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>("Erro interno do servidor: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Obra> updateObra(@PathVariable int codigo, @RequestBody Obra body) {
+        if (!obraRepository.existsById(codigo)) {
+            return ResponseEntity.notFound().build();
         }
+        body.codigo = codigo;
+        obraRepository.update(body);
+        return ResponseEntity.ok(body);
     }
 
-    // Endpoint para deletar uma obra (DELETE)
     @DeleteMapping("/{codigo}")
-    public ResponseEntity<String> deleteObra(@PathVariable int codigo) {
-        try {
-            int result = obraRepository.deleteById(codigo);
-            if (result > 0) {
-                return new ResponseEntity<>("Obra deletada com sucesso.", HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Obra não encontrada.", HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>("Erro interno do servidor: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Void> deleteObra(@PathVariable int codigo) {
+        if (!obraRepository.existsById(codigo)) {
+            return ResponseEntity.notFound().build();
         }
+        obraRepository.deleteById(codigo);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/obras-por-genero")
-    public List<Map<String, Object>> getObrasPorGenero()
-    {
-        return obraRepository.getObrasPorGenero();
+    @GetMapping("/por-genero")
+    public List<Obra> getObrasPorGenero() {
+        return obraRepository.findByGenero();
     }
 
-    @GetMapping("/like/{busca}")
-    public List<Map<String, Object>> getObraWithLike(@PathVariable String busca)
-    {
-        return obraRepository.getObraWithLike(busca + "%");
+    @GetMapping("/buscar")
+    public List<Obra> getObraWithLike(@RequestParam String nome) {
+        return obraRepository.findByNomeContaining(nome);
     }
 
-    @GetMapping("/where/data-lancamento/{busca}")
-    public List<Map<String, Object>> getObraWhereDateIs(@PathVariable String busca)
-    {
-        return obraRepository.getObraWhereDateIs(busca);
+    @GetMapping("/por-data-lancamento")
+    public List<Obra> getObraWhereDateIs(@RequestParam LocalDate data) {
+        return obraRepository.findByDataLancamento(data);
     }
 }
