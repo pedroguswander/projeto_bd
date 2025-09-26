@@ -4,8 +4,12 @@ import com.grupo7.serivco_streaming.dto.Obra;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +39,20 @@ public class ObraRepository {
     public int insert(Obra obra) {
         String sql = "INSERT INTO obra (fk_genero_genero_PK, nome, sinopse, data_lancamento, qnt_temporadas, duracao, obra_TIPO) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        return jdbc.update(sql, obra.fkGeneroGeneroPK, obra.nome, obra.sinopse, obra.dataLancamento,
-                obra.qntTemporadas, obra.duracao, obra.obraTIPO);
+        KeyHolder kh = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, obra.fkGeneroGeneroPK);
+            ps.setString(2, obra.nome);
+            ps.setString(3, obra.sinopse);
+            ps.setObject(4, obra.dataLancamento);
+            ps.setObject(5, obra.qntTemporadas);
+            ps.setTime(6, obra.duracao);
+            ps.setInt(7, obra.obraTIPO);
+            return ps;
+        }, kh);
+        Number key = kh.getKey();
+        return key == null ? 0 : key.intValue();
     }
 
     public List<Obra> findAll() {
