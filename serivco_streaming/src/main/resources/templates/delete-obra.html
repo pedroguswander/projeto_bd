@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Obra</title>
+</head>
+<body>
+
+<h1>Excluir Obra por Código</h1>
+<p>Insira o código (ID) da obra que deseja remover.</p>
+
+<div>
+    <label for="codigoObra">Código da Obra:</label>
+    <input type="number" id="codigoObra" value="123" required>
+    <button id="botaoExcluir">Excluir Obra</button>
+</div>
+
+<p id="mensagemStatus" style="margin-top: 20px; font-weight: bold;"></p>
+
+<script>
+    // Função que será ativada ao clicar no botão
+    function deletarObra() {
+        const codigo = document.getElementById('codigoObra').value;
+        const statusElement = document.getElementById('mensagemStatus');
+
+        // Verifica se o código foi preenchido
+        if (!codigo) {
+            statusElement.textContent = 'Por favor, insira um código válido.';
+            statusElement.style.color = 'orange';
+            return;
+        }
+
+        // Define a URL do endpoint DELETE
+        // A URL completa deve ser ajustada se o seu @Controller tiver um @RequestMapping de classe
+        // Ex: Se o controller for @RequestMapping("/obras"), a URL deve ser: `/obras/${codigo}`
+        const url = `/${codigo}`; // Mantenha assim se não tiver @RequestMapping na classe
+        // Para maior segurança e clareza, assumiremos que seu controller tem @RequestMapping("/obras")
+        const API_URL = `/obras/${codigo}`;
+
+        // Configuração da requisição fetch para o método DELETE
+        fetch(API_URL, {
+            method: 'DELETE' // O método HTTP DELETE
+        })
+            .then(response => {
+                // O método delete do Spring retorna 204 (No Content) em caso de sucesso.
+                if (response.status === 204) {
+                    statusElement.textContent = `Sucesso! Obra com código ${codigo} excluída.`;
+                    statusElement.style.color = 'green';
+                }
+                // Se a obra não for encontrada, o Spring pode retornar um 404
+                else if (response.status === 404) {
+                    statusElement.textContent = `Erro: Obra com código ${codigo} não encontrada. (Status: 404)`;
+                    statusElement.style.color = 'red';
+                }
+                // Captura outros erros do servidor
+                else {
+                    statusElement.textContent = `Erro ao excluir. Status do servidor: ${response.status}`;
+                    statusElement.style.color = 'red';
+                }
+            })
+            .catch(error => {
+                // Captura erros de rede ou de requisição
+                console.error('Erro na requisição:', error);
+                statusElement.textContent = 'Erro de rede ou na comunicação com a API.';
+                statusElement.style.color = 'red';
+            });
+    }
+
+    // Adiciona o evento de clique ao botão
+    document.getElementById('botaoExcluir').addEventListener('click', deletarObra);
+</script>
+</body>
+</html>

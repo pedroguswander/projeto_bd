@@ -25,4 +25,14 @@ public class BasicController {
     public String criarObra() {
         return "criar-obra";
     }
+
+    @GetMapping("/delete-obra")
+    public String deleteObra() {
+        return "delete-obra";
+    }
+
+    @GetMapping("/update-obra")
+    public String updateObra() {
+        return "update-obra";
+    }
 }
