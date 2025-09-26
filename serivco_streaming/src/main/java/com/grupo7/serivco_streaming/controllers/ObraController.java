@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/obras")
+@RequestMapping("/api/obras")
 public class ObraController {
 
     private final ObraService obraService;

@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pesquisas") // URL base para acessar os dados desta pesquisa
+@RequestMapping("/api/pesquisas") // URL base para acessar os dados desta pesquisa
 public class PesquisaStreamingController {
 
     private final PesquisaStreamingRepository repo;
