@@ -137,3 +137,21 @@ CREATE TABLE administra (
                             FOREIGN KEY (fk_conta_codigo) REFERENCES conta(codigo) ON DELETE CASCADE,
                             FOREIGN KEY (fk_conta_codigo_2) REFERENCES conta(codigo) ON DELETE CASCADE
 );
+CREATE TABLE pesquisa_streaming (
+                                    id_resposta INT PRIMARY KEY AUTO_INCREMENT,
+                                    email VARCHAR(255),
+                                    ocupacao VARCHAR(100),
+                                    regiao_residencia VARCHAR(100),
+                                    genero VARCHAR(50),
+                                    faixa_etaria VARCHAR(50),
+                                    quantidade_assinaturas VARCHAR(20),
+                                    servicos_utilizados TEXT,
+                                    motivos_insatisfacao TEXT,
+                                    generos_assistidos TEXT,
+                                    frequencia_uso VARCHAR(50),
+                                    horas_semanais VARCHAR(50),
+                                    satisfacao_geral INT,
+                                    satisfacao_recomendacoes INT,
+                                    dispositivos_utilizados TEXT,
+                                    preco_ideal_mensal VARCHAR(50)
+);
