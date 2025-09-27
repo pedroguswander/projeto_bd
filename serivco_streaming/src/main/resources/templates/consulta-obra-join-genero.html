@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Obras por Genero</title>
+    <style>
+        /* Ajeita para a buscaComLikeForm ter um id diferente */
+        /* O estilo 'display: flex' para um <p> pode não ser o ideal, mas ajustaremos o essencial */
+        #textResult {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            white-space: pre-wrap; /* Mantém a formatação do JSON (quebra de linha) */
+        }
+    </style>
+</head>
+<body>
+<form id="buscaObraPorGenero">
+    <button type="submit">Ver obras por genero</button>
+</form>
+
+<p id="textResult"></p>
+
+<script>
+    // 1. Corrigindo o ID do formulário para o correto: 'buscaComLikeForm'
+    document.getElementById('buscaObraPorGenero').addEventListener('submit', async function(event) {
+
+        // Impede o comportamento padrão do formulário, que é recarregar a página e fazer um GET
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+        // Pega a referência ao elemento de resultado
+        const text_result = document.getElementById('textResult');
+
+        // Limpa o resultado anterior
+        text_result.innerText = "Buscando...";
+
+        try {
+            // 2. Executa a requisição GET
+            const response = await fetch(`/api/obras/por-genero`, {
+                method: 'GET'
+            });
+
+            // Verifica se a resposta foi bem-sucedida (status 200-299)
+            if (!response.ok) {
+                text_result.innerText = `Erro na busca: Status ${response.status}`;
+                return;
+            }
+
+            // Converte o corpo da resposta para JSON (assumindo que sua API retorna um JSON)
+            const result = await response.json();
+
+            // 3. Formata o JSON para exibição
+            // JSON.stringify(result, null, 2) formata o JSON com indentação de 2 espaços para melhor leitura.
+            const formattedResult = JSON.stringify(result, null, 2);
+
+            // 4. Exibe o resultado no elemento <p> usando innerText
+            // Usamos innerText para tratar o resultado como texto puro e evitar injeção de HTML.
+            text_result.innerText = formattedResult;
+
+        } catch (error) {
+            console.error("Erro ao realizar o fetch:", error);
+            text_result.innerText = `Erro ao conectar com a API: ${error.message}`;
+        }
+    });
+</script>
+</body>
+</html>

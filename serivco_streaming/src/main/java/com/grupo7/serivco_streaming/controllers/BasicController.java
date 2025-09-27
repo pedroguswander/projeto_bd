@@ -35,4 +35,9 @@ public class BasicController {
     public String updateObra() {
         return "update-obra";
     }
+
+    @GetMapping("consulta-obra-join-genero")
+    public String consultaObraJoinGenero() {
+        return "consulta-obra-join-genero";
+    }
 }

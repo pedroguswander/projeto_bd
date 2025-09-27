@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atualizar Nova Obra</title>
+    <title>Atualizar Obra</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -22,9 +22,15 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
+        h1, h2 {
             text-align: center;
             color: #091e42;
+        }
+
+        h2 {
+            border-bottom: 2px solid #dfe1e6;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group {
@@ -78,6 +84,14 @@
             background-color: #0065ff;
         }
 
+        button.secondary {
+            background-color: #505f79;
+        }
+
+        button.secondary:hover {
+            background-color: #6b778c;
+        }
+
         .message {
             margin-top: 1.5rem;
             padding: 1rem;
@@ -100,13 +114,23 @@
 <body>
 
 <div class="container">
-    <h1>Cadastrar Nova Obra</h1>
-    <form id="obraForm">
-        <div class="form-group">
-            <label for="nome">Id da obra a se atualizar:</label>
-            <input type="text" id="id" name="id" required>
-        </div>
+    <h1>Atualizar Obra</h1>
 
+    <form id="searchForm">
+        <h2>1. Encontre a Obra</h2>
+        <div class="form-group">
+            <label for="idBusca">Digite o ID da obra que deseja atualizar:</label>
+            <input type="number" id="idBusca" name="idBusca" required>
+        </div>
+        <button type="submit" class="secondary">Buscar Obra</button>
+    </form>
+
+    <div id="responseMessage" class="message" style="display: none;"></div>
+
+    <hr style="margin: 2rem 0; border: 1px solid #dfe1e6;">
+
+    <form id="updateForm" style="display: none;">
+        <h2>2. Modifique os Dados</h2>
         <div class="form-group">
             <label for="nome">Nome da Obra:</label>
             <input type="text" id="nome" name="nome" required>
@@ -142,66 +166,124 @@
             <input type="time" id="duracao" name="duracao" step="1">
         </div>
 
-        <button type="submit">Criar Obra</button>
+        <button type="submit">Atualizar Obra</button>
     </form>
-
-    <div id="responseMessage" class="message" style="display: none;"></div>
 </div>
 
 <script>
-    document.getElementById('obraForm').addEventListener('submit', async function(event) {
-        // Prevenir o envio padrão do formulário
+    // Variável para armazenar o ID da obra que está sendo editada
+    let currentObraId = null;
+
+    const searchForm = document.getElementById('searchForm');
+    const updateForm = document.getElementById('updateForm');
+    const messageDiv = document.getElementById('responseMessage');
+
+    // Função para exibir mensagens
+    function showMessage(text, type) {
+        messageDiv.textContent = text;
+        messageDiv.className = `message ${type}`;
+        messageDiv.style.display = 'block';
+    }
+
+    // Função para preencher o formulário de atualização com os dados da obra
+    function populateForm(obra) {
+        document.getElementById('nome').value = obra.nome || '';
+        document.getElementById('sinopse').value = obra.sinopse || '';
+
+        // O input de data espera o formato YYYY-MM-DD. A API pode retornar a data com hora.
+        if (obra.dataLancamento) {
+            document.getElementById('data_lancamento').value = obra.dataLancamento.split('T')[0];
+        } else {
+            document.getElementById('data_lancamento').value = '';
+        }
+
+        document.getElementById('fk_genero_genero_PK').value = obra.fkGeneroGeneroPK || '';
+        document.getElementById('obra_TIPO').value = obra.obraTIPO || '';
+        document.getElementById('qnt_temporadas').value = obra.qntTemporadas || '';
+        document.getElementById('duracao').value = obra.duracao || '';
+    }
+
+    // Event Listener para o formulário de BUSCA
+    searchForm.addEventListener('submit', async function(event) {
         event.preventDefault();
 
-        const messageDiv = document.getElementById('responseMessage');
-        messageDiv.style.display = 'none'; // Oculta a mensagem anterior
+        const obraId = document.getElementById('idBusca').value;
+        if (!obraId) {
+            showMessage('Por favor, insira um ID para buscar.', 'error');
+            return;
+        }
 
-        // Coletar dados do formulário
-        const formData = new FormData(this);
-        const obra = {};
-
-        // É crucial que as chaves do objeto (ex: 'fk_genero_genero_PK')
-        // correspondam exatamente aos nomes dos atributos da sua classe Java `Obra`.
-        obra.id = formData.get('id');
-        obra.nome = formData.get('nome');
-        obra.sinopse = formData.get('sinopse');
-        obra.dataLancamento = formData.get('data_lancamento');
-        obra.fkGeneroGeneroPK = parseInt(formData.get('fk_genero_genero_PK'), 10);
-        obra.obraTIPO = parseInt(formData.get('obra_TIPO'), 10);
-
-        // Tratar campos que podem ser nulos
-        const qntTemporadas = formData.get('qnt_temporadas');
-        obra.qntTemporadas = qntTemporadas ? parseInt(qntTemporadas, 10) : null;
-
-        const duracao = formData.get('duracao');
-        obra.duracao = duracao ? duracao : null;
+        // Limpa mensagens e oculta o formulário de atualização
+        messageDiv.style.display = 'none';
+        updateForm.style.display = 'none';
 
         try {
-            // Enviar a requisição para o endpoint
-            const response = await fetch(`/api/obras/${obra.id}`, {
+            // Usa o endpoint GET que você forneceu
+            const response = await fetch(`/api/obras/${obraId}`);
+
+            if (response.ok) {
+                const obra = await response.json();
+                currentObraId = obra.codigo; // Armazena o ID para o processo de update
+                populateForm(obra); // Preenche o segundo formulário
+                updateForm.style.display = 'block'; // Exibe o formulário de atualização
+                showMessage('Obra encontrada. Você já pode editar os dados abaixo.', 'success');
+            } else if (response.status === 404) {
+                showMessage(`Erro: Obra com ID ${obraId} não encontrada.`, 'error');
+            } else {
+                const errorText = await response.text();
+                showMessage(`Erro ao buscar obra: ${errorText || response.statusText}`, 'error');
+            }
+        } catch (error) {
+            showMessage('Erro de rede ou ao conectar com o servidor: ' + error.message, 'error');
+        }
+    });
+
+    // Event Listener para o formulário de ATUALIZAÇÃO
+    updateForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        if (!currentObraId) {
+            showMessage('ID da obra não definido. Realize a busca novamente.', 'error');
+            return;
+        }
+
+        // Coleta os dados do formulário de atualização
+        const formData = new FormData(this);
+        const obraAtualizada = {};
+
+        obraAtualizada.id = currentObraId;
+        obraAtualizada.nome = formData.get('nome');
+        obraAtualizada.sinopse = formData.get('sinopse');
+        obraAtualizada.dataLancamento = formData.get('data_lancamento');
+        obraAtualizada.fkGeneroGeneroPK = parseInt(formData.get('fk_genero_genero_PK'), 10);
+        obraAtualizada.obraTIPO = parseInt(formData.get('obra_TIPO'), 10);
+
+        const qntTemporadas = formData.get('qnt_temporadas');
+        obraAtualizada.qntTemporadas = qntTemporadas ? parseInt(qntTemporadas, 10) : null;
+
+        const duracao = formData.get('duracao');
+        obraAtualizada.duracao = duracao ? duracao : null;
+
+        try {
+            // Envia a requisição PUT para o endpoint de atualização
+            const response = await fetch(`/api/obras/${currentObraId}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(obra)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(obraAtualizada)
             });
 
             const responseText = await response.text();
 
-            if (response.ok) { // Status na faixa 200-299
-                messageDiv.textContent = responseText || "Obra criada com sucesso!";
-                messageDiv.className = 'message success';
-                document.getElementById('obraForm').reset(); // Limpa o formulário
+            if (response.ok) {
+                showMessage("Obra atualizada com sucesso!", 'success');
+                updateForm.style.display = 'none'; // Opcional: oculta o form após sucesso
+                searchForm.reset(); // Limpa o campo de busca
             } else {
-                messageDiv.textContent = "Erro: " + (responseText || response.statusText);
-                messageDiv.className = 'message error';
+                showMessage(`Erro ao atualizar: ${responseText || response.statusText}`, 'error');
             }
         } catch (error) {
-            messageDiv.textContent = 'Erro de rede ou ao conectar com o servidor: ' + error.message;
-            messageDiv.className = 'message error';
+            showMessage('Erro de rede ou ao conectar com o servidor: ' + error.message, 'error');
         }
-
-        messageDiv.style.display = 'block'; // Exibe a mensagem
     });
 </script>
 
