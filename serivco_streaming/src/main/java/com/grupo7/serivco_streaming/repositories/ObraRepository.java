@@ -92,7 +92,7 @@ public class ObraRepository {
 
     public List<Obra> findByNomeContaining(String busca) {
         String sql = "SELECT * FROM obra WHERE nome LIKE ?";
-        return jdbc.query(sql, mapper, busca + "%");
+        return jdbc.query(sql, mapper, "%" + busca + "%");
     }
 
     public List<Obra> findByDataLancamento(LocalDate data) {

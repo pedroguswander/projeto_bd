@@ -1,74 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Busca de Obra por LIKE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Busca de Obra</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <style>
-    /* Ajeita para a buscaComLikeForm ter um id diferente */
-    /* O estilo 'display: flex' para um <p> pode não ser o ideal, mas ajustaremos o essencial */
-    #textResult {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-top: 20px;
-      white-space: pre-wrap; /* Mantém a formatação do JSON (quebra de linha) */
+    /* Estilo adicional para espaçamento */
+    body {
+      padding-top: 20px;
     }
   </style>
 </head>
 <body>
-<form id="buscaComLikeForm">
-  <label for="buscaComLike">Insira sua string de busca:</label>
-  <input type="text" id="buscaComLike" name="buscaComLike">
-  <button type="submit">Buscar</button>
-</form>
 
-<p id="textResult"></p>
+<nav th:replace="~{index :: nav}"></nav>
+
+<div class="container" style="margin-top: 100px">
+  <h1 class="mb-4">Busca de Obras por Nome</h1>
+
+  <form id="buscaComLikeForm">
+    <div class="mb-3">
+      <label for="buscaComLike" class="form-label">Insira o nome ou parte do nome da obra:</label>
+      <input type="text" class="form-control" id="buscaComLike" name="buscaComLike" placeholder="Ex: Taxi Driv..." required>
+    </div>
+    <button type="submit" class="btn btn-primary">Buscar</button>
+  </form>
+
+  <div id="resultArea" class="mt-4">
+    <p id="loadingMessage"></p>
+  </div>
+</div>
 
 <script>
-  // 1. Corrigindo o ID do formulário para o correto: 'buscaComLikeForm'
   document.getElementById('buscaComLikeForm').addEventListener('submit', async function(event) {
-
-    // Impede o comportamento padrão do formulário, que é recarregar a página e fazer um GET
     event.preventDefault();
 
     const formData = new FormData(this);
-
-    // O valor da busca, que será a parte variável da URL
     const busca = formData.get("buscaComLike");
+    const resultArea = document.getElementById('resultArea');
+    const loadingMessage = document.getElementById('loadingMessage');
 
-    // Pega a referência ao elemento de resultado
-    const text_result = document.getElementById('textResult');
-
-    // Limpa o resultado anterior
-    text_result.innerText = "Buscando...";
+    // Limpa resultados anteriores e exibe a mensagem de busca
+    resultArea.innerHTML = ''; // Limpa a área de resultados, incluindo qualquer tabela antiga
+    loadingMessage.innerText = "Buscando...";
+    resultArea.appendChild(loadingMessage);
 
     try {
-      // 2. Executa a requisição GET
       const response = await fetch(`/api/obras/buscar?nome=${busca}`, {
         method: 'GET'
       });
 
-      // Verifica se a resposta foi bem-sucedida (status 200-299)
+      // Limpa a mensagem de "Buscando..."
+      loadingMessage.innerText = '';
+
       if (!response.ok) {
-        text_result.innerText = `Erro na busca: Status ${response.status}`;
+        resultArea.innerHTML = `<div class="alert alert-danger">Erro na busca: Status ${response.status} - ${response.statusText}</div>`;
         return;
       }
 
-      // Converte o corpo da resposta para JSON (assumindo que sua API retorna um JSON)
-      const result = await response.json();
+      const results = await response.json();
 
-      // 3. Formata o JSON para exibição
-      // JSON.stringify(result, null, 2) formata o JSON com indentação de 2 espaços para melhor leitura.
-      const formattedResult = JSON.stringify(result, null, 2);
+      // Se não houver resultados, exibe uma mensagem amigável
+      if (!results || results.length === 0) {
+        resultArea.innerHTML = '<div class="alert alert-info">Nenhuma obra encontrada com o termo informado.</div>';
+        return;
+      }
 
-      // 4. Exibe o resultado no elemento <p> usando innerText
-      // Usamos innerText para tratar o resultado como texto puro e evitar injeção de HTML.
-      text_result.innerText = formattedResult;
+      // Cria a estrutura da tabela com as classes do Bootstrap
+      const table = document.createElement('table');
+      table.className = 'table table-striped table-hover'; // Classes para estilização
+
+      // Cria o cabeçalho da tabela (thead)
+      const thead = table.createTHead();
+      const headerRow = thead.insertRow();
+
+      // Pega as chaves do primeiro objeto para criar os cabeçalhos dinamicamente
+      const headers = Object.keys(results[0]);
+      headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.textContent = headerText.charAt(0).toUpperCase() + headerText.slice(1); // Capitaliza o header
+        headerRow.appendChild(th);
+      });
+
+      // Cria o corpo da tabela (tbody) e preenche com os dados
+      const tbody = table.createTBody();
+      results.forEach(item => {
+        const row = tbody.insertRow();
+        // Itera sobre os valores de cada objeto para preencher as células
+        headers.forEach(header => {
+          const cell = row.insertCell();
+          cell.textContent = item[header];
+        });
+      });
+
+      // Adiciona a tabela completa à área de resultados
+      resultArea.appendChild(table);
 
     } catch (error) {
       console.error("Erro ao realizar o fetch:", error);
-      text_result.innerText = `Erro ao conectar com a API: ${error.message}`;
+      // Limpa a mensagem de "Buscando..." em caso de erro de conexão
+      loadingMessage.innerText = '';
+      resultArea.innerHTML = `<div class="alert alert-danger">Erro ao conectar com a API: ${error.message}</div>`;
     }
   });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
