@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atualizar Obra</title>
+    <title>Atualizar Usuário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -45,8 +46,8 @@
 
         input[type="text"],
         input[type="number"],
-        input[type="date"],
-        input[type="time"],
+        input[type="email"], /* Adicionado input type="email" */
+        input[type="password"], /* Adicionado input type="password" */
         textarea {
             width: 100%;
             padding: 0.75rem;
@@ -115,16 +116,16 @@
 
 <nav th:replace="~{index :: nav}"></nav>
 
-<div class="container">
-    <h1>Atualizar Obra</h1>
+<div class="container" style="margin-top: 100px">
+    <h1>Atualizar Usuário</h1>
 
     <form id="searchForm">
-        <h2>1. Encontre a Obra</h2>
+        <h2>1. Encontre o Usuário</h2>
         <div class="form-group">
-            <label for="idBusca">Digite o ID da obra que deseja atualizar:</label>
+            <label for="idBusca">Digite o ID do usuário que deseja atualizar:</label>
             <input type="number" id="idBusca" name="idBusca" required>
         </div>
-        <button type="submit" class="secondary">Buscar Obra</button>
+        <button type="submit" class="secondary">Buscar Usuário</button>
     </form>
 
     <div id="responseMessage" class="message" style="display: none;"></div>
@@ -134,51 +135,53 @@
     <form id="updateForm" style="display: none;">
         <h2>2. Modifique os Dados</h2>
         <div class="form-group">
-            <label for="nome">Nome da Obra:</label>
+            <label for="nome">Nome Completo:</label>
             <input type="text" id="nome" name="nome" required>
         </div>
 
         <div class="form-group">
-            <label for="sinopse">Sinopse:</label>
-            <textarea id="sinopse" name="sinopse"></textarea>
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required>
         </div>
 
         <div class="form-group">
-            <label for="data_lancamento">Data de Lançamento:</label>
-            <input type="date" id="data_lancamento" name="data_lancamento">
+            <label for="senha">Nova Senha (deixe vazio para não alterar):</label>
+            <input type="password" id="senha" name="senha">
         </div>
 
         <div class="form-group">
-            <label for="fk_genero_genero_PK">ID do Gênero (fk_genero_genero_PK):</label>
-            <input type="number" id="fk_genero_genero_PK" name="fk_genero_genero_PK" required>
+            <label for="rua">Rua:</label>
+            <input type="text" id="rua" name="rua">
         </div>
 
         <div class="form-group">
-            <label for="obra_TIPO">Tipo da Obra (Ex: 1 para Filme, 2 para Série):</label>
-            <input type="number" id="obra_TIPO" name="obra_TIPO">
+            <label for="bairro">Bairro:</label>
+            <input type="text" id="bairro" name="bairro">
         </div>
 
         <div class="form-group">
-            <label for="qnt_temporadas">Quantidade de Temporadas (se aplicável):</label>
-            <input type="number" id="qnt_temporadas" name="qnt_temporadas">
+            <label for="numero">Número:</label>
+            <input type="number" id="numero" name="numero" min="1">
         </div>
 
         <div class="form-group">
-            <label for="duracao">Duração (hh:mm:ss):</label>
-            <input type="time" id="duracao" name="duracao" step="1">
+            <label for="fk_reclamacoes_reclamacoes_PK">ID da Reclamação (fk_reclamacoes_reclamacoes_PK):</label>
+            <input type="number" id="fk_reclamacoes_reclamacoes_PK" name="fk_reclamacoes_reclamacoes_PK">
         </div>
 
-        <button type="submit">Atualizar Obra</button>
+        <button type="submit">Atualizar Usuário</button>
     </form>
 </div>
 
 <script>
-    // Variável para armazenar o ID da obra que está sendo editada
-    let currentObraId = null;
+    // Variável para armazenar o ID do usuário que está sendo editado
+    let currentUsuarioId = null;
 
     const searchForm = document.getElementById('searchForm');
     const updateForm = document.getElementById('updateForm');
     const messageDiv = document.getElementById('responseMessage');
+
+    let senha_antiga = "";
 
     // Função para exibir mensagens
     function showMessage(text, type) {
@@ -187,30 +190,26 @@
         messageDiv.style.display = 'block';
     }
 
-    // Função para preencher o formulário de atualização com os dados da obra
-    function populateForm(obra) {
-        document.getElementById('nome').value = obra.nome || '';
-        document.getElementById('sinopse').value = obra.sinopse || '';
+    // Função para preencher o formulário de atualização com os dados do usuário
+    // **Atenção:** A senha não é preenchida por segurança.
+    function populateForm(usuario) {
+        document.getElementById('nome').value = usuario.nome || '';
+        document.getElementById('email').value = usuario.email || '';
+        // Não preenche a senha por segurança: document.getElementById('senha').value = '';
+        document.getElementById('rua').value = usuario.rua || '';
+        document.getElementById('bairro').value = usuario.bairro || '';
+        document.getElementById('numero').value = usuario.numero || '';
 
-        // O input de data espera o formato YYYY-MM-DD. A API pode retornar a data com hora.
-        if (obra.dataLancamento) {
-            document.getElementById('data_lancamento').value = obra.dataLancamento.split('T')[0];
-        } else {
-            document.getElementById('data_lancamento').value = '';
-        }
-
-        document.getElementById('fk_genero_genero_PK').value = obra.fkGeneroGeneroPK || '';
-        document.getElementById('obra_TIPO').value = obra.obraTIPO || '';
-        document.getElementById('qnt_temporadas').value = obra.qntTemporadas || '';
-        document.getElementById('duracao').value = obra.duracao || '';
+        // A chave 'fkReclamacoesReclamacoesPK' deve corresponder ao nome no seu objeto JSON de retorno.
+        document.getElementById('fk_reclamacoes_reclamacoes_PK').value = usuario.fkReclamacoesReclamacoesPK || '';
     }
 
     // Event Listener para o formulário de BUSCA
     searchForm.addEventListener('submit', async function(event) {
         event.preventDefault();
 
-        const obraId = document.getElementById('idBusca').value;
-        if (!obraId) {
+        const usuarioId = document.getElementById('idBusca').value;
+        if (!usuarioId) {
             showMessage('Por favor, insira um ID para buscar.', 'error');
             return;
         }
@@ -220,20 +219,23 @@
         updateForm.style.display = 'none';
 
         try {
-            // Usa o endpoint GET que você forneceu
-            const response = await fetch(`/api/obras/${obraId}`);
+            // Endpoint GET para buscar o usuário
+            const response = await fetch(`/api/usuarios/${usuarioId}`);
 
             if (response.ok) {
-                const obra = await response.json();
-                currentObraId = obra.codigo; // Armazena o ID para o processo de update
-                populateForm(obra); // Preenche o segundo formulário
+                const usuario = await response.json();
+                currentUsuarioId = usuario.usuarioId; // Armazena o ID (Ajuste 'usuarioId' se a chave for diferente)
+                populateForm(usuario); // Preenche o segundo formulário
                 updateForm.style.display = 'block'; // Exibe o formulário de atualização
-                showMessage('Obra encontrada. Você já pode editar os dados abaixo.', 'success');
+                showMessage('Usuário encontrado. Você já pode editar os dados abaixo.', 'success');
+
+                senha_antiga = usuario.senha;
+
             } else if (response.status === 404) {
-                showMessage(`Erro: Obra com ID ${obraId} não encontrada.`, 'error');
+                showMessage(`Erro: Usuário com ID ${usuarioId} não encontrado.`, 'error');
             } else {
                 const errorText = await response.text();
-                showMessage(`Erro ao buscar obra: ${errorText || response.statusText}`, 'error');
+                showMessage(`Erro ao buscar usuário: ${errorText || response.statusText}`, 'error');
             }
         } catch (error) {
             showMessage('Erro de rede ou ao conectar com o servidor: ' + error.message, 'error');
@@ -244,42 +246,48 @@
     updateForm.addEventListener('submit', async function(event) {
         event.preventDefault();
 
-        if (!currentObraId) {
-            showMessage('ID da obra não definido. Realize a busca novamente.', 'error');
+        if (!currentUsuarioId) {
+            showMessage('ID do usuário não definido. Realize a busca novamente.', 'error');
             return;
         }
 
         // Coleta os dados do formulário de atualização
         const formData = new FormData(this);
-        const obraAtualizada = {};
+        const usuarioAtualizado = {};
 
-        obraAtualizada.id = currentObraId;
-        obraAtualizada.nome = formData.get('nome');
-        obraAtualizada.sinopse = formData.get('sinopse');
-        obraAtualizada.dataLancamento = formData.get('data_lancamento');
-        obraAtualizada.fkGeneroGeneroPK = parseInt(formData.get('fk_genero_genero_PK'), 10);
-        obraAtualizada.obraTIPO = parseInt(formData.get('obra_TIPO'), 10);
+        // Mapeamento dos campos para os atributos da classe Java 'Usuario'
+        usuarioAtualizado.usuarioId = currentUsuarioId; // O ID deve ser incluído na requisição PUT/corpo
+        usuarioAtualizado.nome = formData.get('nome');
+        usuarioAtualizado.email = formData.get('email');
+        usuarioAtualizado.rua = formData.get('rua');
+        usuarioAtualizado.bairro = formData.get('bairro');
 
-        const qntTemporadas = formData.get('qnt_temporadas');
-        obraAtualizada.qntTemporadas = qntTemporadas ? parseInt(qntTemporadas, 10) : null;
+        // Tratar Senha: Se o campo estiver preenchido, envia a nova senha. Se não, o backend deve ignorar a alteração.
+        const senha = formData.get('senha');
+        usuarioAtualizado.senha = senha || senha_antiga; // Envia null ou string vazia se não for alterada
 
-        const duracao = formData.get('duracao');
-        obraAtualizada.duracao = duracao ? duracao : null;
+        // Tratar números
+        const numero = formData.get('numero');
+        usuarioAtualizado.numero = numero ? parseInt(numero, 10) : null;
+
+        const fkReclamacoesReclamacoesPK = formData.get('fk_reclamacoes_reclamacoes_PK');
+        usuarioAtualizado.fkReclamacoesReclamacoesPK = fkReclamacoesReclamacoesPK ? parseInt(fkReclamacoesReclamacoesPK, 10) : null;
 
         try {
             // Envia a requisição PUT para o endpoint de atualização
-            const response = await fetch(`/api/obras/${currentObraId}`, {
+            const response = await fetch(`/api/usuarios/${currentUsuarioId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(obraAtualizada)
+                body: JSON.stringify(usuarioAtualizado)
             });
 
             const responseText = await response.text();
 
             if (response.ok) {
-                showMessage("Obra atualizada com sucesso!", 'success');
-                updateForm.style.display = 'none'; // Opcional: oculta o form após sucesso
-                searchForm.reset(); // Limpa o campo de busca
+                showMessage("Usuário atualizado com sucesso!", 'success');
+                // Após o sucesso, você pode limpar os campos
+                updateForm.style.display = 'none';
+                searchForm.reset();
             } else {
                 showMessage(`Erro ao atualizar: ${responseText || response.statusText}`, 'error');
             }
@@ -287,7 +295,8 @@
             showMessage('Erro de rede ou ao conectar com o servidor: ' + error.message, 'error');
         }
     });
-</script>
 
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

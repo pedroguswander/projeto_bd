@@ -55,6 +55,15 @@ public class WebController {
         return "consulta-obra-join-genero";
     }
 
+    //CRUD USUARIO
+    @GetMapping("web/usuarios/criar-usuario")
+    public String criarUsuario() { return "criar-usuario"; }
+
+    @GetMapping("web/usuarios/update-usuario")
+    public String updateUsuario() { return "update-usuario"; }
+
+    @GetMapping("web/usuarios/delete-usuario")
+    public String deleteUsuario() { return "delete-usuario"; }
 
 
     @GetMapping("/web/usuarios/buscar-por-email")

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excluir Usuário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+
+<nav th:replace="~{index :: nav}"></nav>
+
+<div class="container mt-5" style="margin-top: 100px;">
+    <div class="card shadow-lg p-4">
+        <h1 class="card-title text-center mb-4">Excluir Usuário por ID</h1>
+        <p class="text-center text-muted">Insira o ID do usuário que deseja remover permanentemente.</p>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">ID do Usuário:</span>
+            <input type="number" id="idUsuario" class="form-control" placeholder="Ex: 5" required>
+            <button class="btn btn-danger" type="button" id="botaoExcluir">
+                <i class="bi bi-trash"></i> Excluir Usuário
+            </button>
+        </div>
+
+        <div id="mensagemStatus" class="alert mt-3 text-center" style="display: none;"></div>
+    </div>
+</div>
+
+<script>
+    // Função que será ativada ao clicar no botão
+    function deletarUsuario() {
+        const id = document.getElementById('idUsuario').value;
+        const statusElement = document.getElementById('mensagemStatus');
+
+        // Limpa a mensagem anterior e a oculta
+        statusElement.textContent = '';
+        statusElement.style.display = 'none';
+
+        // Verifica se o ID foi preenchido
+        if (!id) {
+            statusElement.textContent = 'Por favor, insira um ID válido.';
+            statusElement.className = 'alert alert-warning';
+            statusElement.style.display = 'block';
+            return;
+        }
+
+        // Define a URL do endpoint DELETE, assumindo /api/usuarios/{id}
+        const API_URL = `/api/usuarios/${id}`;
+
+        // Configuração da requisição fetch para o método DELETE
+        fetch(API_URL, {
+            method: 'DELETE' // O método HTTP DELETE
+        })
+            .then(response => {
+                // O método delete em APIs RESTful de sucesso geralmente retorna 204 (No Content)
+                if (response.status === 204) {
+                    statusElement.textContent = `Sucesso! Usuário com ID ${id} excluído.`;
+                    statusElement.className = 'alert alert-success';
+                    // Limpa o campo após o sucesso
+                    document.getElementById('idUsuario').value = '';
+                }
+                // Se o recurso não for encontrado, o servidor pode retornar 404
+                else if (response.status === 404) {
+                    statusElement.textContent = `Erro: Usuário com ID ${id} não encontrado.`;
+                    statusElement.className = 'alert alert-danger';
+                }
+                // Captura outros erros do servidor
+                else {
+                    // Tenta ler o corpo da resposta em caso de erro
+                    return response.text().then(text => {
+                        const errorMsg = text || `Status do servidor: ${response.status}`;
+                        statusElement.textContent = `Erro ao excluir. Detalhe: ${errorMsg}`;
+                        statusElement.className = 'alert alert-danger';
+                    });
+                }
+                statusElement.style.display = 'block';
+            })
+            .catch(error => {
+                // Captura erros de rede ou de requisição
+                console.error('Erro na requisição:', error);
+                statusElement.textContent = 'Erro de rede ou na comunicação com a API.';
+                statusElement.className = 'alert alert-danger';
+                statusElement.style.display = 'block';
+            });
+    }
+
+    // Adiciona o evento de clique ao botão
+    document.getElementById('botaoExcluir').addEventListener('click', deletarUsuario);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
