@@ -11,15 +11,16 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: #f4f7f9;
+            background-color: #ffffff;
             display: flex;
-            flex-direction: column; /* Para empilhar os dashboards verticalmente */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Para garantir que o body ocupe a altura total */
+            min-height: 100vh;
             margin: 0;
-            padding: 20px 0; /* Espaçamento superior e inferior */
-            box-sizing: border-box; /* Inclui padding e borda no tamanho total */
+            padding: 20px 0;
+            box-sizing: border-box;
+            color: #333;
         }
         .dashboard-container {
             background-color: #ffffff;
@@ -27,8 +28,11 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 25px;
             width: 90%;
-            max-width: 800px;
-            margin-bottom: 30px; /* Espaço entre os dashboards */
+            max-width: 900px;
+            margin-bottom: 30px;
+        }
+        .small-chart-container {
+            max-width: 450px;
         }
         h1, h2 {
             text-align: center;
@@ -40,86 +44,51 @@
 <body>
 
 <div class="dashboard-container">
-    <h1>Top 5 Gêneros Mais Assistidos em Streaming</h1>
-    <canvas id="graficoGeneros"></canvas>
-</div>
-
-<div class="dashboard-container">
     <h2>Nível de Satisfação de Streaming por Gênero</h2>
     <canvas id="graficoSatisfacao"></canvas>
 </div>
 
+<div class="dashboard-container">
+    <h2>Consumo de Gêneros por Dispositivo</h2>
+    <canvas id="graficoGenerosPorDispositivo"></canvas>
+</div>
+
+<div class="dashboard-container">
+    <h2>Total de Pessoas por Gênero e Sexo</h2>
+    <canvas id="graficoGenerosPorSexo"></canvas>
+</div>
+
+<div class="dashboard-container">
+    <h2>Streamings Usados por Horas Assistidas</h2>
+    <canvas id="graficoStreamingsPorHoras"></canvas>
+</div>
+
+<div class="dashboard-container">
+    <h2>Relação entre Gêneros de Filmes/Séries e Serviços de Streaming</h2>
+    <canvas id="graficoGenerosPorServicos"></canvas>
+</div>
+
+<div class="dashboard-container small-chart-container">
+    <h2>Análise da Distribuição por Faixa Etária</h2>
+    <canvas id="graficoFaixaEtaria"></canvas>
+</div>
+
+<div class="dashboard-container small-chart-container">
+    <h2>Análise da Distribuição por Gênero</h2>
+    <canvas id="graficoGenero"></canvas>
+</div>
+
+<div class="dashboard-container small-chart-container">
+    <h2>Análise da Distribuição de uso de tela (semanal)</h2>
+    <canvas id="graficoUsoTela"></canvas>
+</div>
+
 <script>
-    // Registrar o plugin de datalabels globalmente para ambos os gráficos
     Chart.register(ChartDataLabels);
 
-    // --- Dados e Configuração do Primeiro Gráfico (Gêneros Mais Assistidos) ---
-    const generosLabels = ['Comédia', 'Ação', 'Romance', 'Drama', 'Ficção'];
-    const dadosValoresGeneros = [29, 23, 21, 15, 12];
-    const coresBarrasGeneros = [
-        'rgba(255, 189, 137, 0.8)', // Comédia (Laranja)
-        'rgba(163, 221, 153, 0.8)', // Ação (Verde)
-        'rgba(199, 185, 232, 0.8)', // Romance (Roxo)
-        'rgba(253, 253, 150, 0.8)', // Drama (Amarelo)
-        'rgba(174, 198, 207, 0.8)'  // Ficção (Azul)
-    ];
-    const coresBordasGeneros = [
-        'rgb(255, 189, 137)',
-        'rgb(163, 221, 153)',
-        'rgb(199, 185, 232)',
-        'rgb(253, 253, 150)',
-        'rgb(174, 198, 207)'
-    ];
-
-    const configGeneros = {
-        type: 'bar',
-        data: {
-            labels: generosLabels,
-            datasets: [{
-                label: 'Quantidade',
-                data: dadosValoresGeneros,
-                backgroundColor: coresBarrasGeneros,
-                borderColor: coresBordasGeneros,
-                borderWidth: 2,
-                borderRadius: 5,
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 5
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                datalabels: {
-                    anchor: 'end',
-                    align: 'top',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    },
-                    color: '#444'
-                }
-            }
-        }
-    };
-
-    // --- Dados e Configuração do Segundo Gráfico (Nível de Satisfação) ---
     const satisfacaoLabels = ['Feminino', 'Masculino'];
-    const dadosValoresSatisfacao = [3.45, 3.7]; // Valores aproximados do seu gráfico
-    const corSatisfacao = 'rgba(173, 216, 230, 0.8)'; // Azul claro, similar ao do seu gráfico
+    const dadosValoresSatisfacao = [3.45, 3.7];
+    const corSatisfacao = 'rgba(173, 216, 230, 0.8)';
     const bordaSatisfacao = 'rgb(173, 216, 230)';
 
     const configSatisfacao = {
@@ -140,12 +109,16 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 4.5, // Definir um máximo para o eixo Y para se assemelhar ao gráfico original
+                    max: 4.5,
                     ticks: {
-                        stepSize: 0.5, // Intervalo do eixo Y
+                        stepSize: 0.5,
                         callback: function(value) {
-                            return value.toFixed(1); // Formata os ticks para uma casa decimal
-                        }
+                            return value.toFixed(1);
+                        },
+                        color: '#666'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
                     },
                     title: {
                         display: true,
@@ -153,12 +126,16 @@
                         font: {
                             size: 14,
                             weight: 'bold'
-                        }
+                        },
+                        color: '#333'
                     }
                 },
                 x: {
                     grid: {
                         display: false
+                    },
+                    ticks: {
+                        color: '#666'
                     },
                     title: {
                         display: true,
@@ -166,44 +143,631 @@
                         font: {
                             size: 14,
                             weight: 'bold'
-                        }
+                        },
+                        color: '#333'
                     }
                 }
             },
             plugins: {
                 legend: {
-                    display: true, // Manter a legenda para "Nível de satisfação"
+                    display: true,
                     position: 'top',
-                    align: 'end'
+                    align: 'end',
+                    labels: {
+                        color: '#333'
+                    }
                 },
                 datalabels: {
                     anchor: 'end',
                     align: 'top',
-                    offset: 4, // Pequeno deslocamento para o rótulo
+                    offset: 4,
                     font: {
                         size: 14,
                         weight: 'bold'
                     },
                     color: '#444',
                     formatter: function(value) {
-                        return value.toFixed(2); // Formata o valor com 2 casas decimais
+                        return value.toFixed(2);
                     }
                 }
             }
         }
     };
 
-    // --- Renderizar os Gráficos ---
-    // Primeiro Gráfico
-    const meuGraficoGeneros = new Chart(
-        document.getElementById('graficoGeneros'),
-        configGeneros
-    );
+    const generosDispositivoLabels = ['Tablet', 'Dispositivo de streaming', 'Computador/Notebook', 'Smartphone', 'TV'];
+    const coresGenerosDispositivo = [
+        '#2b73b5',
+        '#56b68a',
+        '#de4856',
+        '#6fc3ea',
+        '#f5bc43',
+        '#6a5acd',
+        '#90d05c',
+        '#fb6e52'
+    ];
 
-    // Segundo Gráfico
+    const dadosGenerosPorDispositivo = {
+        labels: generosDispositivoLabels,
+        datasets: [
+            {
+                label: 'Animação',
+                data: [0, 2, 3, 3, 6],
+                backgroundColor: coresGenerosDispositivo[0]
+            },
+            {
+                label: 'Ficção Científica',
+                data: [5, 10, 7, 10, 14],
+                backgroundColor: coresGenerosDispositivo[1]
+            },
+            {
+                label: 'Terror',
+                data: [1, 5, 6, 7, 10],
+                backgroundColor: coresGenerosDispositivo[2]
+            },
+            {
+                label: 'Romance',
+                data: [1, 4, 6, 5, 10],
+                backgroundColor: coresGenerosDispositivo[3]
+            },
+             {
+                label: 'Documentário',
+                data: [0, 4, 4, 7, 7],
+                backgroundColor: coresGenerosDispositivo[4]
+            },
+            {
+                label: 'Drama',
+                data: [6, 10, 9, 16, 25],
+                backgroundColor: coresGenerosDispositivo[5]
+            },
+            {
+                label: 'Comédia',
+                data: [2, 5, 7, 5, 7],
+                backgroundColor: coresGenerosDispositivo[6]
+            },
+            {
+                label: 'Ação',
+                data: [2, 10, 9, 14, 19],
+                backgroundColor: coresGenerosDispositivo[7]
+            }
+        ]
+    };
+
+    const configGenerosPorDispositivo = {
+        type: 'bar',
+        data: dadosGenerosPorDispositivo,
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Gêneros',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#333'
+                    },
+                    ticks: {
+                        color: '#666'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                y: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Dispositivo',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#333'
+                    },
+                    ticks: {
+                        color: '#666'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        boxWidth: 20,
+                        color: '#333'
+                    }
+                },
+                datalabels: {
+                    display: false
+                }
+            },
+            layout: {
+                padding: 10
+            }
+        }
+    };
+
+    const generosSexoLabels = ['Ação', 'Comédia', 'Drama', 'Documentário', 'Romance', 'Terror', 'Ficção Científica', 'Animação', 'Total'];
+
+    const dadosGenerosPorSexo = {
+        labels: generosSexoLabels.slice().reverse(),
+        datasets: [
+            {
+                label: 'Total de Homens',
+                data: [13, 14, 5, 6, 4, 4, 7, 8, 18].reverse(),
+                backgroundColor: '#387B4E',
+                borderColor: '#387B4E',
+                borderWidth: 1
+            },
+            {
+                label: 'Total de Mulheres',
+                data: [10, 14, 9, 4, 17, 3, 5, 3, 19].reverse(),
+                backgroundColor: '#CC843A',
+                borderColor: '#CC843A',
+                borderWidth: 1
+            }
+        ]
+    };
+
+    const configGenerosPorSexo = {
+        type: 'bar',
+        data: dadosGenerosPorSexo,
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Total de Pessoas',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#333'
+                    },
+                    ticks: {
+                        color: '#666'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Gênero',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#333'
+                    },
+                    ticks: {
+                        color: '#666'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        boxWidth: 20,
+                        color: '#333'
+                    }
+                },
+                datalabels: {
+                    display: false
+                }
+            },
+            layout: {
+                padding: 10
+            }
+        }
+    };
+
+    const streamingsLabels = ['Menos que 2', 'Até 2 horas', 'Até 4 horas', 'Mais que 4 h'];
+    const coresStreamings = [
+        '#fb6e52',
+        '#90d05c',
+        '#6a5acd',
+        '#f5bc43',
+        '#6fc3ea',
+        '#de4856',
+        '#56b68a',
+        '#2b73b5'
+    ];
+
+    const dadosStreamingsPorHoras = {
+        labels: streamingsLabels.slice().reverse(),
+        datasets: [
+            {
+                label: 'Amazon Prime',
+                data: [4, 8, 11, 7].reverse(),
+                backgroundColor: coresStreamings[0]
+            },
+            {
+                label: 'Apple TV',
+                data: [2, 1, 2, 2].reverse(),
+                backgroundColor: coresStreamings[1]
+            },
+            {
+                label: 'Crunchyroll',
+                data: [1, 2, 3, 0].reverse(),
+                backgroundColor: coresStreamings[2]
+            },
+            {
+                label: 'Disney+',
+                data: [3, 5, 8, 6].reverse(),
+                backgroundColor: coresStreamings[3]
+            },
+            {
+                label: 'Globo play',
+                data: [1, 4, 5, 5].reverse(),
+                backgroundColor: coresStreamings[4]
+            },
+            {
+                label: 'HBO',
+                data: [3, 4, 6, 5].reverse(),
+                backgroundColor: coresStreamings[5]
+            },
+            {
+                label: 'Netflix',
+                data: [8, 9, 11, 5].reverse(),
+                backgroundColor: coresStreamings[6]
+            },
+            {
+                label: 'Paramount',
+                data: [2, 1, 0, 0].reverse(),
+                backgroundColor: coresStreamings[7]
+            }
+        ]
+    };
+
+    const configStreamingsPorHoras = {
+        type: 'bar',
+        data: dadosStreamingsPorHoras,
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Streamings Usados',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#333'
+                    },
+                    ticks: {
+                        color: '#666'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                y: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Horas assistidas',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#333'
+                    },
+                    ticks: {
+                        color: '#666'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        boxWidth: 20,
+                        color: '#333'
+                    }
+                },
+                datalabels: {
+                    display: false
+                }
+            },
+            layout: {
+                padding: 10
+            }
+        }
+    };
+
+    const generosServicosLabels = ['Animação', 'Ação', 'Comédia', 'Documentário', 'Drama', 'Ficção Científica', 'Romance', 'Terror'];
+    const coresServicos = {
+        'Paramount Plus': '#2b73b5',
+        'Netflix': '#56b68a',
+        'HBO Max': '#de4856',
+        'Globo play': '#6fc3ea',
+        'Disney+': '#f5bc43',
+        'Crunchyroll': '#6a5acd',
+        'Apple TV': '#90d05c',
+        'Amazon Prime Video': '#fb6e52'
+    };
+
+    const dadosGenerosPorServicos = {
+        labels: generosServicosLabels.slice().reverse(),
+        datasets: [
+            {
+                label: 'Paramount Plus',
+                data: [2, 3, 3, 1, 0, 2, 1, 0].reverse(),
+                backgroundColor: coresServicos['Paramount Plus']
+            },
+            {
+                label: 'Netflix',
+                data: [10, 21, 27, 9, 13, 10, 19, 7].reverse(),
+                backgroundColor: coresServicos['Netflix']
+            },
+            {
+                label: 'HBO Max',
+                data: [5, 14, 14, 4, 6, 6, 9, 4].reverse(),
+                backgroundColor: coresServicos['HBO Max']
+            },
+            {
+                label: 'Globo play',
+                data: [3, 12, 11, 4, 6, 5, 9, 3].reverse(),
+                backgroundColor: coresServicos['Globo play']
+            },
+            {
+                label: 'Disney+',
+                data: [7, 16, 19, 5, 7, 5, 13, 5].reverse(),
+                backgroundColor: coresServicos['Disney+']
+            },
+            {
+                label: 'Crunchyroll',
+                data: [6, 4, 5, 0, 2, 5, 1, 1].reverse(),
+                backgroundColor: coresServicos['Crunchyroll']
+            },
+            {
+                label: 'Apple TV',
+                data: [3, 5, 6, 3, 0, 2, 2, 2].reverse(),
+                backgroundColor: coresServicos['Apple TV']
+            },
+            {
+                label: 'Amazon Prime Video',
+                data: [9, 21, 23, 9, 11, 9, 16, 7].reverse(),
+                backgroundColor: coresServicos['Amazon Prime Video']
+            }
+        ]
+    };
+
+    const configGenerosPorServicos = {
+        type: 'bar',
+        data: dadosGenerosPorServicos,
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Streamings Assinados',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#333'
+                    },
+                    ticks: {
+                        color: '#666'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                y: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: 'Gênero',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#333'
+                    },
+                    ticks: {
+                        color: '#666'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        boxWidth: 20,
+                        color: '#333'
+                    }
+                },
+                datalabels: {
+                    display: false
+                }
+            },
+            layout: {
+                padding: 10
+            }
+        }
+    };
+
+    const faixasEtariasLabels = ['Entre 18 e 30 anos', 'Entre 30 e 50 anos', 'Entre 50 e 70 anos'];
+    const faixasEtariasData = [82.8, 6.9, 10.3];
+    const faixasEtariasCores = ['#4269e8', '#5cb85c', '#ef4444'];
+
+    const configFaixasEtarias = {
+        type: 'pie',
+        data: {
+            labels: faixasEtariasLabels,
+            datasets: [{
+                data: faixasEtariasData,
+                backgroundColor: faixasEtariasCores,
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                },
+                datalabels: {
+                    color: '#ffffff',
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    },
+                    formatter: (value, context) => {
+                        return value.toFixed(1) + '%';
+                    }
+                }
+            }
+        }
+    };
+    
+    const generosLabels = ['Masculino', 'Feminino'];
+    const generosData = [48.6, 51.4];
+    const generosCores = ['#4269e8', '#de4856'];
+
+    const configGeneros = {
+        type: 'pie',
+        data: {
+            labels: generosLabels,
+            datasets: [{
+                data: generosData,
+                backgroundColor: generosCores,
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                },
+                datalabels: {
+                    color: '#ffffff',
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    },
+                    formatter: (value, context) => {
+                        return value.toFixed(1) + '%';
+                    }
+                }
+            }
+        }
+    };
+
+    const usoTelaLabels = ['Menos de 2 horas', 'Até 2 Horas', 'Até 4 horas', 'Mais que 4 horas'];
+    const usoTelaData = [21.6, 24.3, 35.1, 18.9];
+    const usoTelaCores = ['#00a0ff', '#ff4d4d', '#ffa800', '#98ff98'];
+
+    const configUsoTela = {
+        type: 'pie',
+        data: {
+            labels: usoTelaLabels,
+            datasets: [{
+                data: usoTelaData,
+                backgroundColor: usoTelaCores,
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                },
+                datalabels: {
+                    color: '#ffffff',
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    },
+                    formatter: (value, context) => {
+                        return value.toFixed(1) + '%';
+                    }
+                }
+            }
+        }
+    };
+
     const meuGraficoSatisfacao = new Chart(
         document.getElementById('graficoSatisfacao'),
         configSatisfacao
+    );
+
+    const meuGraficoGenerosPorDispositivo = new Chart(
+        document.getElementById('graficoGenerosPorDispositivo'),
+        configGenerosPorDispositivo
+    );
+
+    const meuGraficoGenerosPorSexo = new Chart(
+        document.getElementById('graficoGenerosPorSexo'),
+        configGenerosPorSexo
+    );
+
+    const meuGraficoStreamingsPorHoras = new Chart(
+        document.getElementById('graficoStreamingsPorHoras'),
+        configStreamingsPorHoras
+    );
+
+    const meuGraficoGenerosPorServicos = new Chart(
+        document.getElementById('graficoGenerosPorServicos'),
+        configGenerosPorServicos
+    );
+
+    const meuGraficoFaixaEtaria = new Chart(
+        document.getElementById('graficoFaixaEtaria'),
+        configFaixasEtarias
+    );
+    
+    const meuGraficoGenero = new Chart(
+        document.getElementById('graficoGenero'),
+        configGeneros
+    );
+
+    const meuGraficoUsoTela = new Chart(
+        document.getElementById('graficoUsoTela'),
+        configUsoTela
     );
 </script>
 
