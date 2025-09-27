@@ -5,23 +5,59 @@ import com.grupo7.serivco_streaming.services.UsuarioService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/web/usuarios")
-public class UsuarioWebController {
+public class WebController {
 
     private final UsuarioService usuarioService;
 
-    public UsuarioWebController(UsuarioService usuarioService) {
+
+    public WebController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
-    @GetMapping("/buscar-por-email")
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
+
+    @GetMapping("/consulta-obra-like")
+    public String consultaObraLike() {
+        return "consulta-obra-like";
+    }
+
+    @GetMapping("/criar-obra")
+    public String criarObra() {
+        return "criar-obra";
+    }
+
+    @GetMapping("/delete-obra")
+    public String deleteObra() {
+        return "delete-obra";
+    }
+
+    @GetMapping("/update-obra")
+    public String updateObra() {
+        return "update-obra";
+    }
+
+    @GetMapping("/consulta-obra-join-genero")
+    public String consultaObraJoinGenero() {
+        return "consulta-obra-join-genero";
+    }
+
+
+
+    @GetMapping("/web/usuarios/buscar-por-email")
     public String paginaBuscaPorEmail(@RequestParam(required = false) String email, Model model) {
         if (email != null && !email.isEmpty()) {
             Optional<Usuario> usuarioOpt = usuarioService.findByEmail(email);
@@ -34,7 +70,7 @@ public class UsuarioWebController {
         return "busca-email";
     }
 
-    @GetMapping("/buscar-por-bairro")
+    @GetMapping("/web/usuarios/buscar-por-bairro")
     public String paginaBuscaPorBairro(@RequestParam(required = false) String bairro, Model model) {
         if (bairro != null && !bairro.isEmpty()) {
             List<Usuario> usuarios = usuarioService.findByBairro(bairro);
