@@ -29,8 +29,8 @@
                         Usuários
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" th:href="@{/usuarios/buscar-por-email}">Buscar por Email</a></li>
-                        <li><a class="dropdown-item" th:href="@{/usuarios/buscar-por-bairro}">Buscar por Bairro</a></li>
+                        <li><a class="dropdown-item" th:href="@{/web/usuarios/buscar-por-email}">Buscar por Email</a></li>
+                        <li><a class="dropdown-item" th:href="@{/web/usuarios/buscar-por-bairro}">Buscar por Bairro</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -38,10 +38,10 @@
                         Obras
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" th:href="@{/obras}">Listar/Gerenciar Obras</a></li>
+                        <li><a class="dropdown-item" th:href="@{/obras}">CRUD Obras</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" th:href="@{/obras/consultar-por-nome}">Consultar por Nome</a></li>
-                        <li><a class="dropdown-item" th:href="@{/obras/consultar-por-genero}">Consultar por Gênero</a></li>
+                        <li><a class="dropdown-item" th:href="@{/consulta-obra-like}">Consultar por Nome</a></li>
+                        <li><a class="dropdown-item" th:href="@{/consulta-obra-join-genero}">Consultar por Gênero</a></li>
                     </ul>
                 </li>
             </ul>
