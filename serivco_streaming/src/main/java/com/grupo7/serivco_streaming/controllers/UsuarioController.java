@@ -29,6 +29,18 @@ public class UsuarioController {
         return usuarioService.findAll();
     }
 
+    @GetMapping("/buscar-por-email")
+    public ResponseEntity<Usuario> getByEmail(@RequestParam String email) {
+        return usuarioService.findByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/buscar-por-bairro")
+    public List<Usuario> getByBairro(@RequestParam String bairro) {
+        return usuarioService.findByBairro(bairro);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getById(@PathVariable int id) {
         return usuarioService.findById(id)

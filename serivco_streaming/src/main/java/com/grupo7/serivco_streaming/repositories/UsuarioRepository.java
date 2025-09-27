@@ -90,6 +90,21 @@ public class UsuarioRepository {
         return c != null && c > 0;
     }
 
+    public Optional<Usuario> findByEmail(String email) {
+        try {
+
+            Usuario u = jdbc.queryForObject("SELECT * FROM usuario WHERE email = ?", mapper, email);
+            return Optional.ofNullable(u);
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    public List<Usuario> findByBairro(String bairro) {
+        String sql = "SELECT * FROM usuario WHERE bairro = ?";
+        return jdbc.query(sql, mapper, bairro);
+    }
+
     // UPDATE
     public int update(int id, Usuario u) {
         String sql = """

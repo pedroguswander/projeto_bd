@@ -11,4 +11,6 @@ public interface UsuarioService {
     Optional<Usuario> findById(int id);
     Usuario update(int id, Usuario usuario);
     void delete(int id);
+    Optional<Usuario> findByEmail(String email);
+    List<Usuario> findByBairro(String bairro);
 }

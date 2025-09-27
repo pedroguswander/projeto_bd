@@ -41,6 +41,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public Optional<Usuario> findByEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<Usuario> findByBairro(String bairro) {
+        return usuarioRepository.findByBairro(bairro);
+    }
+
+    @Override
     public Usuario update(int id, Usuario usuario) {
         // Garante que o usuário existe antes de atualizar
         usuarioRepository.findById(id)
