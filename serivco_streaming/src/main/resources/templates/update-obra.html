@@ -1,114 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atualizar Obra</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            margin: 0;
-            padding: 2rem;
-            background-color: #f4f5f7;
-            color: #172b4d;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        h1, h2 {
-            text-align: center;
-            color: #091e42;
-        }
-
-        h2 {
-            border-bottom: 2px solid #dfe1e6;
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        input[type="time"],
-        textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #dfe1e6;
-            border-radius: 4px;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #0052cc;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        button {
-            width: 100%;
-            padding: 0.75rem;
-            border: none;
-            border-radius: 4px;
-            background-color: #0052cc;
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        button:hover {
-            background-color: #0065ff;
-        }
-
-        button.secondary {
-            background-color: #505f79;
-        }
-
-        button.secondary:hover {
-            background-color: #6b778c;
-        }
-
-        .message {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 4px;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .message.success {
-            background-color: #e3fcef;
-            color: #064;
-        }
-
-        .message.error {
-            background-color: #ffeded;
-            color: #de350b;
-        }
+        body { padding-top: 5rem; }
     </style>
 </head>
 <body>
@@ -116,118 +14,111 @@
 <nav th:replace="~{index :: nav}"></nav>
 
 <div class="container">
-    <h1>Atualizar Obra</h1>
+    <h1 class="mt-5 text-center">Atualizar Obra</h1>
 
-    <form id="searchForm">
-        <h2>1. Encontre a Obra</h2>
-        <div class="form-group">
-            <label for="idBusca">Digite o ID da obra que deseja atualizar:</label>
-            <input type="number" id="idBusca" name="idBusca" required>
-        </div>
-        <button type="submit" class="secondary">Buscar Obra</button>
-    </form>
+    <div class="card my-4 p-4">
+        <h2 class="card-title text-center border-bottom pb-3 mb-4">1. Encontre a Obra</h2>
+        <form id="searchForm">
+            <div class="mb-3">
+                <label for="idBusca" class="form-label">Digite o ID da obra que deseja atualizar:</label>
+                <input type="number" class="form-control" id="idBusca" name="idBusca" required>
+            </div>
+            <button type="submit" class="btn btn-secondary w-100">Buscar Obra</button>
+        </form>
+    </div>
 
-    <div id="responseMessage" class="message" style="display: none;"></div>
+    <div id="responseMessage" class="alert d-none" role="alert"></div>
 
-    <hr style="margin: 2rem 0; border: 1px solid #dfe1e6;">
+    <div class="card my-4 p-4" id="updateFormCard" style="display: none;">
+        <h2 class="card-title text-center border-bottom pb-3 mb-4">2. Modifique os Dados</h2>
+        <form id="updateForm">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome da Obra:</label>
+                <input type="text" class="form-control" id="nome" name="nome" required>
+            </div>
 
-    <form id="updateForm" style="display: none;">
-        <h2>2. Modifique os Dados</h2>
-        <div class="form-group">
-            <label for="nome">Nome da Obra:</label>
-            <input type="text" id="nome" name="nome" required>
-        </div>
+            <div class="mb-3">
+                <label for="sinopse" class="form-label">Sinopse:</label>
+                <textarea class="form-control" id="sinopse" name="sinopse"></textarea>
+            </div>
 
-        <div class="form-group">
-            <label for="sinopse">Sinopse:</label>
-            <textarea id="sinopse" name="sinopse"></textarea>
-        </div>
+            <div class="mb-3">
+                <label for="data_lancamento" class="form-label">Data de Lançamento:</label>
+                <input type="date" class="form-control" id="data_lancamento" name="data_lancamento">
+            </div>
 
-        <div class="form-group">
-            <label for="data_lancamento">Data de Lançamento:</label>
-            <input type="date" id="data_lancamento" name="data_lancamento">
-        </div>
+            <div class="mb-3">
+                <label for="fk_genero_genero_PK" class="form-label">ID do Gênero (fk_genero_genero_PK):</label>
+                <input type="number" class="form-control" id="fk_genero_genero_PK" name="fk_genero_genero_PK" required>
+            </div>
 
-        <div class="form-group">
-            <label for="fk_genero_genero_PK">ID do Gênero (fk_genero_genero_PK):</label>
-            <input type="number" id="fk_genero_genero_PK" name="fk_genero_genero_PK" required>
-        </div>
+            <div class="mb-3">
+                <label for="obra_TIPO" class="form-label">Tipo da Obra (Ex: 1 para Filme, 2 para Série):</label>
+                <input type="number" class="form-control" id="obra_TIPO" name="obra_TIPO">
+            </div>
 
-        <div class="form-group">
-            <label for="obra_TIPO">Tipo da Obra (Ex: 1 para Filme, 2 para Série):</label>
-            <input type="number" id="obra_TIPO" name="obra_TIPO">
-        </div>
+            <div class="mb-3">
+                <label for="qnt_temporadas" class="form-label">Quantidade de Temporadas (se aplicável):</label>
+                <input type="number" class="form-control" id="qnt_temporadas" name="qnt_temporadas">
+            </div>
 
-        <div class="form-group">
-            <label for="qnt_temporadas">Quantidade de Temporadas (se aplicável):</label>
-            <input type="number" id="qnt_temporadas" name="qnt_temporadas">
-        </div>
+            <div class="mb-3">
+                <label for="duracao" class="form-label">Duração (hh:mm:ss):</label>
+                <input type="time" class="form-control" id="duracao" name="duracao" step="1">
+            </div>
 
-        <div class="form-group">
-            <label for="duracao">Duração (hh:mm:ss):</label>
-            <input type="time" id="duracao" name="duracao" step="1">
-        </div>
-
-        <button type="submit">Atualizar Obra</button>
-    </form>
+            <button type="submit" class="btn btn-primary w-100">Atualizar Obra</button>
+        </form>
+    </div>
 </div>
 
 <script>
-    // Variável para armazenar o ID da obra que está sendo editada
     let currentObraId = null;
 
     const searchForm = document.getElementById('searchForm');
+    const updateFormCard = document.getElementById('updateFormCard');
     const updateForm = document.getElementById('updateForm');
     const messageDiv = document.getElementById('responseMessage');
 
-    // Função para exibir mensagens
     function showMessage(text, type) {
         messageDiv.textContent = text;
-        messageDiv.className = `message ${type}`;
-        messageDiv.style.display = 'block';
+        messageDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'}`;
+        messageDiv.classList.remove('d-none');
     }
 
-    // Função para preencher o formulário de atualização com os dados da obra
     function populateForm(obra) {
         document.getElementById('nome').value = obra.nome || '';
         document.getElementById('sinopse').value = obra.sinopse || '';
-
-        // O input de data espera o formato YYYY-MM-DD. A API pode retornar a data com hora.
         if (obra.dataLancamento) {
             document.getElementById('data_lancamento').value = obra.dataLancamento.split('T')[0];
         } else {
             document.getElementById('data_lancamento').value = '';
         }
-
         document.getElementById('fk_genero_genero_PK').value = obra.fkGeneroGeneroPK || '';
         document.getElementById('obra_TIPO').value = obra.obraTIPO || '';
         document.getElementById('qnt_temporadas').value = obra.qntTemporadas || '';
         document.getElementById('duracao').value = obra.duracao || '';
     }
 
-    // Event Listener para o formulário de BUSCA
     searchForm.addEventListener('submit', async function(event) {
         event.preventDefault();
-
         const obraId = document.getElementById('idBusca').value;
+
+        messageDiv.classList.add('d-none');
+        updateFormCard.style.display = 'none';
+
         if (!obraId) {
             showMessage('Por favor, insira um ID para buscar.', 'error');
             return;
         }
 
-        // Limpa mensagens e oculta o formulário de atualização
-        messageDiv.style.display = 'none';
-        updateForm.style.display = 'none';
-
         try {
-            // Usa o endpoint GET que você forneceu
             const response = await fetch(`/api/obras/${obraId}`);
-
             if (response.ok) {
                 const obra = await response.json();
-                currentObraId = obra.codigo; // Armazena o ID para o processo de update
-                populateForm(obra); // Preenche o segundo formulário
-                updateForm.style.display = 'block'; // Exibe o formulário de atualização
+                currentObraId = obra.codigo;
+                populateForm(obra);
+                updateFormCard.style.display = 'block';
                 showMessage('Obra encontrada. Você já pode editar os dados abaixo.', 'success');
             } else if (response.status === 404) {
                 showMessage(`Erro: Obra com ID ${obraId} não encontrada.`, 'error');
@@ -240,7 +131,6 @@
         }
     });
 
-    // Event Listener para o formulário de ATUALIZAÇÃO
     updateForm.addEventListener('submit', async function(event) {
         event.preventDefault();
 
@@ -249,25 +139,19 @@
             return;
         }
 
-        // Coleta os dados do formulário de atualização
         const formData = new FormData(this);
-        const obraAtualizada = {};
-
-        obraAtualizada.id = currentObraId;
-        obraAtualizada.nome = formData.get('nome');
-        obraAtualizada.sinopse = formData.get('sinopse');
-        obraAtualizada.dataLancamento = formData.get('data_lancamento');
-        obraAtualizada.fkGeneroGeneroPK = parseInt(formData.get('fk_genero_genero_PK'), 10);
-        obraAtualizada.obraTIPO = parseInt(formData.get('obra_TIPO'), 10);
-
-        const qntTemporadas = formData.get('qnt_temporadas');
-        obraAtualizada.qntTemporadas = qntTemporadas ? parseInt(qntTemporadas, 10) : null;
-
-        const duracao = formData.get('duracao');
-        obraAtualizada.duracao = duracao ? duracao : null;
+        const obraAtualizada = {
+            id: currentObraId,
+            nome: formData.get('nome'),
+            sinopse: formData.get('sinopse'),
+            dataLancamento: formData.get('data_lancamento'),
+            fkGeneroGeneroPK: parseInt(formData.get('fk_genero_genero_PK'), 10),
+            obraTIPO: parseInt(formData.get('obra_TIPO'), 10),
+            qntTemporadas: formData.get('qnt_temporadas') ? parseInt(formData.get('qnt_temporadas'), 10) : null,
+            duracao: formData.get('duracao') || null
+        };
 
         try {
-            // Envia a requisição PUT para o endpoint de atualização
             const response = await fetch(`/api/obras/${currentObraId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -278,8 +162,8 @@
 
             if (response.ok) {
                 showMessage("Obra atualizada com sucesso!", 'success');
-                updateForm.style.display = 'none'; // Opcional: oculta o form após sucesso
-                searchForm.reset(); // Limpa o campo de busca
+                updateFormCard.style.display = 'none';
+                searchForm.reset();
             } else {
                 showMessage(`Erro ao atualizar: ${responseText || response.statusText}`, 'error');
             }
@@ -289,5 +173,6 @@
     });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
