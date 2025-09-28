@@ -61,8 +61,8 @@ public class ObraServiceImpl implements ObraService {
     }
 
     @Override
-    public List<Obra> findByGenero() {
-        return obraRepository.findByGenero();
+    public List<String> findByGenero(String nome) {
+        return obraRepository.findByGenero(nome);
     }
 
     @Override

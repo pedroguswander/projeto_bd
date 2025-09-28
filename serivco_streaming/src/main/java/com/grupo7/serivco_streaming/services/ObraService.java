@@ -18,7 +18,7 @@ public interface ObraService {
 
     void delete(int codigo);
 
-    List<Obra> findByGenero();
+    List<String> findByGenero(String nome);
 
     List<Obra> findByNomeContaining(String nome);
 

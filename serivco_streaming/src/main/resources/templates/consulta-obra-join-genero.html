@@ -1,69 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Obras por Genero</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca de Obras por Gênero</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
     <style>
-        /* Ajeita para a buscaComLikeForm ter um id diferente */
-        /* O estilo 'display: flex' para um <p> pode não ser o ideal, mas ajustaremos o essencial */
-        #textResult {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 20px;
-            white-space: pre-wrap; /* Mantém a formatação do JSON (quebra de linha) */
+        /* Estilo para espaçamento */
+        body {
+            padding-top: 20px;
         }
     </style>
 </head>
 <body>
-<form id="buscaObraPorGenero">
-    <button type="submit">Ver obras por genero</button>
-</form>
 
-<p id="textResult"></p>
+<nav th:replace="~{index :: nav}"></nav>
+
+<div class="container" style="margin-top: 50px">
+    <h1 class="mb-4">Buscar Obras por Gênero</h1>
+
+    <form id="buscaObraPorGenero">
+        <div class="mb-3">
+            <label for="generoSelect" class="form-label">Selecione o Gênero:</label>
+            <select class="form-select" id="generoSelect" name="generoSelect">
+                <option value="" selected disabled>Escolha um gênero</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="generoInput" class="form-label">Ou digite o Gênero (Opcional):</label>
+            <input type="text" class="form-control" id="generoInput" name="generoInput" placeholder="Ex: Fantasia">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Buscar Obras</button>
+    </form>
+
+    <div id="resultArea" class="mt-4">
+        <p id="loadingMessage" class="fst-italic"></p>
+    </div>
+</div>
 
 <script>
-    // 1. Corrigindo o ID do formulário para o correto: 'buscaComLikeForm'
-    document.getElementById('buscaObraPorGenero').addEventListener('submit', async function(event) {
+    // Lista de gêneros fornecida no prompt, convertida em array de Strings
+    const generos = [
+        'Ação', 'Comédia', 'Drama', 'Ficção Científica', 'Terror',
+        'Suspense', 'Romance', 'Documentário', 'Animação', 'Aventura',
+        'Fantasia', 'Musical', 'Mistério', 'Policial', 'Guerra',
+        'Faroeste', 'Biografia', 'Histórico', 'Esporte', 'Família',
+        'Independente', 'Cult', 'Noir', 'Thriller Psicológico', 'Super-herói',
+        'Anime', 'Sitcom', 'Stand-up', 'Realidade', 'Variedades'
+    ];
 
-        // Impede o comportamento padrão do formulário, que é recarregar a página e fazer um GET
+    // Preenche o <select> com os gêneros
+    const selectElement = document.getElementById('generoSelect');
+    generos.forEach(genero => {
+        const option = document.createElement('option');
+        option.value = genero;
+        option.textContent = genero;
+        selectElement.appendChild(option);
+    });
+
+    document.getElementById('buscaObraPorGenero').addEventListener('submit', async function(event) {
         event.preventDefault();
 
-        const formData = new FormData(this);
+        const resultArea = document.getElementById('resultArea');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const selectedGenero = document.getElementById('generoSelect').value;
+        const inputGenero = document.getElementById('generoInput').value.trim();
 
-        // Pega a referência ao elemento de resultado
-        const text_result = document.getElementById('textResult');
+        // 1. Determina qual gênero buscar
+        let generoBusca = '';
+        if (inputGenero !== '') {
+            // Prioriza o texto digitado (se houver)
+            generoBusca = inputGenero;
+        } else if (selectedGenero !== '') {
+            // Usa o gênero selecionado no dropdown
+            generoBusca = selectedGenero;
+        } else {
+            // Se nada foi selecionado/digitado
+            resultArea.innerHTML = '<div class="alert alert-warning">Por favor, selecione ou digite um gênero para buscar.</div>';
+            return;
+        }
 
-        // Limpa o resultado anterior
-        text_result.innerText = "Buscando...";
+        // Limpa resultados anteriores e exibe a mensagem de busca
+        resultArea.innerHTML = '';
+        loadingMessage.innerText = `Buscando obras do gênero: ${generoBusca}...`;
+        resultArea.appendChild(loadingMessage);
 
         try {
-            // 2. Executa a requisição GET
-            const response = await fetch(`/api/obras/por-genero`, {
+            // 2. Executa a requisição GET com o parâmetro 'nome'
+            // A API espera: /api/obras/por-genero?nome=Ação
+            const response = await fetch(`/api/obras/por-genero?nome=${encodeURIComponent(generoBusca)}`, {
                 method: 'GET'
             });
 
-            // Verifica se a resposta foi bem-sucedida (status 200-299)
+            // Limpa a mensagem de "Buscando..."
+            loadingMessage.innerText = '';
+
             if (!response.ok) {
-                text_result.innerText = `Erro na busca: Status ${response.status}`;
+                resultArea.innerHTML = `<div class="alert alert-danger">Erro na busca: Status ${response.status} - ${response.statusText}</div>`;
                 return;
             }
 
-            // Converte o corpo da resposta para JSON (assumindo que sua API retorna um JSON)
-            const result = await response.json();
+            // A API retorna List<String> (os nomes das obras)
+            const results = await response.json();
 
-            // 3. Formata o JSON para exibição
-            // JSON.stringify(result, null, 2) formata o JSON com indentação de 2 espaços para melhor leitura.
-            const formattedResult = JSON.stringify(result, null, 2);
+            // 3. Exibição dos resultados em tabela (mantendo o estilo anterior)
+            if (!results || results.length === 0) {
+                resultArea.innerHTML = `<div class="alert alert-info">Nenhuma obra do gênero "${generoBusca}" encontrada.</div>`;
+                return;
+            }
 
-            // 4. Exibe o resultado no elemento <p> usando innerText
-            // Usamos innerText para tratar o resultado como texto puro e evitar injeção de HTML.
-            text_result.innerText = formattedResult;
+            // Atualiza o título da página para refletir a busca
+            document.querySelector('h1').textContent = `Obras por Gênero: ${generoBusca}`;
+
+            const table = document.createElement('table');
+            table.className = 'table table-striped table-hover';
+
+            const thead = table.createTHead();
+            const headerRow = thead.insertRow();
+
+            const th = document.createElement('th');
+            th.textContent = "Nome da Obra";
+            headerRow.appendChild(th);
+
+            const tbody = table.createTBody();
+            results.forEach(nomeObra => {
+                const row = tbody.insertRow();
+                const cell = row.insertCell();
+                cell.textContent = nomeObra;
+            });
+
+            resultArea.appendChild(table);
 
         } catch (error) {
             console.error("Erro ao realizar o fetch:", error);
-            text_result.innerText = `Erro ao conectar com a API: ${error.message}`;
+            loadingMessage.innerText = '';
+            resultArea.innerHTML = `<div class="alert alert-danger">Erro ao conectar com a API: ${error.message}</div>`;
         }
     });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

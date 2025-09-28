@@ -51,8 +51,8 @@ public class ObraController {
     }
 
     @GetMapping("/por-genero")
-    public List<Obra> getObrasPorGenero() {
-        return obraService.findByGenero();
+    public List<String> getObrasPorGenero(@RequestParam String nome) {
+        return obraService.findByGenero(nome);
     }
 
     @GetMapping("/buscar")

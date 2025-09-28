@@ -85,9 +85,9 @@ public class ObraRepository {
         return jdbc.update(sql, codigo);
     }
 
-    public List<Obra> findByGenero() {
-        String sql = "SELECT * FROM obra o JOIN genero g ON o.fk_genero_genero_PK = g.genero_PK";
-        return jdbc.query(sql, mapper);
+    public List<String> findByGenero(String nome) {
+        String sql = "SELECT o.nome FROM obra o JOIN genero g ON o.fk_genero_genero_PK = g.genero_PK WHERE g.nome=?";
+        return jdbc.queryForList(sql, String.class, nome);
     }
 
     public List<Obra> findByNomeContaining(String busca) {
