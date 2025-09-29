@@ -1,4 +1,3 @@
-// Local: com/grupo7/serivco_streaming/service/PesquisaStreamingServiceImpl.java
 package com.grupo7.serivco_streaming.services;
 
 import com.grupo7.serivco_streaming.dto.PesquisaStreaming;

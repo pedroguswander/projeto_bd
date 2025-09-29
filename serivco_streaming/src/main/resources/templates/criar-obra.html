@@ -145,25 +145,20 @@
 
 <script>
     document.getElementById('obraForm').addEventListener('submit', async function(event) {
-        // Prevenir o envio padrão do formulário
         event.preventDefault();
 
         const messageDiv = document.getElementById('responseMessage');
-        messageDiv.style.display = 'none'; // Oculta a mensagem anterior
+        messageDiv.style.display = 'none'; 
 
-        // Coletar dados do formulário
         const formData = new FormData(this);
         const obra = {};
 
-        // É crucial que as chaves do objeto (ex: 'fk_genero_genero_PK')
-        // correspondam exatamente aos nomes dos atributos da sua classe Java `Obra`.
         obra.nome = formData.get('nome');
         obra.sinopse = formData.get('sinopse');
         obra.dataLancamento = formData.get('data_lancamento');
         obra.fkGeneroGeneroPK = parseInt(formData.get('fk_genero_genero_PK'), 10);
         obra.obraTIPO = parseInt(formData.get('obra_TIPO'), 10);
 
-        // Tratar campos que podem ser nulos
         const qntTemporadas = formData.get('qnt_temporadas');
         obra.qntTemporadas = qntTemporadas ? parseInt(qntTemporadas, 10) : null;
 
@@ -171,7 +166,6 @@
         obra.duracao = duracao ? duracao : null;
 
         try {
-            // Enviar a requisição para o endpoint
             const response = await fetch('/api/obras', {
                 method: 'POST',
                 headers: {
@@ -182,10 +176,10 @@
 
             const responseText = await response.text();
 
-            if (response.ok) { // Status na faixa 200-299
+            if (response.ok) { 
                 messageDiv.textContent = responseText || "Obra criada com sucesso!";
                 messageDiv.className = 'message success';
-                document.getElementById('obraForm').reset(); // Limpa o formulário
+                document.getElementById('obraForm').reset(); 
             } else {
                 messageDiv.textContent = "Erro: " + (responseText || response.statusText);
                 messageDiv.className = 'message error';
@@ -195,7 +189,7 @@
             messageDiv.className = 'message error';
         }
 
-        messageDiv.style.display = 'block'; // Exibe a mensagem
+        messageDiv.style.display = 'block'; 
     });
 </script>
 

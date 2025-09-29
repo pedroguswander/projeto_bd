@@ -105,7 +105,6 @@ public class UsuarioRepository {
         return jdbc.query(sql, mapper, bairro);
     }
 
-    // UPDATE
     public int update(int id, Usuario u) {
         String sql = """
             UPDATE usuario
@@ -130,7 +129,6 @@ public class UsuarioRepository {
         );
     }
 
-    // DELETE
     public int delete(int id) {
         return jdbc.update("DELETE FROM usuario WHERE usuario_id = ?", id);
     }

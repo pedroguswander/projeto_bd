@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <style>
-        /* Estilo para espaçamento */
         body {
             padding-top: 20px;
         }
@@ -43,7 +42,6 @@
 </div>
 
 <script>
-    // Lista de gêneros fornecida no prompt, convertida em array de Strings
     const generos = [
         'Ação', 'Comédia', 'Drama', 'Ficção Científica', 'Terror',
         'Suspense', 'Romance', 'Documentário', 'Animação', 'Aventura',
@@ -53,7 +51,6 @@
         'Anime', 'Sitcom', 'Stand-up', 'Realidade', 'Variedades'
     ];
 
-    // Preenche o <select> com os gêneros
     const selectElement = document.getElementById('generoSelect');
     generos.forEach(genero => {
         const option = document.createElement('option');
@@ -70,33 +67,25 @@
         const selectedGenero = document.getElementById('generoSelect').value;
         const inputGenero = document.getElementById('generoInput').value.trim();
 
-        // 1. Determina qual gênero buscar
         let generoBusca = '';
         if (inputGenero !== '') {
-            // Prioriza o texto digitado (se houver)
             generoBusca = inputGenero;
         } else if (selectedGenero !== '') {
-            // Usa o gênero selecionado no dropdown
             generoBusca = selectedGenero;
         } else {
-            // Se nada foi selecionado/digitado
             resultArea.innerHTML = '<div class="alert alert-warning">Por favor, selecione ou digite um gênero para buscar.</div>';
             return;
         }
 
-        // Limpa resultados anteriores e exibe a mensagem de busca
         resultArea.innerHTML = '';
         loadingMessage.innerText = `Buscando obras do gênero: ${generoBusca}...`;
         resultArea.appendChild(loadingMessage);
 
         try {
-            // 2. Executa a requisição GET com o parâmetro 'nome'
-            // A API espera: /api/obras/por-genero?nome=Ação
             const response = await fetch(`/api/obras/por-genero?nome=${encodeURIComponent(generoBusca)}`, {
                 method: 'GET'
             });
 
-            // Limpa a mensagem de "Buscando..."
             loadingMessage.innerText = '';
 
             if (!response.ok) {
@@ -104,16 +93,13 @@
                 return;
             }
 
-            // A API retorna List<String> (os nomes das obras)
             const results = await response.json();
 
-            // 3. Exibição dos resultados em tabela (mantendo o estilo anterior)
             if (!results || results.length === 0) {
                 resultArea.innerHTML = `<div class="alert alert-info">Nenhuma obra do gênero "${generoBusca}" encontrada.</div>`;
                 return;
             }
 
-            // Atualiza o título da página para refletir a busca
             document.querySelector('h1').textContent = `Obras por Gênero: ${generoBusca}`;
 
             const table = document.createElement('table');

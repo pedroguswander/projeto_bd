@@ -46,8 +46,8 @@
 
         input[type="text"],
         input[type="number"],
-        input[type="email"], /* Adicionado input type="email" */
-        input[type="password"], /* Adicionado input type="password" */
+        input[type="email"], 
+        input[type="password"], 
         textarea {
             width: 100%;
             padding: 0.75rem;
@@ -174,7 +174,6 @@
 </div>
 
 <script>
-    // Variável para armazenar o ID do usuário que está sendo editado
     let currentUsuarioId = null;
 
     const searchForm = document.getElementById('searchForm');
@@ -183,28 +182,22 @@
 
     let senha_antiga = "";
 
-    // Função para exibir mensagens
     function showMessage(text, type) {
         messageDiv.textContent = text;
         messageDiv.className = `message ${type}`;
         messageDiv.style.display = 'block';
     }
 
-    // Função para preencher o formulário de atualização com os dados do usuário
-    // **Atenção:** A senha não é preenchida por segurança.
     function populateForm(usuario) {
         document.getElementById('nome').value = usuario.nome || '';
         document.getElementById('email').value = usuario.email || '';
-        // Não preenche a senha por segurança: document.getElementById('senha').value = '';
         document.getElementById('rua').value = usuario.rua || '';
         document.getElementById('bairro').value = usuario.bairro || '';
         document.getElementById('numero').value = usuario.numero || '';
 
-        // A chave 'fkReclamacoesReclamacoesPK' deve corresponder ao nome no seu objeto JSON de retorno.
         document.getElementById('fk_reclamacoes_reclamacoes_PK').value = usuario.fkReclamacoesReclamacoesPK || '';
     }
 
-    // Event Listener para o formulário de BUSCA
     searchForm.addEventListener('submit', async function(event) {
         event.preventDefault();
 
@@ -214,19 +207,17 @@
             return;
         }
 
-        // Limpa mensagens e oculta o formulário de atualização
         messageDiv.style.display = 'none';
         updateForm.style.display = 'none';
 
         try {
-            // Endpoint GET para buscar o usuário
             const response = await fetch(`/api/usuarios/${usuarioId}`);
 
             if (response.ok) {
                 const usuario = await response.json();
-                currentUsuarioId = usuario.usuarioId; // Armazena o ID (Ajuste 'usuarioId' se a chave for diferente)
-                populateForm(usuario); // Preenche o segundo formulário
-                updateForm.style.display = 'block'; // Exibe o formulário de atualização
+                currentUsuarioId = usuario.usuarioId; 
+                populateForm(usuario); 
+                updateForm.style.display = 'block'; 
                 showMessage('Usuário encontrado. Você já pode editar os dados abaixo.', 'success');
 
                 senha_antiga = usuario.senha;
@@ -242,7 +233,6 @@
         }
     });
 
-    // Event Listener para o formulário de ATUALIZAÇÃO
     updateForm.addEventListener('submit', async function(event) {
         event.preventDefault();
 
@@ -251,22 +241,19 @@
             return;
         }
 
-        // Coleta os dados do formulário de atualização
         const formData = new FormData(this);
         const usuarioAtualizado = {};
 
-        // Mapeamento dos campos para os atributos da classe Java 'Usuario'
-        usuarioAtualizado.usuarioId = currentUsuarioId; // O ID deve ser incluído na requisição PUT/corpo
+
+        usuarioAtualizado.usuarioId = currentUsuarioId; 
         usuarioAtualizado.nome = formData.get('nome');
         usuarioAtualizado.email = formData.get('email');
         usuarioAtualizado.rua = formData.get('rua');
         usuarioAtualizado.bairro = formData.get('bairro');
 
-        // Tratar Senha: Se o campo estiver preenchido, envia a nova senha. Se não, o backend deve ignorar a alteração.
         const senha = formData.get('senha');
-        usuarioAtualizado.senha = senha || senha_antiga; // Envia null ou string vazia se não for alterada
+        usuarioAtualizado.senha = senha || senha_antiga; 
 
-        // Tratar números
         const numero = formData.get('numero');
         usuarioAtualizado.numero = numero ? parseInt(numero, 10) : null;
 
@@ -274,7 +261,6 @@
         usuarioAtualizado.fkReclamacoesReclamacoesPK = fkReclamacoesReclamacoesPK ? parseInt(fkReclamacoesReclamacoesPK, 10) : null;
 
         try {
-            // Envia a requisição PUT para o endpoint de atualização
             const response = await fetch(`/api/usuarios/${currentUsuarioId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -285,7 +271,6 @@
 
             if (response.ok) {
                 showMessage("Usuário atualizado com sucesso!", 'success');
-                // Após o sucesso, você pode limpar os campos
                 updateForm.style.display = 'none';
                 searchForm.reset();
             } else {

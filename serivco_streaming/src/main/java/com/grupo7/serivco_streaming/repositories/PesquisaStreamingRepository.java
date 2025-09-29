@@ -1,4 +1,3 @@
-// Local: com/grupo7/serivco_streaming/repositories/PesquisaStreamingRepository.java
 package com.grupo7.serivco_streaming.repositories;
 
 import com.grupo7.serivco_streaming.dto.PesquisaStreaming;

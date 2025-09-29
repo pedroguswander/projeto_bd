@@ -1,4 +1,3 @@
-// Local: com/grupo7/serivco_streaming/controllers/PesquisaStreamingController.java
 package com.grupo7.serivco_streaming.controllers;
 
 import com.grupo7.serivco_streaming.dto.PesquisaStreaming;
@@ -9,7 +8,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/pesquisas") // Mantendo /api/pesquisas conforme o original
+@RequestMapping("/api/pesquisas") 
 public class PesquisaStreamingController {
 
     private final PesquisaStreamingService pesquisaService;

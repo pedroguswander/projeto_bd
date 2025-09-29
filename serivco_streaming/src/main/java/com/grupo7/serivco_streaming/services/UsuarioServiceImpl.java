@@ -1,4 +1,3 @@
-// Local: com/grupo7/serivco_streaming/service/UsuarioServiceImpl.java
 package com.grupo7.serivco_streaming.services;
 
 import com.grupo7.serivco_streaming.dto.Usuario;
@@ -21,7 +20,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario create(Usuario usuario) {
-        // Lógica de negócio movida do Controller para o Service
         if (usuario.email != null && usuarioRepository.existsByEmail(usuario.email)) {
             throw new DuplicateKeyException("Email já cadastrado.");
         }
@@ -52,7 +50,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario update(int id, Usuario usuario) {
-        // Garante que o usuário existe antes de atualizar
         usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o id: " + id));
 

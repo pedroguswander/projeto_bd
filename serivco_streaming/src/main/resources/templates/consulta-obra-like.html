@@ -6,7 +6,6 @@
   <title>Busca de Obra</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <style>
-    /* Estilo adicional para espaçamento */
     body {
       padding-top: 20px;
     }
@@ -41,8 +40,7 @@
     const resultArea = document.getElementById('resultArea');
     const loadingMessage = document.getElementById('loadingMessage');
 
-    // Limpa resultados anteriores e exibe a mensagem de busca
-    resultArea.innerHTML = ''; // Limpa a área de resultados, incluindo qualquer tabela antiga
+    resultArea.innerHTML = ''; 
     loadingMessage.innerText = "Buscando...";
     resultArea.appendChild(loadingMessage);
 
@@ -51,7 +49,6 @@
         method: 'GET'
       });
 
-      // Limpa a mensagem de "Buscando..."
       loadingMessage.innerText = '';
 
       if (!response.ok) {
@@ -61,45 +58,37 @@
 
       const results = await response.json();
 
-      // Se não houver resultados, exibe uma mensagem amigável
       if (!results || results.length === 0) {
         resultArea.innerHTML = '<div class="alert alert-info">Nenhuma obra encontrada com o termo informado.</div>';
         return;
       }
 
-      // Cria a estrutura da tabela com as classes do Bootstrap
       const table = document.createElement('table');
-      table.className = 'table table-striped table-hover'; // Classes para estilização
+      table.className = 'table table-striped table-hover';
 
-      // Cria o cabeçalho da tabela (thead)
       const thead = table.createTHead();
       const headerRow = thead.insertRow();
 
-      // Pega as chaves do primeiro objeto para criar os cabeçalhos dinamicamente
       const headers = Object.keys(results[0]);
       headers.forEach(headerText => {
         const th = document.createElement('th');
-        th.textContent = headerText.charAt(0).toUpperCase() + headerText.slice(1); // Capitaliza o header
+        th.textContent = headerText.charAt(0).toUpperCase() + headerText.slice(1); 
         headerRow.appendChild(th);
       });
 
-      // Cria o corpo da tabela (tbody) e preenche com os dados
       const tbody = table.createTBody();
       results.forEach(item => {
         const row = tbody.insertRow();
-        // Itera sobre os valores de cada objeto para preencher as células
         headers.forEach(header => {
           const cell = row.insertCell();
           cell.textContent = item[header];
         });
       });
 
-      // Adiciona a tabela completa à área de resultados
       resultArea.appendChild(table);
 
     } catch (error) {
       console.error("Erro ao realizar o fetch:", error);
-      // Limpa a mensagem de "Buscando..." em caso de erro de conexão
       loadingMessage.innerText = '';
       resultArea.innerHTML = `<div class="alert alert-danger">Erro ao conectar com a API: ${error.message}</div>`;
     }

@@ -155,7 +155,6 @@ CREATE TABLE pesquisa_streaming (
                                     dispositivos_utilizados TEXT,
                                     preco_ideal_mensal VARCHAR(50)
 );
- USE Streaming;
 INSERT INTO genero (nome) VALUES
                               ('Ação'), ('Comédia'), ('Drama'), ('Ficção Científica'), ('Terror'),
                               ('Suspense'), ('Romance'), ('Documentário'), ('Animação'), ('Aventura'),
