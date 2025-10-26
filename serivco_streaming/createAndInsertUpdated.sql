@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS StreamingAtualizado;
-USE StreamingAtualizado;
+CREATE DATABASE IF NOT EXISTS Streaming;
+USE Streaming;
 
 CREATE TABLE genero (
     genero_PK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
