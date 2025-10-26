@@ -2,7 +2,6 @@ package com.grupo7.serivco_streaming.dto;
 
 public class Usuario {
     public int usuarioId;
-    public Integer fkReclamacoesReclamacoesPK;
     public String rua;
     public String bairro;
     public Integer numero;
