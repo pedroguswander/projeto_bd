@@ -1,304 +1,418 @@
---
--- ESQUEMA COMPLETO COM MODIFICAÇÕES
---
+CREATE DATABASE IF NOT EXISTS StreamingAtualizado;
+USE StreamingAtualizado;
 
-create database streaming2;
-
-use streaming2;
-
--- Tabela reclamacoes
-CREATE TABLE reclamacoes (
-                             id INT,
-                             fk_usuario_ID INT,
-                             tipo CHAR(50),
-                             descricao CHAR(255),
-                             dataReclamacao DATE
-);
-
--- Tabela genero
 CREATE TABLE genero (
-                        genero_PK INT NOT NULL,
-                        genero CHAR(50)
-);
-
-CREATE TABLE conta (
-                       cod INT,
-                       icone CHAR(50),
-                       statusAssinatura CHAR(50),
-                       dataExpiracao DATE
-);
-
-CREATE TABLE Usuario (
-                         ID INT,
-                         Nome CHAR(100),
-                         Senha CHAR(50),
-                         email CHAR(100),
-                         rua CHAR(100),
-                         numero CHAR(10),
-                         bairro CHAR(100),
-                         reclamacoes CHAR(255),
-                         fk_pesquisa_email INT
-);
-
-CREATE TABLE Plano (
-                       tipoPlano INT, -- Alterado para INT para simplificar a FK, apesar de CHAR no schema original
-                       qtdTelas INT,
-                       preco FLOAT,
-                       possuiAnuncio BOOLEAN
-);
-
-CREATE TABLE Assinatura_Assina (
-                                   fk_Usuario_ID INT,
-                                   fk_Plano_tipoPlano INT
+                        genero_PK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                        nome VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE diretor (
-                         DataNasc DATE,
-                         Nome CHAR(100)
+                         id INT PRIMARY KEY AUTO_INCREMENT,
+                         nome VARCHAR(100) NOT NULL,
+                         data_nascimento DATE,
+                         nacionalidade VARCHAR(50)
 );
 
-CREATE TABLE episodio (
-                          numero INT,
-                          numeroTemporada INT,
-                          duracao TIME,
-                          id INT,
-                          fk_serie_COD INT
+CREATE TABLE plano (
+                       tipo_do_plano VARCHAR(50) PRIMARY KEY,
+                       preco DECIMAL(10,2) NOT NULL CHECK (preco > 0),
+                       qnt_de_telas_simultaneas INT NOT NULL CHECK (qnt_de_telas_simultaneas > 0),
+                       possui_anuncio BOOLEAN
+);
+
+CREATE TABLE reclamacoes (
+                             reclamacao_PK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                             descricao VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE usuario (
+                         usuario_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                         nome VARCHAR(100) NOT NULL,
+                         email VARCHAR(100) NOT NULL UNIQUE,
+                         senha VARCHAR(255) NOT NULL,
+                         rua VARCHAR(100),
+                         bairro VARCHAR(50),
+                         numero INT CHECK (numero > 0)
 );
 
 CREATE TABLE obra (
-                      COD INT,
-                      Nome CHAR(100),
-                      DataExp DATE,
-                      Sinopse CHAR(255),
-                      DataLanc DATE,
-                      fk_genero_genero INT,
-                      qtdTemporadas INT,
+                      codigo INT PRIMARY KEY AUTO_INCREMENT,
+                      fk_genero_genero_PK INT,
+                      nome VARCHAR(100) NOT NULL,
+                      sinopse VARCHAR(500),
+                      data_lancamento DATE,
+                      qnt_temporadas INT,
                       duracao TIME,
-                      obra_TIPO INT
+                      fk_diretor_id INT,
+                      obra_TIPO INT,
+                      FOREIGN KEY (fk_genero_genero_PK) REFERENCES genero(genero_PK),
+                      FOREIGN KEY (fk_diretor_id) REFERENCES diretor(id)
 );
 
-CREATE TABLE historicoVisualizacao (
-                                       progressoPercentual FLOAT,
-                                       tempoAssistido FLOAT,
-                                       fk_conta_cod INT
+CREATE TABLE episodio (
+                          episodio_id INT PRIMARY KEY AUTO_INCREMENT,
+                          numero INT NOT NULL,
+                          numero_temporada INT NOT NULL,
+                          duracao TIME,
+                          fk_obra_codigo INT NOT NULL,
+                          FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
 );
 
-CREATE TABLE listaFavoritos (
-                                ordemExibicao CHAR(10),
-                                qtdObras INT,
-                                fk_conta_cod INT
+CREATE TABLE conta (
+                       codigo INT PRIMARY KEY AUTO_INCREMENT,
+                       data_expiracao DATE,
+                       icone VARCHAR(100),
+                       status_assinatura VARCHAR(50),
+                       fk_usuario_id INT UNIQUE,
+                       fk_administrador_id INT,
+                       FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id),
+                       FOREIGN KEY (fk_administrador_id) REFERENCES conta(codigo)
 );
 
-CREATE TABLE pesquisa (
-                          email CHAR(100),
-                          preco_ideal_mensal INT,
-                          quantidade_assinatura CHAR(50),
-                          generos_assistidos CHAR(255),
-                          faixa_etaria CHAR(50),
-                          ocupacao CHAR(100),
-                          dispositivos_utilizados_FK INT,
-                          servicos_utilizados_FK INT,
-                          regiao_residencia CHAR(100),
-                          satisfacao_geral INT,
-                          satisfacao_recomendacao INT,
-                          motivos_insatisfacao CHAR(255),
-                          frequencia_uso CHAR(50),
-                          genero CHAR(50),
-                          horas_semanais CHAR(50)
-);
-
-CREATE TABLE dispositivos_utilizados (
-                                         dispositivos_utilizados_PK INT NOT NULL,
-                                         dispositivos_utilizados CHAR(100)
-);
-
-CREATE TABLE servicos_utilizados (
-                                     servicos_utilizados_PK INT NOT NULL,
-                                     servicos_utilizados CHAR(100)
-);
-
-CREATE TABLE administra (
-                            conta_A_cod INT,
-                            conta_B_cod INT
-);
-
-CREATE TABLE avalia (
-                        fk_conta_cod INT,
-                        fk_obra_COD INT,
-                        nota INT,
-                        data DATE,
-                        comentario_FK INT,
-                        texto CHAR(255)
-);
-
-CREATE TABLE comentario (
-                            comentario_PK INT NOT NULL,
-                            comentario CHAR(255)
-);
-
-CREATE TABLE dirige (
-                        fk_obra_COD INT
+CREATE TABLE assinatura_assina (
+                                   fk_usuario_id INT NOT NULL,
+                                   fk_plano_tipo_do_plano VARCHAR(50) NOT NULL,
+                                   PRIMARY KEY (fk_usuario_id, fk_plano_tipo_do_plano),
+                                   FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                                   FOREIGN KEY (fk_plano_tipo_do_plano) REFERENCES plano(tipo_do_plano) ON DELETE RESTRICT
 );
 
 CREATE TABLE assiste (
-                         fk_conta_cod INT,
-                         fk_obra_COD INT
+                         fk_usuario_id INT NOT NULL,
+                         fk_obra_codigo INT NOT NULL,
+                         PRIMARY KEY (fk_usuario_id, fk_obra_codigo),
+                         FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                         FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
+);
+
+CREATE TABLE avaliacao (
+                           fk_usuario_id INT NOT NULL,
+                           fk_obra_codigo INT NOT NULL,
+                           nota INT DEFAULT 0 CHECK (nota BETWEEN 1 AND 5),
+                           data_avaliacao DATE,
+                           texto VARCHAR(500),
+                           PRIMARY KEY (fk_usuario_id, fk_obra_codigo),
+                           FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                           FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
+);
+
+CREATE TABLE comentario (
+                            codigo INT PRIMARY KEY AUTO_INCREMENT,
+                            fk_usuario_id INT NOT NULL,
+                            fk_obra_codigo INT NOT NULL,
+                            texto VARCHAR(500),
+                            gostei BOOLEAN,
+                            FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                            FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
+);
+
+CREATE TABLE historico_de_visualizacao (
+                                           fk_usuario_id INT NOT NULL,
+                                           fk_obra_codigo INT NOT NULL,
+                                           tempo_assistido DECIMAL(10,2) CHECK (tempo_assistido >= 0),
+                                           progresso_percentual DECIMAL(5,2) CHECK (progresso_percentual BETWEEN 0 AND 100),
+                                           PRIMARY KEY (fk_usuario_id, fk_obra_codigo),
+                                           FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                                           FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
+);
+
+CREATE TABLE lista_de_favoritos (
+                                    fk_usuario_id INT NOT NULL,
+                                    fk_obra_codigo INT NOT NULL,
+                                    ordem_de_exibicao INT,
+                                    PRIMARY KEY (fk_usuario_id, fk_obra_codigo),
+                                    FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                                    FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
+);
+
+CREATE TABLE reclama (
+                         fk_usuario_id INT NOT NULL,
+                         fk_reclamacao_pk INT NOT NULL,
+                         PRIMARY KEY (fk_usuario_id, fk_reclamacao_pk),
+                         FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                         FOREIGN KEY (fk_reclamacao_pk) REFERENCES reclamacoes(reclamacao_PK) ON DELETE CASCADE
+);
+
+CREATE TABLE pesquisa_streaming (
+                                    id_resposta INT PRIMARY KEY AUTO_INCREMENT,
+                                    fk_usuario_id INT,
+                                    email VARCHAR(255),
+                                    horas_semanais VARCHAR(50),
+                                    frequencia_uso VARCHAR(50),
+                                    servicos_utilizados TEXT,
+                                    dispositivos_utilizados TEXT,
+                                    satisfacao_geral INT CHECK (satisfacao_geral BETWEEN 1 AND 5),
+                                    satisfacao_recomendacao INT CHECK (satisfacao_recomendacao BETWEEN 1 AND 5),
+                                    motivo_insatisfacao TEXT,
+                                    genero VARCHAR(50),
+                                    faixa_etaria VARCHAR(50),
+                                    ocupacao VARCHAR(100),
+                                    regiao_residencia VARCHAR(100),
+                                    qtd_assinaturas VARCHAR(20),
+                                    generos_assistidos TEXT,
+                                    preco_ideal_menos VARCHAR(50),
+                                    FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id)
 );
 
 
---
--- INSERÇÃO DE 30 TUPLAS EM CADA TABELA (EXCETO USUARIO E PESQUISA)
---
+INSERT INTO genero (nome) VALUES
+                              ('Ação'), ('Comédia'), ('Drama'), ('Ficção Científica'), ('Terror'),
+                              ('Suspense'), ('Romance'), ('Documentário'), ('Animação'), ('Aventura'),
+                              ('Fantasia'), ('Musical'), ('Mistério'), ('Policial'), ('Guerra'),
+                              ('Faroeste'), ('Biografia'), ('Histórico'), ('Esporte'), ('Família'),
+                              ('Independente'), ('Cult'), ('Noir'), ('Thriller Psicológico'), ('Super-herói'),
+                              ('Anime'), ('Sitcom'), ('Stand-up'), ('Realidade'), ('Variedades');
 
--- Tabela genero (Necessária para OBRA)
-INSERT INTO genero (genero_PK, genero) VALUES
-                                           (1, 'Ação'), (2, 'Comédia'), (3, 'Drama'), (4, 'Terror'), (5, 'Ficção Científica'),
-                                           (6, 'Romance'), (7, 'Documentário'), (8, 'Aventura'), (9, 'Crime'), (10, 'Fantasia'),
-                                           (11, 'Musical'), (12, 'Suspense'), (13, 'Guerra'), (14, 'Western'), (15, 'Biografia'),
-                                           (16, 'Histórico'), (17, 'Animação'), (18, 'Infantil'), (19, 'Esportes'), (20, 'Curta-metragem'),
-                                           (21, 'Novela'), (22, 'Reality Show'), (23, 'Mistério'), (24, 'Show'), (25, 'Stand-up'),
-                                           (26, 'Viagem'), (27, 'Culinária'), (28, 'Saúde'), (29, 'Educação'), (30, 'Outros');
+INSERT INTO reclamacoes (descricao) VALUES
+                                        ('Problema de login'), ('Legendas dessincronizadas'), ('Vídeo não carrega'), ('Cobrança indevida'), ('Qualidade de vídeo ruim'),
+                                        ('App travando'), ('Dificuldade de cancelamento'), ('Áudio com problema'), ('Conteúdo indisponível na região'), ('Propaganda enganosa'),
+                                        ('Interface confusa'), ('Busca não funciona'), ('Erro ao baixar conteúdo'), ('Conta hackeada'), ('Conteúdo removido'),
+                                        ('Falta de opção de áudio'), ('Suporte ao cliente ruim'), ('Erro de reprodução'), ('Falta de acessibilidade'), ('Problemas no app da TV'),
+                                        ('Lentidão na navegação'), ('Perfil infantil inadequado'), ('Sugestão de conteúdo'), ('Problema com forma de pagamento'), ('Outros'),
+                                        ('Não consigo avaliar o conteúdo'), ('A lista de favoritos sumiu'), ('Histórico não atualiza'), ('Legendas com erros de tradução'), ('O aplicativo fechou sozinho');
 
--- Tabela Plano (Necessária para Assinatura_Assina)
-INSERT INTO Plano (tipoPlano, qtdTelas, preco, possuiAnuncio) VALUES
-                                                                  (1, 1, 21.90, FALSE), (2, 2, 34.90, FALSE), (3, 4, 47.90, FALSE), (4, 1, 15.90, TRUE), (5, 2, 25.90, TRUE),
-                                                                  (6, 4, 35.90, TRUE), (7, 1, 19.90, FALSE), (8, 2, 29.90, FALSE), (9, 4, 39.90, FALSE), (10, 1, 12.90, TRUE),
-                                                                  (11, 2, 22.90, TRUE), (12, 4, 32.90, TRUE), (13, 1, 20.00, FALSE), (14, 2, 30.00, FALSE), (15, 4, 40.00, FALSE),
-                                                                  (16, 1, 15.00, TRUE), (17, 2, 25.00, TRUE), (18, 4, 35.00, TRUE), (19, 1, 22.00, FALSE), (20, 2, 33.00, FALSE),
-                                                                  (21, 4, 44.00, FALSE), (22, 1, 17.00, TRUE), (23, 2, 27.00, TRUE), (24, 4, 37.00, TRUE), (25, 1, 23.00, FALSE),
-                                                                  (26, 2, 35.00, FALSE), (27, 4, 45.00, FALSE), (28, 1, 16.00, TRUE), (29, 2, 26.00, TRUE), (30, 4, 36.00, TRUE);
+INSERT INTO plano (tipo_do_plano, preco, qnt_de_telas_simultaneas, possui_anuncio) VALUES
+                                                                                       ('Básico com Anúncios', 25.90, 2, TRUE),
+                                                                                       ('Padrão', 39.90, 2, FALSE),
+                                                                                       ('Premium HD', 55.90, 4, FALSE),
+                                                                                       ('Família 4K', 70.00, 6, FALSE);
 
--- Tabela obra (Necessária para episodio, avalia, dirige, assiste)
-INSERT INTO obra (COD, Nome, DataExp, Sinopse, DataLanc, fk_genero_genero, qtdTemporadas, duracao, obra_TIPO) VALUES
-                                                                                                                  (101, 'Projeto Alfa', '2026-01-01', 'Sinopse 1', '2023-01-01', 5, 2, '02:00:00', 1),
-                                                                                                                  (102, 'O Segredo da Ilha', '2026-02-01', 'Sinopse 2', '2022-03-15', 8, 3, '00:45:00', 2),
-                                                                                                                  (103, 'Riso Sem Limites', '2025-12-31', 'Sinopse 3', '2024-05-20', 2, 1, '01:30:00', 1),
-                                                                                                                  (104, 'O Código Perdido', '2026-03-01', 'Sinopse 4', '2021-11-10', 9, 4, '00:50:00', 2),
-                                                                                                                  (105, 'Estrelas Cadentes', '2025-11-01', 'Sinopse 5', '2023-07-01', 6, 1, '01:45:00', 1),
-                                                                                                                  (106, 'A Muralha', '2026-04-01', 'Sinopse 6', '2022-09-01', 13, 5, '00:40:00', 2),
-                                                                                                                  (107, 'Lendas Urbanas', '2025-10-01', 'Sinopse 7', '2024-01-25', 4, 1, '02:10:00', 1),
-                                                                                                                  (108, 'Nova Geração', '2026-05-01', 'Sinopse 8', '2023-04-05', 17, 2, '00:25:00', 2),
-                                                                                                                  (109, 'Caminhos Cruzados', '2025-09-01', 'Sinopse 9', '2021-06-12', 3, 3, '01:15:00', 1),
-                                                                                                                  (110, 'O Último Suspiro', '2026-06-01', 'Sinopse 10', '2024-02-29', 12, 1, '00:55:00', 2),
-                                                                                                                  (111, 'Viagem no Tempo', '2025-08-01', 'Sinopse 11', '2022-05-01', 5, 2, '02:00:00', 1),
-                                                                                                                  (112, 'Mistério da Floresta', '2026-07-01', 'Sinopse 12', '2023-08-10', 8, 3, '00:45:00', 2),
-                                                                                                                  (113, 'Comédia Total', '2025-07-01', 'Sinopse 13', '2024-06-20', 2, 1, '01:30:00', 1),
-                                                                                                                  (114, 'Polícia Secreta', '2026-08-01', 'Sinopse 14', '2021-12-10', 9, 4, '00:50:00', 2),
-                                                                                                                  (115, 'Dois Corações', '2025-06-01', 'Sinopse 15', '2023-09-01', 6, 1, '01:45:00', 1),
-                                                                                                                  (116, 'Trincheira', '2026-09-01', 'Sinopse 16', '2022-10-01', 13, 5, '00:40:00', 2),
-                                                                                                                  (117, 'A Casa Mal-Assombrada', '2025-05-01', 'Sinopse 17', '2024-03-25', 4, 1, '02:10:00', 1),
-                                                                                                                  (118, 'Robôs Amigos', '2026-10-01', 'Sinopse 18', '2023-05-05', 17, 2, '00:25:00', 2),
-                                                                                                                  (119, 'Vidas em Jogo', '2025-04-01', 'Sinopse 19', '2021-07-12', 3, 3, '01:15:00', 1),
-                                                                                                                  (120, 'O Desaparecimento', '2026-11-01', 'Sinopse 20', '2024-04-29', 12, 1, '00:55:00', 2),
-                                                                                                                  (121, 'Planeta X', '2025-03-01', 'Sinopse 21', '2022-06-01', 5, 2, '02:00:00', 1),
-                                                                                                                  (122, 'Ruínas Antigas', '2026-12-01', 'Sinopse 22', '2023-10-10', 8, 3, '00:45:00', 2),
-                                                                                                                  (123, 'Stand-up do Zeca', '2025-02-01', 'Sinopse 23', '2024-07-20', 25, 1, '01:30:00', 1),
-                                                                                                                  (124, 'Investigação Noturna', '2027-01-01', 'Sinopse 24', '2021-09-10', 9, 4, '00:50:00', 2),
-                                                                                                                  (125, 'Amor Proibido', '2025-01-01', 'Sinopse 25', '2023-11-01', 6, 1, '01:45:00', 1),
-                                                                                                                  (126, 'Campo de Batalha', '2027-02-01', 'Sinopse 26', '2022-11-01', 13, 5, '00:40:00', 2),
-                                                                                                                  (127, 'A Maldição', '2024-12-01', 'Sinopse 27', '2024-05-25', 4, 1, '02:10:00', 1),
-                                                                                                                  (128, 'Mundo Digital', '2027-03-01', 'Sinopse 28', '2023-06-05', 17, 2, '00:25:00', 2),
-                                                                                                                  (129, 'Histórias Reais', '2024-11-01', 'Sinopse 29', '2021-08-12', 3, 3, '01:15:00', 1),
-                                                                                                                  (130, 'O Último Voo', '2027-04-01', 'Sinopse 30', '2024-06-29', 12, 1, '00:55:00', 2);
+INSERT INTO diretor (nome, data_nascimento, nacionalidade) VALUES
+                                                               ('Fernando Meirelles', '1955-11-09', 'Brasileiro'), ('Glauber Rocha', '1939-03-14', 'Brasileiro'), ('Walter Salles', '1956-04-12', 'Brasileiro'),
+                                                               ('José Padilha', '1967-08-01', 'Brasileiro'), ('Anna Muylaert', '1964-04-21', 'Brasileira'), ('Kleber Mendonça Filho', '1968-11-22', 'Brasileiro'),
+                                                               ('Hector Babenco', '1946-02-07', 'Argentino-Brasileiro'), ('Bruno Barreto', '1955-03-16', 'Brasileiro'), ('Laís Bodanzky', '1969-09-23', 'Brasileira'),
+                                                               ('Carlos Saldanha', '1965-01-24', 'Brasileiro'), ('Quentin Tarantino', '1963-03-27', 'Americano'), ('Martin Scorsese', '1942-11-17', 'Americano'),
+                                                               ('Christopher Nolan', '1970-07-30', 'Britânico'), ('Steven Spielberg', '1946-12-18', 'Americano'), ('Bong Joon-ho', '1969-09-14', 'Sul-coreano'),
+                                                               ('Guillermo del Toro', '1964-10-09', 'Mexicano'), ('Sofia Coppola', '1971-05-14', 'Americana'), ('Greta Gerwig', '1983-08-04', 'Americana'),
+                                                               ('Denis Villeneuve', '1967-10-03', 'Canadense'), ('Alfonso Cuarón', '1961-11-28', 'Mexicano'),
+                                                               ('James Cameron', '1954-08-16', 'Canadense'), ('Ridley Scott', '1937-11-30', 'Britânico'), ('David Fincher', '1962-08-28', 'Americano'),
+                                                               ('Hayao Miyazaki', '1941-01-05', 'Japonês'), ('Pedro Almodóvar', '1949-09-25', 'Espanhol'), ('Spike Lee', '1957-03-20', 'Americano'),
+                                                               ('Wes Anderson', '1969-05-01', 'Americano'), ('Jordan Peele', '1979-02-21', 'Americano'), ('Lulu Wang', '1983-02-25', 'Chinesa-Americana'),
+                                                               ('Chloé Zhao', '1982-03-31', 'Chinesa');
 
--- Tabela conta (Necessária para historicoVisualizacao, listaFavoritos, administra, avalia, assiste)
-INSERT INTO conta (cod, icone, statusAssinatura, dataExpiracao) VALUES
-                                                                    (1, 'Gato', 'Ativa', '2026-10-01'), (2, 'Cachorro', 'Ativa', '2026-09-20'), (3, 'Estrela', 'Pendente', '2025-11-05'), (4, 'Foguete', 'Ativa', '2026-08-15'), (5, 'Ninja', 'Ativa', '2026-07-10'),
-                                                                    (6, 'Coroa', 'Ativa', '2026-06-01'), (7, 'Fantasma', 'Cancelada', '2025-05-20'), (8, 'Sol', 'Ativa', '2026-04-10'), (9, 'Lua', 'Ativa', '2026-03-25'), (10, 'Coração', 'Ativa', '2026-02-14'),
-                                                                    (11, 'Árvore', 'Ativa', '2026-01-01'), (12, 'Carro', 'Pendente', '2025-12-01'), (13, 'Bola', 'Ativa', '2026-11-20'), (14, 'Câmera', 'Ativa', '2026-10-15'), (15, 'Livro', 'Ativa', '2026-09-01'),
-                                                                    (16, 'Máscara', 'Cancelada', '2025-08-10'), (17, 'Anel', 'Ativa', '2026-07-25'), (18, 'Mapa', 'Ativa', '2026-06-15'), (19, 'Sino', 'Ativa', '2026-05-05'), (20, 'Fogo', 'Ativa', '2026-04-20'),
-                                                                    (21, 'Gelo', 'Pendente', '2025-03-30'), (22, 'Vento', 'Ativa', '2026-03-01'), (23, 'Terra', 'Ativa', '2026-02-05'), (24, 'Água', 'Ativa', '2026-01-20'), (25, 'Raio', 'Ativa', '2025-12-10'),
-                                                                    (26, 'Flor', 'Cancelada', '2025-11-25'), (27, 'Trovão', 'Ativa', '2026-10-30'), (28, 'Nuvem', 'Ativa', '2026-09-15'), (29, 'Diamante', 'Ativa', '2026-08-01'), (30, 'Espada', 'Ativa', '2026-07-05');
+INSERT INTO usuario (nome, email, senha, rua, bairro, numero) VALUES
+                                                                  ('Ana Silva', 'ana.silva@email.com', 'senha123', 'Rua das Flores', 'Centro', 10),
+                                                                  ('Bruno Costa', 'bruno.costa@email.com', 'costa321', 'Avenida Principal', 'Jardins', 25),
+                                                                  ('Carla Dias', 'carla.dias@email.com', 'dias123', 'Rua da Praia', 'Copacabana', 150),
+                                                                  ('Daniel Faria', 'daniel.faria@email.com', 'faria456', 'Rua das Palmeiras', 'Tijuca', 33),
+                                                                  ('Eduarda Lima', 'eduarda.lima@email.com', 'lima789', 'Avenida Brasil', 'Moema', 1200),
+                                                                  ('Fábio Melo', 'fabio.melo@email.com', 'melo123', 'Rua Augusta', 'Consolação', 900),
+                                                                  ('Gabriela Nunes', 'gabriela.nunes@email.com', 'nunes456', 'Rua do Sol', 'Boa Viagem', 455),
+                                                                  ('Heitor Almeida', 'heitor.almeida@email.com', 'almeida789', 'Avenida Paulista', 'Bela Vista', 1800),
+                                                                  ('Isabela Barros', 'isabela.barros@email.com', 'barros123', 'Rua dos Pinheiros', 'Pinheiros', 750),
+                                                                  ('João Pereira', 'joao.pereira@email.com', 'pereira456', 'Rua da Lapa', 'Lapa', 210),
+                                                                  ('Karina Rocha', 'karina.rocha@email.com', 'rocha789', 'Avenida Ipiranga', 'República', 500),
+                                                                  ('Lucas Martins', 'lucas.martins@email.com', 'martins123', 'Rua Frei Caneca', 'Cerqueira César', 130),
+                                                                  ('Mariana Gomes', 'mariana.gomes@email.com', 'gomes456', 'Rua Sete de Setembro', 'Centro', 180),
+                                                                  ('Nelson Oliveira', 'nelson.oliveira@email.com', 'oliveira789', 'Avenida Rio Branco', 'Centro', 99),
+                                                                  ('Otávio Souza', 'otavio.souza@email.com', 'souza123', 'Rua da Alfândega', 'Saúde', 250),
+                                                                  ('Paula Fernandes', 'paula.fernandes@email.com', 'fernandes456', 'Rua Visconde de Pirajá', 'Ipanema', 340),
+                                                                  ('Quintino Borges', 'quintino.borges@email.com', 'borges789', 'Avenida Atlântica', 'Leme', 700),
+                                                                  ('Renata Azevedo', 'renata.azevedo@email.com', 'azevedo123', 'Rua Haddock Lobo', 'Jardim Paulista', 1100),
+                                                                  ('Sérgio Castro', 'sergio.castro@email.com', 'castro456', 'Rua Oscar Freire', 'Jardins', 555),
+                                                                  ('Tatiana Ribeiro', 'tatiana.ribeiro@email.com', 'ribeiro789', 'Alameda Santos', 'Paraíso', 2000),
+                                                                  ('Ulisses Neves', 'ulisses.neves@email.com', 'neves123', 'Rua da Quitanda', 'Centro', 80),
+                                                                  ('Vanessa Ramos', 'vanessa.ramos@email.com', 'ramos456', 'Rua Barão de Itapetininga', 'Vila Buarque', 120),
+                                                                  ('William Santos', 'william.santos@email.com', 'santos789', 'Avenida Angélica', 'Higienópolis', 1500),
+                                                                  ('Xavier Pinto', 'xavier.pinto@email.com', 'pinto123', 'Rua Maria Antônia', 'Consolação', 294),
+                                                                  ('Yara Mendonça', 'yara.mendonca@email.com', 'mendonca456', 'Avenida Higienópolis', 'Higienópolis', 618),
+                                                                  ('Zélia Cardoso', 'zelia.cardoso@email.com', 'cardoso789', 'Rua da Consolação', 'Jardins', 222),
+                                                                  ('André Barbosa', 'andre.barbosa@email.com', 'barbosa123', 'Rua Itambé', 'Higienópolis', 45),
+                                                                  ('Beatriz Tavares', 'beatriz.tavares@email.com', 'tavares456', 'Avenida Nove de Julho', 'Jardim Paulista', 3000),
+                                                                  ('Caio Drummond', 'caio.drummond@email.com', 'drummond789', 'Rua Pamplona', 'Jardim Paulista', 800),
+                                                                  ('Débora Freire', 'debora.freire@email.com', 'freire123', 'Rua Bela Cintra', 'Cerqueira César', 1700);
 
--- Tabela diretor (Necessária para dirige)
-INSERT INTO diretor (DataNasc, Nome) VALUES
-                                         ('1970-01-01', 'Maria Silva'), ('1965-05-15', 'João Pereira'), ('1980-11-20', 'Ana Souza'), ('1958-03-10', 'Pedro Oliveira'), ('1975-08-25', 'Sofia Santos'),
-                                         ('1985-02-02', 'Ricardo Costa'), ('1960-04-12', 'Helena Almeida'), ('1972-09-30', 'Carlos Ferreira'), ('1988-12-05', 'Laura Lima'), ('1955-06-18', 'Antônio Gomes'),
-                                         ('1978-07-14', 'Beatriz Rocha'), ('1963-01-28', 'Fernando Mendes'), ('1982-10-11', 'Giovana Nunes'), ('1950-04-01', 'Manuel Barbosa'), ('1977-09-09', 'Clara Dias'),
-                                         ('1983-03-21', 'Marcelo Vieira'), ('1968-11-17', 'Luciana Pinto'), ('1974-06-22', 'Rui Castro'), ('1989-05-08', 'Tania Reis'), ('1966-12-03', 'Sérgio Viana'),
-                                         ('1971-02-19', 'Patrícia Lima'), ('1984-08-07', 'Diego Marques'), ('1962-09-24', 'Eva Cardoso'), ('1979-10-31', 'Guilherme Freire'), ('1986-04-16', 'Vanessa Pires'),
-                                         ('1961-07-07', 'Jorge Moura'), ('1973-11-29', 'Paula Sales'), ('1987-01-26', 'Felipe Barros'), ('1969-05-03', 'Mônica Lira'), ('1990-03-14', 'Alexandre Dantas');
+INSERT INTO reclama (fk_usuario_id, fk_reclamacao_pk) VALUES
+                                                          (1, 1), (2, 3), (3, 4), (4, 2), (5, 5), (6, 8), (7, 6), (8, 11), (9, 9), (10, 14),
+                                                          (11, 1), (12, 3), (13, 7), (14, 12), (15, 15), (16, 18), (17, 20), (18, 10), (19, 22), (20, 13),
+                                                          (21, 25), (22, 1), (23, 3), (24, 4), (25, 16), (26, 19), (27, 21), (28, 24), (29, 2), (30, 5),
+                                                          (1, 26), (1, 27), (2, 26), (3, 27), (4, 28);
 
--- Tabela dispositivos_utilizados (Necessária para pesquisa)
+INSERT INTO obra (nome, sinopse, fk_genero_genero_PK, data_lancamento, qnt_temporadas, duracao, fk_diretor_id, obra_TIPO) VALUES
+                                                                                                                              ('Cidade de Deus', 'A vida na favela sob a ótica do crime, da amizade e da vingança.', 14, '2002-08-30', NULL, '02:10:00', 1, 1),
+                                                                                                                              ('Tropa de Elite', 'A rotina de um capitão do BOPE que busca um substituto enquanto lida com a pressão do trabalho e da família.', 1, '2007-10-05', NULL, '01:55:00', 4, 1),
+                                                                                                                              ('O Auto da Compadecida', 'As aventuras de João Grilo e Chicó, dois nordestinos pobres que vivem de golpes para sobreviver.', 2, '2000-09-15', NULL, '01:44:00', 25, 1),
+                                                                                                                              ('Bacurau', 'Após a morte da matriarca, uma cidade do sertão brasileiro some misteriosamente do mapa.', 6, '2019-08-29', NULL, '02:11:00', 6, 1),
+                                                                                                                              ('3%', 'Em um futuro distópico, jovens competem em um processo seletivo brutal por uma chance de viver em um paraíso.', 4, '2016-11-25', 4, '00:49:00', NULL, 2),
+                                                                                                                              ('Coisa Mais Linda', 'Uma mulher forte abre um clube de bossa nova no Rio de Janeiro dos anos 50, desafiando a sociedade.', 3, '2019-03-22', 2, '00:52:00', NULL, 2),
+                                                                                                                              ('A Origem', 'Um ladrão de sonhos enfrenta seu último e mais desafiador trabalho: implantar uma ideia na mente de alguém.', 4, '2010-08-06', NULL, '02:28:00', 13, 1),
+                                                                                                                              ('Parasita', 'Uma família pobre se infiltra de forma engenhosa na vida de uma família rica, com consequências inesperadas.', 6, '2019-11-07', NULL, '02:12:00', 15, 1),
+                                                                                                                              ('A Viagem de Chihiro', 'Uma menina de 10 anos se perde em um mundo mágico e misterioso habitado por deuses e monstros.', 9, '2003-07-18', NULL, '02:05:00', 24, 1),
+                                                                                                                              ('The Office', 'Documentário cômico sobre o dia a dia de funcionários excêntricos em um escritório de uma empresa de papel.', 27, '2005-03-24', 9, '00:22:00', NULL, 2),
+                                                                                                                              ('Breaking Bad', 'Um professor de química com câncer terminal começa a produzir metanfetamina para garantir o futuro de sua família.', 3, '2008-01-20', 5, '00:47:00', NULL, 2),
+                                                                                                                              ('O Poderoso Chefão', 'A saga de uma família mafiosa italiana em Nova York e a ascensão de Michael Corleone ao poder.', 14, '1972-09-08', NULL, '02:55:00', 11, 1),
+                                                                                                                              ('Matrix', 'Um hacker descobre que sua realidade é uma simulação e se junta a uma rebelião contra as máquinas.', 4, '1999-05-21', NULL, '02:16:00', NULL, 1),
+                                                                                                                              ('Forrest Gump', 'A história da vida de um homem simples com um QI baixo, mas boas intenções, que testemunha eventos históricos.', 7, '1994-12-07', NULL, '02:22:00', 14, 1),
+                                                                                                                              ('Game of Thrones', 'Famílias nobres de Westeros disputam o Trono de Ferro em uma trama de política, guerra e fantasia.', 11, '2011-04-17', 8, '00:55:00', NULL, 2),
+                                                                                                                              ('Interestelar', 'Em um futuro onde a Terra está morrendo, uma equipe de astronautas viaja por um buraco de minhoca em busca de um novo lar.', 4, '2014-11-06', NULL, '02:49:00', 13, 1),
+                                                                                                                              ('Fleabag', 'A vida de uma jovem de luto e com humor ácido em Londres.', 2, '2016-07-21', 2, '00:27:00', NULL, 2),
+                                                                                                                              ('Chernobyl', 'Minissérie que dramatiza a história do desastre nuclear de 1986.', 18, '2019-05-06', 1, '01:05:00', NULL, 2),
+                                                                                                                              ('O Silêncio dos Inocentes', 'Uma agente do FBI busca a ajuda de um brilhante assassino para capturar outro serial killer.', 24, '1991-05-31', NULL, '01:58:00', 22, 1),
+                                                                                                                              ('Clube da Luta', 'Um homem insone e um vendedor de sabão criam um clube de luta clandestino.', 21, '1999-10-29', NULL, '02:19:00', 23, 1),
+                                                                                                                              ('Pulp Fiction', 'As vidas de dois assassinos de aluguel e outros personagens se entrelaçam.', 14, '1994-10-14', NULL, '02:34:00', 11, 1),
+                                                                                                                              ('Vingadores: Ultimato', 'Os heróis restantes da Marvel se unem para uma última cartada contra Thanos.', 25, '2019-04-25', NULL, '03:01:00', 21, 1),
+                                                                                                                              ('Coringa', 'Em Gotham, um comediante fracassado busca conexão enquanto a cidade mergulha no caos.', 3, '2019-10-03', NULL, '02:02:00', NULL, 1),
+                                                                                                                              ('Stranger Things', 'Um grupo de crianças em uma cidade pequena nos anos 80 descobre mistérios sobrenaturais.', 5, '2016-07-15', 4, '00:51:00', NULL, 2),
+                                                                                                                              ('A Casa de Papel', 'Um grupo de assaltantes executa um plano ambicioso para roubar a Casa da Moeda da Espanha.', 6, '2017-05-02', 5, '00:45:00', NULL, 2),
+                                                                                                                              ('Sintonia', 'A história de três jovens da periferia de São Paulo que lutam para realizar seus sonhos.', 3, '2019-08-09', 3, '00:40:00', NULL, 2),
+                                                                                                                              ('Bom Dia, Verônica', 'Uma escrivã da polícia investiga por conta própria dois casos arquivados.', 14, '2020-10-01', 2, '00:48:00', NULL, 2),
+                                                                                                                              ('O Menino e o Mundo', 'Um garoto sai em busca de seu pai em uma aventura que retrata os problemas do mundo moderno.', 9, '2014-01-17', NULL, '01:20:00', 10, 1),
+                                                                                                                              ('Que Horas Ela Volta?', 'A chegada da filha da empregada doméstica na casa dos patrões abala a estrutura social.', 3, '2015-08-27', NULL, '01:52:00', 5, 1),
+                                                                                                                              ('O Irlandês', 'A vida de um assassino de aluguel da máfia e seu envolvimento no desaparecimento de Jimmy Hoffa.', 17, '2019-11-27', NULL, '03:29:00', 12, 1);
 
--- Tabela servicos_utilizados (Necessária para pesquisa)
+INSERT INTO episodio (fk_obra_codigo, numero_temporada, numero, duracao) VALUES
+                                                                             (5, 1, 1, '00:48:00'), (5, 1, 2, '00:51:00'), (5, 2, 1, '00:49:00'),
+                                                                             (6, 1, 1, '00:53:00'), (6, 1, 2, '00:50:00'), (6, 2, 1, '00:55:00'),
+                                                                             (10, 1, 1, '00:21:00'), (10, 1, 2, '00:23:00'), (10, 2, 1, '00:22:00'),
+                                                                             (11, 1, 1, '00:47:00'), (11, 1, 2, '00:48:00'), (11, 2, 1, '00:46:00'),
+                                                                             (15, 1, 1, '00:58:00'), (15, 1, 2, '00:56:00'), (15, 2, 1, '00:59:00'),
+                                                                             (17, 1, 1, '00:26:00'), (17, 1, 2, '00:28:00'), (17, 2, 1, '00:25:00'),
+                                                                             (18, 1, 1, '01:03:00'), (18, 1, 2, '01:08:00'),
+                                                                             (24, 1, 1, '00:50:00'), (24, 1, 2, '00:52:00'), (24, 2, 1, '00:51:00'),
+                                                                             (25, 1, 1, '00:44:00'), (25, 1, 2, '00:46:00'), (25, 2, 1, '00:43:00'),
+                                                                             (26, 1, 1, '00:41:00'), (26, 1, 2, '00:39:00'),
+                                                                             (27, 1, 1, '00:47:00'), (27, 1, 2, '00:49:00');
 
--- Tabela episodio
-INSERT INTO episodio (numero, numeroTemporada, duracao, id, fk_serie_COD) VALUES
-                                                                              (1, 1, '00:45:00', 1001, 102), (2, 1, '00:46:00', 1002, 102), (3, 1, '00:44:00', 1003, 102), (4, 1, '00:47:00', 1004, 104), (5, 1, '00:48:00', 1005, 104),
-                                                                              (6, 2, '00:45:00', 1006, 104), (7, 1, '00:39:00', 1007, 106), (8, 2, '00:40:00', 1008, 106), (9, 3, '00:41:00', 1009, 106), (10, 4, '00:42:00', 1010, 106),
-                                                                              (11, 1, '00:24:00', 1011, 108), (12, 2, '00:26:00', 1012, 108), (13, 1, '00:54:00', 1013, 110), (14, 1, '00:45:00', 1014, 112), (15, 2, '00:46:00', 1015, 112),
-                                                                              (16, 3, '00:44:00', 1016, 112), (17, 1, '00:47:00', 1017, 114), (18, 2, '00:48:00', 1018, 114), (19, 3, '00:45:00', 1019, 114), (20, 4, '00:40:00', 1020, 114),
-                                                                              (21, 1, '00:39:00', 1021, 116), (22, 2, '00:40:00', 1022, 116), (23, 3, '00:41:00', 1023, 116), (24, 4, '00:42:00', 1024, 116), (25, 1, '00:24:00', 1025, 118),
-                                                                              (26, 2, '00:26:00', 1026, 118), (27, 1, '00:54:00', 1027, 120), (28, 1, '00:45:00', 1028, 122), (29, 2, '00:46:00', 1029, 122), (30, 3, '00:44:00', 1030, 122);
+INSERT INTO conta (data_expiracao, icone, status_assinatura, fk_usuario_id, fk_administrador_id) VALUES
+                                                                                                     ('2026-10-20', 'avatar01.png', 'Ativa', 1, NULL),
+                                                                                                     ('2025-11-15', 'avatar02.png', 'Ativa', 2, 1),
+                                                                                                     ('2025-09-22', 'avatar03.png', 'Cancelada', 3, 1),
+                                                                                                     ('2026-05-30', 'avatar04.png', 'Ativa', 4, 1),
+                                                                                                     ('2027-01-10', 'avatar05.png', 'Ativa', 5, 4),
+                                                                                                     ('2025-12-01', 'avatar06.png', 'Pendente', 6, 4),
+                                                                                                     ('2026-08-18', 'avatar07.png', 'Ativa', 7, NULL),
+                                                                                                     ('2025-10-05', 'avatar08.png', 'Ativa', 8, 7),
+                                                                                                     ('2024-03-12', 'avatar09.png', 'Expirada', 9, 7),
+                                                                                                     ('2026-11-25', 'avatar10.png', 'Ativa', 10, 9),
+                                                                                                     ('2027-02-14', 'avatar11.png', 'Ativa', 11, 9),
+                                                                                                     ('2026-09-09', 'avatar12.png', 'Ativa', 12, 9),
+                                                                                                     ('2025-04-04', 'avatar13.png', 'Cancelada', 13, 11),
+                                                                                                     ('2026-06-07', 'avatar14.png', 'Ativa', 14, 13),
+                                                                                                     ('2026-07-19', 'avatar15.png', 'Ativa', 15, 14),
+                                                                                                     ('2025-08-30', 'avatar16.png', 'Pendente', 16, 15),
+                                                                                                     ('2026-12-21', 'avatar17.png', 'Ativa', 17, 15),
+                                                                                                     ('2027-03-01', 'avatar18.png', 'Ativa', 18, 16),
+                                                                                                     ('2023-11-11', 'avatar19.png', 'Expirada', 19, 17),
+                                                                                                     ('2026-02-28', 'avatar20.png', 'Ativa', 20, 18),
+                                                                                                     ('2026-04-15', 'avatar21.png', 'Ativa', 21, 20),
+                                                                                                     ('2025-10-10', 'avatar22.png', 'Ativa', 22, 20),
+                                                                                                     ('2025-06-13', 'avatar23.png', 'Cancelada', 23, 20),
+                                                                                                     ('2026-10-17', 'avatar24.png', 'Ativa', 24, 20),
+                                                                                                     ('2027-05-20', 'avatar25.png', 'Ativa', 25, 20),
+                                                                                                     ('2025-11-02', 'avatar26.png', 'Pendente', 26, 25),
+                                                                                                     ('2026-03-25', 'avatar27.png', 'Ativa', 27, 25),
+                                                                                                     ('2025-09-30', 'avatar28.png', 'Ativa', 28, NULL),
+                                                                                                     ('2024-08-08', 'avatar29.png', 'Expirada', 29, 28),
+                                                                                                     ('2027-06-01', 'avatar30.png', 'Ativa', 30, 28);
 
--- Tabela historicoVisualizacao
-INSERT INTO historicoVisualizacao (progressoPercentual, tempoAssistido, fk_conta_cod) VALUES
-                                                                                          (75.5, 90.5, 1), (100.0, 45.0, 2), (20.3, 15.2, 3), (95.1, 110.8, 4), (10.0, 8.5, 5),
-                                                                                          (50.0, 60.0, 6), (100.0, 120.0, 7), (88.7, 75.3, 8), (35.2, 20.1, 9), (60.0, 55.0, 10),
-                                                                                          (100.0, 180.0, 11), (15.5, 12.0, 12), (70.1, 95.5, 13), (99.0, 40.0, 14), (5.0, 3.5, 15),
-                                                                                          (80.0, 100.0, 16), (100.0, 50.0, 17), (45.6, 35.8, 18), (92.0, 85.0, 19), (25.0, 18.0, 20),
-                                                                                          (100.0, 90.0, 21), (30.5, 25.5, 22), (85.0, 70.0, 23), (10.1, 5.0, 24), (55.5, 48.9, 25),
-                                                                                          (100.0, 150.0, 26), (72.0, 92.5, 27), (18.9, 11.1, 28), (98.0, 115.2, 29), (40.0, 30.0, 30);
+INSERT INTO assinatura_assina (fk_usuario_id, fk_plano_tipo_do_plano) VALUES
+                                                                          (1, 'Premium HD'),
+                                                                          (2, 'Padrão'),
+                                                                          (3, 'Básico com Anúncios'),
+                                                                          (4, 'Família 4K'),
+                                                                          (5, 'Premium HD'),
+                                                                          (6, 'Padrão'),
+                                                                          (7, 'Padrão'),
+                                                                          (8, 'Básico com Anúncios'),
+                                                                          (9, 'Premium HD'),
+                                                                          (10, 'Família 4K'),
+                                                                          (11, 'Padrão'),
+                                                                          (12, 'Básico com Anúncios'),
+                                                                          (13, 'Premium HD'),
+                                                                          (14, 'Padrão'),
+                                                                          (15, 'Padrão'),
+                                                                          (16, 'Família 4K'),
+                                                                          (17, 'Premium HD'),
+                                                                          (18, 'Básico com Anúncios'),
+                                                                          (19, 'Padrão'),
+                                                                          (20, 'Premium HD'),
+                                                                          (21, 'Básico com Anúncios'),
+                                                                          (22, 'Padrão'),
+                                                                          (23, 'Premium HD'),
+                                                                          (24, 'Família 4K'),
+                                                                          (25, 'Básico com Anúncios'),
+                                                                          (26, 'Padrão'),
+                                                                          (27, 'Premium HD'),
+                                                                          (28, 'Padrão'),
+                                                                          (29, 'Básico com Anúncios'),
+                                                                          (30, 'Família 4K');
 
--- Tabela listaFavoritos
-INSERT INTO listaFavoritos (ordemExibicao, qtdObras, fk_conta_cod) VALUES
-                                                                       ('Recente', 5, 1), ('Alfabética', 10, 2), ('Manual', 3, 3), ('Recente', 12, 4), ('Alfabética', 8, 5),
-                                                                       ('Manual', 15, 6), ('Recente', 2, 7), ('Alfabética', 18, 8), ('Manual', 7, 9), ('Recente', 20, 10),
-                                                                       ('Alfabética', 4, 11), ('Manual', 25, 12), ('Recente', 6, 13), ('Alfabética', 11, 14), ('Manual', 9, 15),
-                                                                       ('Recente', 14, 16), ('Alfabética', 1, 17), ('Manual', 16, 18), ('Recente', 19, 19), ('Alfabética', 13, 20),
-                                                                       ('Manual', 22, 21), ('Recente', 24, 22), ('Alfabética', 28, 23), ('Manual', 21, 24), ('Recente', 23, 25),
-                                                                       ('Alfabética', 26, 26), ('Manual', 30, 27), ('Recente', 27, 28), ('Alfabética', 29, 29), ('Manual', 17, 30);
+INSERT INTO assiste (fk_usuario_id, fk_obra_codigo) VALUES
+                                                        (1, 1), (1, 5), (2, 2), (3, 7), (4, 11), (5, 15), (6, 24), (7, 8), (8, 25), (9, 1),
+                                                        (10, 10), (11, 16), (12, 20), (13, 21), (14, 4), (15, 6), (16, 18), (17, 22), (18, 3), (19, 12),
+                                                        (20, 13), (21, 17), (22, 26), (23, 29), (24, 30), (25, 9), (26, 27), (27, 11), (28, 24), (29, 1);
 
--- Tabela administra
-INSERT INTO administra (conta_A_cod, conta_B_cod) VALUES
-                                                      (1, 2), (1, 3), (2, 4), (3, 5), (4, 6),
-                                                      (5, 7), (6, 8), (7, 9), (8, 10), (9, 11),
-                                                      (10, 12), (11, 13), (12, 14), (13, 15), (14, 16),
-                                                      (15, 17), (16, 18), (17, 19), (18, 20), (19, 21),
-                                                      (20, 22), (21, 23), (22, 24), (23, 25), (24, 26),
-                                                      (25, 27), (26, 28), (27, 29), (28, 30), (29, 1);
+INSERT INTO avaliacao (fk_usuario_id, fk_obra_codigo, nota, data_avaliacao, texto) VALUES
+                                                                                       (1, 1, 5, '2025-09-10', 'Excelente!'), (2, 2, 4, '2025-09-11', 'Muito bom, recomendo.'), (3, 7, 3, '2025-09-12', 'Razoável, esperava mais.'),
+                                                                                       (4, 11, 5, '2025-09-13', 'Perfeito, um dos melhores que já vi.'), (5, 15, 2, '2025-09-14', 'Não gostei, enredo fraco.'),
+                                                                                       (6, 24, 4, '2025-09-15', 'Ótima atuação.'), (7, 8, 1, '2025-09-16', 'Péssimo, perdi meu tempo.'), (8, 25, 5, '2025-09-17', 'Fotografia impecável.'),
+                                                                                       (9, 1, 3, '2025-09-18', 'Começa bem, mas se perde no final.'), (10, 10, 4, '2025-09-19', 'Divertido.'),
+                                                                                       (11, 16, 5, '2025-08-01', 'Obra de arte!'), (12, 20, 4, '2025-08-02', 'Surpreendente.'), (13, 21, 3, '2025-08-03', 'Ok.'),
+                                                                                       (14, 4, 5, '2025-08-04', 'Inesquecível.'), (15, 6, 2, '2025-08-05', 'Decepcionante.'), (16, 18, 4, '2025-08-06', 'Vale a pena assistir.'),
+                                                                                       (17, 22, 1, '2025-08-07', 'Muito ruim.'), (18, 3, 5, '2025-08-08', 'Fantástico!'), (19, 12, 3, '2025-08-09', 'Mediano.'),
+                                                                                       (20, 13, 4, '2025-08-10', 'Inteligente.'), (21, 17, 5, '2025-07-20', 'Maravilhoso.'), (22, 26, 4, '2025-07-21', 'Prende a atenção.'),
+                                                                                       (23, 29, 3, '2025-07-22', 'Poderia ser melhor.'), (24, 30, 5, '2025-07-23', 'Genial.'), (25, 9, 2, '2025-07-24', 'Chato.'),
+                                                                                       (26, 27, 4, '2025-07-25', 'Emocionante.'), (27, 11, 1, '2025-07-26', 'Terrível.'), (28, 24, 5, '2025-07-27', 'Espetacular.'),
+                                                                                       (29, 1, 3, '2025-07-28', 'Regular.'), (30, 5, 4, '2025-07-29', 'Muito bem feito.');
 
--- Tabela comentario (Necessária para avalia)
-INSERT INTO comentario (comentario_PK, comentario) VALUES
-                                                       (1, 'Excelente obra, recomendo!'), (2, 'Poderia ser melhor, história fraca.'), (3, 'Nota 10, muito emocionante.'), (4, 'Horrível, perdi meu tempo.'), (5, 'Bom entretenimento, mas clichê.'),
-                                                       (6, 'Simplesmente perfeito, assisti duas vezes.'), (7, 'Um pouco arrastado no meio.'), (8, 'Adorei a fotografia e a trilha sonora.'), (9, 'Final previsível, mas OK.'), (10, 'Incrível! Superou minhas expectativas.'),
-                                                       (11, 'Não entendi nada da história.'), (12, 'Divertido, mas nada inovador.'), (13, 'Um clássico instantâneo!'), (14, 'Atuações medianas.'), (15, 'Recomendo para quem gosta do gênero.'),
-                                                       (16, 'Terror psicológico de qualidade.'), (17, 'Desenho muito bonito, pena que é curto.'), (18, 'Profundo e reflexivo.'), (19, 'Mais ou menos, passatempo.'), (20, 'Muito longo, deveria ter sido minissérie.'),
-                                                       (21, 'Roteiro inteligente.'), (22, 'Cansativo de assistir.'), (23, 'Amo esse filme!'), (24, 'Cheio de furos na trama.'), (25, 'Uma linda história de amor.'),
-                                                       (26, 'Muita ação, adorei!'), (27, 'Me deu medo de verdade.'), (28, 'Engraçado e descontraído.'), (29, 'Vale a pena a maratona.'), (30, 'Poderia ter um final diferente.');
+INSERT INTO comentario (fk_usuario_id, fk_obra_codigo, texto, gostei) VALUES
+                                                                          (1, 1, 'Adorei o final!', TRUE), (2, 2, 'O protagonista é irritante.', FALSE), (3, 7, 'Que plot twist!', TRUE),
+                                                                          (4, 11, 'A trilha sonora é incrível.', TRUE), (5, 15, 'Achei o ritmo muito lento.', FALSE), (6, 24, 'Me fez chorar.', TRUE),
+                                                                          (7, 8, 'Não entendi nada.', FALSE), (8, 25, 'Maratonei em um dia!', TRUE), (9, 1, 'Cenas de ação bem coreografadas.', TRUE),
+                                                                          (10, 10, 'Personagens sem profundidade.', FALSE), (11, 16, 'Figurino impecável.', TRUE), (12, 20, 'O humor é muito forçado.', FALSE),
+                                                                          (13, 21, 'Reassistindo pela terceira vez.', TRUE), (14, 4, 'O livro é bem melhor.', FALSE), (15, 6, 'Me identifiquei com a história.', TRUE),
+                                                                          (16, 18, 'Ansioso pela próxima temporada.', TRUE), (17, 22, 'Cancelaram a série, que ódio.', FALSE), (18, 3, 'Atuação de gala.', TRUE),
+                                                                          (19, 12, 'Efeitos especiais deixaram a desejar.', FALSE), (20, 13, 'Um clássico moderno.', TRUE), (21, 17, 'Superestimado.', FALSE),
+                                                                          (22, 26, 'Me surpreendeu positivamente.', TRUE), (23, 29, 'O vilão rouba a cena.', TRUE), (24, 30, 'Merecia mais reconhecimento.', TRUE),
+                                                                          (25, 9, 'Final decepcionante.', FALSE), (26, 27, 'Para assistir com a família.', TRUE), (27, 11, 'Muito pesado.', FALSE),
+                                                                          (28, 24, 'Direção genial.', TRUE), (29, 1, 'História clichê.', FALSE), (30, 5, 'Recomendo a todos.', TRUE);
 
--- Tabela avalia
-INSERT INTO avalia (fk_conta_cod, fk_obra_COD, nota, data, comentario_FK, texto) VALUES
-                                                                                     (1, 101, 5, '2024-01-05', 1, 'Excelente obra, recomendo!'), (2, 102, 3, '2024-01-10', 2, 'Poderia ser melhor, história fraca.'), (3, 103, 5, '2024-01-15', 3, 'Nota 10, muito emocionante.'),
-                                                                                     (4, 104, 2, '2024-01-20', 4, 'Horrível, perdi meu tempo.'), (5, 105, 4, '2024-01-25', 5, 'Bom entretenimento, mas clichê.'), (6, 106, 5, '2024-02-01', 6, 'Simplesmente perfeito, assisti duas vezes.'),
-                                                                                     (7, 107, 3, '2024-02-05', 7, 'Um pouco arrastado no meio.'), (8, 108, 5, '2024-02-10', 8, 'Adorei a fotografia e a trilha sonora.'), (9, 109, 3, '2024-02-15', 9, 'Final previsível, mas OK.'),
-                                                                                     (10, 110, 5, '2024-02-20', 10, 'Incrível! Superou minhas expectativas.'), (11, 111, 2, '2024-03-01', 11, 'Não entendi nada da história.'), (12, 112, 4, '2024-03-05', 12, 'Divertido, mas nada inovador.'),
-                                                                                     (13, 113, 5, '2024-03-10', 13, 'Um clássico instantâneo!'), (14, 114, 3, '2024-03-15', 14, 'Atuações medianas.'), (15, 115, 4, '2024-03-20', 15, 'Recomendo para quem gosta do gênero.'),
-                                                                                     (16, 116, 5, '2024-04-01', 16, 'Terror psicológico de qualidade.'), (17, 117, 5, '2024-04-05', 17, 'Desenho muito bonito, pena que é curto.'), (18, 118, 4, '2024-04-10', 18, 'Profundo e reflexivo.'),
-                                                                                     (19, 119, 3, '2024-04-15', 19, 'Mais ou menos, passatempo.'), (20, 120, 2, '2024-04-20', 20, 'Muito longo, deveria ter sido minissérie.'), (21, 121, 5, '2024-05-01', 21, 'Roteiro inteligente.'),
-                                                                                     (22, 122, 2, '2024-05-05', 22, 'Cansativo de assistir.'), (23, 123, 5, '2024-05-10', 23, 'Amo esse filme!'), (24, 124, 3, '2024-05-15', 24, 'Cheio de furos na trama.'), (25, 125, 5, '2024-05-20', 25, 'Uma linda história de amor.'),
-                                                                                     (26, 126, 5, '2024-06-01', 26, 'Muita ação, adorei!'), (27, 127, 5, '2024-06-05', 27, 'Me deu medo de verdade.'), (28, 128, 4, '2024-06-10', 28, 'Engraçado e descontraído.'), (29, 129, 4, '2024-06-15', 29, 'Vale a pena a maratona.'), (30, 130, 3, '2024-06-20', 30, 'Poderia ter um final diferente.');
+INSERT INTO historico_de_visualizacao (fk_usuario_id, fk_obra_codigo, tempo_assistido, progresso_percentual) VALUES
+                                                                                                                 (1, 1, 7800.50, 99.50), (2, 2, 3200.00, 45.10), (3, 7, 8820.00, 100.00), (4, 11, 1500.75, 25.00), (5, 15, 4500.00, 50.25),
+                                                                                                                 (6, 24, 9200.00, 100.00), (7, 8, 650.20, 10.80), (8, 25, 2400.00, 33.33), (9, 1, 5600.00, 80.00), (10, 10, 1234.56, 15.70),
+                                                                                                                 (11, 16, 6800.00, 100.00), (12, 20, 4980.00, 75.00), (13, 21, 300.00, 5.00), (14, 4, 7100.00, 92.40), (15, 6, 10800.00, 100.00),
+                                                                                                                 (16, 18, 999.00, 12.00), (17, 22, 4250.50, 55.50), (18, 3, 5400.00, 68.90), (19, 12, 8100.00, 99.00), (20, 13, 3300.00, 40.00),
+                                                                                                                 (21, 17, 5000.00, 100.00), (22, 26, 1800.00, 22.80), (23, 29, 750.00, 9.50), (24, 30, 6320.00, 81.20), (25, 9, 11000.00, 100.00),
+                                                                                                                 (26, 27, 2040.00, 30.00), (27, 11, 4800.00, 66.70), (28, 24, 3150.80, 45.00), (29, 1, 9500.00, 100.00), (30, 5, 800.00, 8.80);
 
--- Tabela dirige
-INSERT INTO dirige (fk_obra_COD) VALUES
-                                     (101), (102), (103), (104), (105), (106), (107), (108), (109), (110),
-                                     (111), (112), (113), (114), (115), (116), (117), (118), (119), (120),
-                                     (121), (122), (123), (124), (125), (126), (127), (128), (129), (130);
+INSERT INTO lista_de_favoritos (fk_usuario_id, fk_obra_codigo, ordem_de_exibicao) VALUES
+                                                                                      (1, 1, 1), (2, 2, 2), (3, 7, 1), (4, 11, 3), (5, 15, 1), (6, 24, 2), (7, 8, 1), (8, 25, 1), (9, 1, 3), (10, 10, 2),
+                                                                                      (11, 16, 1), (12, 20, 1), (13, 21, 2), (14, 4, 1), (15, 6, 2), (16, 18, 3), (17, 22, 1), (18, 3, 1), (19, 12, 2), (20, 13, 1),
+                                                                                      (21, 17, 3), (22, 26, 2), (23, 29, 1), (24, 30, 1), (25, 9, 2), (26, 27, 1), (27, 11, 3), (28, 24, 1), (29, 1, 2), (30, 5, 1);
 
--- Tabela assiste
-INSERT INTO assiste (fk_conta_cod, fk_obra_COD) VALUES
-                                                    (1, 101), (2, 102), (3, 103), (4, 104), (5, 105),
-                                                    (6, 106), (7, 107), (8, 108), (9, 109), (10, 110),
-                                                    (11, 111), (12, 112), (13, 113), (14, 114), (15, 115),
-                                                    (16, 116), (17, 117), (18, 118), (19, 119), (20, 120),
-                                                    (21, 121), (22, 122), (23, 123), (24, 124), (25, 125),
-                                                    (26, 126), (27, 127), (28, 128), (29, 129), (30, 130);
-
--- Tabela Assinatura_Assina (Requer fk_Usuario_ID e fk_Plano_tipoPlano. Assumindo ID do Usuario de 1 a 30)
-INSERT INTO Assinatura_Assina (fk_Usuario_ID, fk_Plano_tipoPlano) VALUES
-                                                                      (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10),
-                                                                      (11, 11), (12, 12), (13, 13), (14, 14), (15, 15), (16, 16), (17, 17), (18, 18), (19, 19), (20, 20),
-                                                                      (21, 21), (22, 22), (23, 23), (24, 24), (25, 25), (26, 26), (27, 27), (28, 28), (29, 29), (30, 30);
-
--- Tabela reclamacoes (Requer fk_usuario_ID. Assumindo ID do Usuario de 1 a 30)
+INSERT INTO pesquisa_streaming (
+    fk_usuario_id,
+    email, ocupacao, regiao_residencia, genero, faixa_etaria, qtd_assinaturas,
+    servicos_utilizados, motivo_insatisfacao, generos_assistidos, frequencia_uso, horas_semanais,
+    satisfacao_geral, satisfacao_recomendacao, dispositivos_utilizados, preco_ideal_menos
+) VALUES
+      (1, 'manoelcarreiroa@gmail.com', 'Autônomo(a)', 'Região Nordeste', 'Masculino', 'Entre 50 e 70 anos', '2', 'Netflix, Amazon Prime Video', 'Títulos dessinteressantes, Falta de produções originais de qualidade, Limitação de telas, Conteúdo limitado ou repetitivo, Propagandas', 'Ação, Comédia, Drama, Documentário, Romance', 'Semanalmente', 'Até 4 horas', 4, 4, 'TV', 'Entre R$15,00 e R$30,00'),
+      (2, 'lsncb.leticia.pessoal@gmail.com', NULL, 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '2', 'Netflix', 'Títulos dessinteressantes, Falta de produções originais de qualidade, Conteúdo limitado ou repetitivo, Preço elevado, Propagandas, pouca variedade e filmes ruins', 'Comédia, Drama, Romance', 'Raramente', '3', NULL, 3, 'TV, Computador/Notebook, Dispositivo de streaming (Ex: Chromecast, Fire TV Stick)', 'Entre R$15,00 e R$30,00'),
+      (3, 'segurosmedicosusa@gmail.com', 'Autônomo(a)', 'Estados Unidos', 'Masculino', 'Entre 30 e 50 anos', '6 ou mais', 'Netflix, Amazon Prime Video, Disney+, HBO Max, Apple TV, Paramount Plus', 'Falta de produções originais de qualidade, Limitação de telas, Conteúdo limitado ou repetitivo', 'Ação, Comédia, Documentário', 'Raramente', 'Raramente', 4, 4, 'TV, Smartphone, Computador/Notebook', 'Acima de R$50,00'),
+      (4, 'fafhcavalcanti@gmail.com', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 30 e 50 anos', '2', 'Crunchyroll', 'Títulos dessinteressantes', 'Drama, Ficção Científica, Animação', 'Semanalmente', 'Até 4 horas', 4, 4, 'Computador/Notebook', 'Acima de R$50,00'),
+      (5, 'b.cardoso.araujo@gmail.com', 'CLT', 'Região Sul', 'Feminino', 'Entre 18 e 30 anos', '6 ou mais', 'Netflix, Amazon Prime Video, Disney+, HBO Max', 'Conteúdo limitado ou repetitivo, Preço elevado, Propagandas', 'Drama, Documentário, Romance', 'Semanalmente', 'Até 4 horas', 4, 4, 'TV, Smartphone', 'Entre R$15,00 e R$30,00'),
+      (6, 'vdmdf2016@gmail.com', 'Integrante de empresa júnior', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Amazon Prime Video, Disney+, HBO Max, Crunchyroll', 'Títulos dessinteressantes', 'Ação, Comédia, Drama, Animação, Romance', 'Diariamente', 'Até 4 horas', 5, 4, 'Smartphone, Computador/Notebook, Dispositivo de streaming (Ex: Chromecast, Fire TV Stick)', 'Entre R$30,00 e R$50,00'),
+      (7, 'ibn@cesar.school', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '6 ou mais', 'Netflix, Amazon Prime Video, Disney+, HBO Max, Globo play, Apple TV, Crunchyroll', 'Títulos dessinteressantes, Preço elevado', 'Ação, Comédia, Ficção Científica, Animação', 'Semanalmente', 'Até 2 horas', 4, 4, 'TV, Smartphone, Computador/Notebook', 'Entre R$15,00 e R$30,00'),
+      (8, 'joaopedrodmv21@gmail.com', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Amazon Prime Video, Disney+', 'Conteúdo limitado ou repetitivo, Preço elevado, Propagandas', 'Ação, Comédia, Animação, Romance', 'Semanalmente', 'Até 2 horas', 3, 4, 'TV, Smartphone', 'Entre R$15,00 e R$30,00'),
+      (9, 'rft@cesar.school', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Amazon Prime Video, HBO Max, Paramount Plus, Crunchyroll', 'Títulos dessinteressantes, Varia mto de cada uma', 'Comédia, Terror', 'Mensalmente', 'Raramente', 4, 3, 'TV, Tablet', 'Entre R$15,00 e R$30,00'),
+      (10, 'gabriel.fcarvalho@upe.br', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '3', 'Netflix, Amazon Prime Video, Apple TV', 'Títulos dessinteressantes, Conteúdo limitado ou repetitivo', 'Comédia, Documentário, Animação', 'Raramente', 'Raramente', 2, 1, 'TV', 'Entre R$15,00 e R$30,00'),
+      (11, 'eduardoscavalcantij@gmail.com', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '3', 'Netflix, Amazon Prime Video, Crunchyroll', 'Títulos dessinteressantes, Limitação de telas, Conteúdo limitado ou repetitivo, Preço elevado, Propagandas', 'Comédia, Ficção Científica, Animação', 'Raramente', 'Raramente', 4, 4, 'TV, Smartphone', 'Entre R$15,00 e R$30,00'),
+      (12, 'mcr@cesar.school', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Amazon Prime Video, HBO Max, Paramount Plus, Crunchyroll', 'Títulos dessinteressantes, Preço elevado, Propagandas', 'Ação, Comédia, Ficção Científica, Animação', 'Diariamente', 'Até 2 horas', 3, 3, 'Smartphone, Computador/Notebook', 'Até R$15,00'),
+      (13, 'gabrielfribeiro04@gmail.com', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '3', 'Netflix, Amazon Prime Video, HBO Max', 'Títulos dessinteressantes', 'Ação, Drama, Ficção Científica', 'Semanalmente', 'Até 4 horas', 2, 4, 'TV, Computador/Notebook', 'Entre R$15,00 e R$30,00'),
+      (14, 'ana.rangels@ufpe.br', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '2', 'Netflix, Amazon Prime Video', 'Títulos dessinteressantes, Falta de atualização, Limitação de telas, Preço elevado, Propagandas', 'Comédia, Drama, Ficção Científica, Terror, Romance', 'Diariamente', 'Até 2 horas', 2, 3, 'TV, Smartphone, Tablet', 'Até R$15,00'),
+      (15, 'jfilipej1@gmail.com', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '1', 'Netflix', 'Limitação de telas', 'Ação, Comédia, Documentário', 'Semanalmente', 'Até 2 horas', 4, 4, 'TV, Computador/Notebook', 'Até R$15,00'),
+      (16, 'ceciliaeeskinazi@gmail.com', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Amazon Prime Video, HBO Max, Globo play, Apple TV', 'Preço elevado, Propagandas', 'Ficção Científica, Terror, Romance', 'Semanalmente', 'Até 4 horas', 4, 4, 'TV, Computador/Notebook', 'Entre R$15,00 e R$30,00'),
+      (17, 'mariajulinhagomes12@gmail.com', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Amazon Prime Video, Disney+, HBO Max', 'Falta de produções originais de qualidade, Limitação de telas, Preço elevado, Propagandas', 'Comédia, Romance', 'Mensalmente', 'Até 2 horas', 4, 3, 'TV, Smartphone', 'Entre R$15,00 e R$30,00'),
+      (18, 'gigimaal2019@gmail.com', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Disney+, HBO Max, Globo play, Paramount Plus', 'Títulos dessinteressantes, Falta de atualização, Preço elevado, Propagandas', 'Ação, Comédia, Ficção Científica, Animação, Romance', 'Raramente', 'Raramente', 3, 3, 'Computador/Notebook', 'Entre R$30,00 e R$50,00'),
+      (19, 'anamariiaalves05@gmail.com', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '6 ou mais', 'Netflix, Amazon Prime Video, Disney+, HBO Max, Globo play', 'Preço elevado', 'Ação, Drama', 'Diariamente', 'Até 4 horas', 5, 5, 'TV, Smartphone, Tablet', 'Entre R$30,00 e R$50,00'),
+      (20, 'estersoutto1@gmail.com', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Disney+, Globo play', 'Títulos dessinteressantes', 'Comédia, Drama, Romance', 'Diariamente', 'Até 4 horas', 3, 3, 'TV, Tablet', 'Entre R$15,00 e R$30,00'),
+      (21, 'michelecarla988@gmail.com', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '1', 'Netflix', 'Títulos dessinteressantes', 'Comédia, Terror, Animação, Romance', 'Raramente', 'Raramente', 4, 3, 'TV, Smartphone, Tablet', 'Entre R$15,00 e R$30,00'),
+      (22, 'gmdf@cesar.school', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '2', 'Amazon Prime Video, Disney+', 'Preço elevado, Propagandas', 'Ação, Comédia, Animação, Romance', 'Semanalmente', 'Mais que 4 horas', 1, 1, 'TV, Computador/Notebook, Dispositivo de streaming (Ex: Chromecast, Fire TV Stick)', 'Entre R$15,00 e R$30,00'),
+      (23, 'mariafernandamalta0006@gmail.com', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '3', 'Netflix, Amazon Prime Video, HBO Max, Globo play', 'Títulos dessinteressantes, Falta de atualização, Preço elevado, Propagandas', 'Ação, Comédia, Romance', 'Semanalmente', 'Até 2 horas', 4, 5, 'Smartphone, Tablet', 'Entre R$15,00 e R$30,00'),
+      (24, 'lipe2101@gmail.com', 'Estagiário', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '6 ou mais', 'Netflix, Amazon Prime Video, Disney+, HBO Max, Globo play, Apple TV', 'Títulos dessinteressantes, Falta de atualização, Limitação de telas, Conteúdo limitado ou repetitivo, Preço elevado, Propagandas', 'Ação, Comédia, Documentário', 'Diariamente', 'Mais que 4 horas', 4, 4, 'TV', 'Entre R$15,00 e R$30,00'),
+      (25, 'malu.abreu.tenorio@gmail.com', 'Estudante', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '4 a 5', 'Amazon Prime Video, Disney+, HBO Max', 'Falta de produções originais de qualidade, Limitação de telas', 'Ação, Comédia, Drama, Romance', 'Diariamente', 'Mais que 4 horas', 3, 2, 'TV, Tablet', 'Entre R$15,00 e R$30,00'),
+      (26, 'carolina.argusmao@gmail.com', 'CLT', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '6 ou mais', 'Netflix, Amazon Prime Video, Disney+, HBO Max, Globo play, Apple TV', 'Limitação de telas, Propagandas', 'Ação, Comédia, Romance', 'Semanalmente', 'Mais que 4 horas', 4, 4, 'TV', 'Acima de R$50,00'),
+      (27, 'bia.gusmao09@gmail.com', 'Autônomo(a)', 'Região Nordeste', 'Feminino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Amazon Prime Video, Disney+, HBO Max, Globo play', 'Títulos dessinteressantes, Falta de atualização, Conteúdo limitado ou repetitivo', 'Ação, Comédia, Drama, Ficção Científica, Documentário, Romance', 'Diariamente', 'Mais que 4 horas', 4, 3, 'TV, Smartphone', 'Entre R$15,00 e R$30,00'),
+      (28, 'andrea.araujo@fundaj.gov.br', 'Servidor público', 'Região Nordeste', 'Feminino', 'Entre 50 e 70 anos', '4 a 5', 'Netflix, Amazon Prime Video, Globo play', NULL, 'Ação, Drama, Documentário, Romance', 'Diariamente', 'Até 4 horas', 4, 4, 'TV', 'Entre R$30,00 e R$50,00'),
+      (29, 'robertaaraujogusmao@gmail.com', 'Autônomo(a)', 'Região Nordeste', 'Feminino', 'Entre 50 e 70 anos', '3', 'Netflix, Amazon Prime Video, Globo play', 'Limitação de telas', 'Ação, Drama, Documentário', 'Semanalmente', 'Mais que 4 horas', 4, 4, 'TV, Smartphone', 'Entre R$15,00 e R$30,00'),
+      (30, 'lucasgbcorreia@gmail.com', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Amazon Prime Video, Disney+, HBO Max, Globo play', 'Preço elevado, Propagandas', 'Ação, Comédia, Terror', 'Diariamente', 'Mais que 4 horas', 3, 4, 'TV, Smartphone', 'Entre R$15,00 e R$30,00');
