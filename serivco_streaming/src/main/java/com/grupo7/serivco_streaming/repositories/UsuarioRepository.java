@@ -25,10 +25,6 @@ public class UsuarioRepository {
     private final RowMapper<Usuario> mapper = (rs, rowNum) -> {
         Usuario u = new Usuario();
         u.usuarioId = rs.getInt("usuario_id");
-
-        int fk = rs.getInt("fk_reclamacoes_reclamacoes_PK");
-        u.fkReclamacoesReclamacoesPK = rs.wasNull() ? null : fk;
-
         u.rua = rs.getString("rua");
         u.bairro = rs.getString("bairro");
 
@@ -45,21 +41,19 @@ public class UsuarioRepository {
     public int insert(Usuario u) {
         String sql = """
             INSERT INTO usuario
-            (fk_reclamacoes_reclamacoes_PK, rua, bairro, numero, nome, email, senha)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            (rua, bairro, numero, nome, email, senha)
+            VALUES (?, ?, ?, ?, ?, ?)
         """;
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            if (u.fkReclamacoesReclamacoesPK == null) ps.setNull(1, java.sql.Types.INTEGER);
-            else ps.setInt(1, u.fkReclamacoesReclamacoesPK);
-            ps.setString(2, u.rua);
-            ps.setString(3, u.bairro);
-            if (u.numero == null) ps.setNull(4, java.sql.Types.INTEGER);
-            else ps.setInt(4, u.numero);
-            ps.setString(5, u.nome);
-            ps.setString(6, u.email);
-            ps.setString(7, u.senha);
+            ps.setString(1, u.rua);
+            ps.setString(2, u.bairro);
+            if (u.numero == null) ps.setNull(3, java.sql.Types.INTEGER);
+            else ps.setInt(3, u.numero);
+            ps.setString(4, u.nome);
+            ps.setString(5, u.email);
+            ps.setString(6, u.senha);
             return ps;
         }, kh);
         Number key = kh.getKey();
@@ -108,8 +102,7 @@ public class UsuarioRepository {
     public int update(int id, Usuario u) {
         String sql = """
             UPDATE usuario
-               SET fk_reclamacoes_reclamacoes_PK = ?,
-                   rua = ?,
+               SET rua = ?,
                    bairro = ?,
                    numero = ?,
                    nome = ?,
@@ -118,7 +111,6 @@ public class UsuarioRepository {
              WHERE usuario_id = ?
         """;
         return jdbc.update(sql,
-                u.fkReclamacoesReclamacoesPK,
                 u.rua,
                 u.bairro,
                 u.numero,

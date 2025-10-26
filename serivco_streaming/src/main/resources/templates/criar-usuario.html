@@ -139,11 +139,6 @@
             <input type="number" id="numero" name="numero" min="1">
         </div>
 
-        <div class="form-group">
-            <label for="fk_reclamacoes_reclamacoes_PK">ID da Reclamação (Opcional):</label>
-            <input type="number" id="fk_reclamacoes_reclamacoes_PK" name="fk_reclamacoes_reclamacoes_PK">
-        </div>
-
         <button type="submit">Criar Usuário</button>
     </form>
 
@@ -168,9 +163,6 @@
 
         const numero = formData.get('numero');
         usuario.numero = numero ? parseInt(numero, 10) : null;
-
-        const fkReclamacoesReclamacoesPK = formData.get('fk_reclamacoes_reclamacoes_PK');
-        usuario.fkReclamacoesReclamacoesPK = fkReclamacoesReclamacoesPK ? parseInt(fkReclamacoesReclamacoesPK, 10) : null;
 
         try {
             const response = await fetch('/api/usuarios', {
