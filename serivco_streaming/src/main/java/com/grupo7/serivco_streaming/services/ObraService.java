@@ -23,4 +23,6 @@ public interface ObraService {
     List<Obra> findByNomeContaining(String nome);
 
     List<Obra> findByDataLancamento(LocalDate data);
+
+    public List<String> getUsuariosSemPlano();
 }

@@ -55,6 +55,10 @@ public class ObraRepository {
         return key == null ? 0 : key.intValue();
     }
 
+    public List<String> getUsuariosSemPlano() {
+        return jdbc.queryForList("SELECT * from usuarios_sem_plano", String.class);
+    }
+
     public List<Obra> findAll() {
         return jdbc.query("SELECT * FROM obra", mapper);
     }

@@ -64,4 +64,9 @@ public class ObraController {
     public List<Obra> getObraWhereDateIs(@RequestParam LocalDate data) {
         return obraService.findByDataLancamento(data);
     }
+
+    @GetMapping("/usuarios-sem-plano")
+    public List<String> getUsuariosSemPlano() {
+        return obraService.getUsuariosSemPlano();
+    }
 }
