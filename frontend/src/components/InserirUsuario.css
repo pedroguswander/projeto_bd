@@ -1,0 +1,160 @@
+/* 1. O Fundo Escuro (Backdrop) */
+.modal-backdrop {
+  position: fixed; /* Cobre a tela inteira */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.65); /* Fundo escuro semitransparente */
+  
+  /* Z-index alto para ficar na frente de tudo */
+  z-index: 1000; 
+
+  /* Flexbox para centralizar o conteúdo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Animação suave */
+  animation: fadeIn 0.3s ease;
+}
+
+/* 2. O Conteúdo do Modal (a caixa branca) */
+.modal-content {
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 600px; /* Largura máxima do modal */
+  
+  /* Z-index maior que o backdrop */
+  z-index: 1001; 
+
+  /* Evita que o modal fique muito grande em telas pequenas */
+  max-height: 90vh;
+  overflow-y: auto; /* Adiciona scroll se o conteúdo for maior */
+
+  /* Animação de "zoom" */
+  animation: zoomIn 0.3s ease;
+}
+
+/* 3. Estilos do Formulário Interno */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+}
+
+.modal-form-group {
+  margin-bottom: 16px;
+}
+
+.modal-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.modal-form-group input[type="text"],
+.modal-form-group input[type="email"],
+.modal-form-group input[type="password"],
+.modal-form-group input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box; /* Garante que o padding não afete a largura */
+  font-size: 14px;
+}
+
+.modal-radio-group {
+  display: flex;
+  gap: 20px;
+}
+
+.modal-radio-group label {
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-address-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Rua (mais larga) e Bairro */
+  gap: 16px;
+}
+
+/* Faz o "Número" ocupar a linha inteira, mas é melhor colocá-lo no grid */
+/* Vamos ajustar o grid para 3 colunas */
+.modal-address-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr; /* Rua | Bairro | Número */
+  gap: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modal-btn-primary {
+  background-color: #415a77; /* Azul do seu menu */
+  color: white;
+}
+.modal-btn-primary:hover {
+  background-color: #31445a;
+}
+
+.modal-btn-secondary {
+  background-color: #f0f0f0;
+  color: #555;
+}
+.modal-btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
