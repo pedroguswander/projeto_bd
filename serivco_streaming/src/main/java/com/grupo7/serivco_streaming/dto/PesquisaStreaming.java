@@ -3,6 +3,7 @@ package com.grupo7.serivco_streaming.dto;
 
 public class PesquisaStreaming {
     public int idResposta;
+    public int fk_usuario_id;
     public String email;
     public String ocupacao;
     public String regiaoResidencia;

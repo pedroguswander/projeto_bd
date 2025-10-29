@@ -24,4 +24,6 @@ public class PesquisaController {
     {
         return pesquisaRepository.getMediaSatisfacaoPorGenero();
     }
+
+
 }
