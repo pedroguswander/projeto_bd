@@ -156,10 +156,8 @@ function Home() {
             </div>
 
             <div className="dashboard-card card-medium">
-              <h3>Horário de Pico</h3>
-              <div className="metric">19:00 - 22:00</div>
               <div className="placeholder-chart-donut">
-                <p>(Gráfico de Rosca: Visualizações por hora)</p>
+                  <SatisfacaoChart />
               </div>
             </div>
 
@@ -192,7 +190,7 @@ function Home() {
               <div className="metric">2.568</div>
               <div className="metric-change negative">-1.8% vs semana passada</div>
               <div className="placeholder-chart">
-                <SatisfacaoChart />
+
                 <p>(Gráfico de Linha: Novas assinaturas por dia)</p>
               </div>
             </div>

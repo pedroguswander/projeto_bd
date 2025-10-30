@@ -7,6 +7,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -55,4 +56,7 @@ public class PesquisaStreamingServiceImpl implements PesquisaStreamingService {
         }
         pesquisaRepository.delete(id);
     }
+    public Map<String, Double> getMediaSatisfacaoPorGenero() { return pesquisaRepository.getMediaSatisfacaoPorGenero(); }
+
+    public Map<String, Long> getStreamingHoursCountsByValue() { return pesquisaRepository.getStreamingHoursCountsByValue(); }
 }

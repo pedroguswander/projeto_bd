@@ -11,7 +11,7 @@ const fetchSatisfacaoData = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Em um caso real, seria algo como:
-    const response = await fetch('http://localhost:8080/api/pesquisa');
+    const response = await fetch('http://localhost:8080/api/pesquisas/satisfacao-por-genero');
     if (!response.ok) {
         throw new Error('Falha ao buscar dados');
     }

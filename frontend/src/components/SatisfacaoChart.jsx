@@ -131,7 +131,7 @@ const SatisfacaoChart = () => {
 
   // 4. Renderiza o card e o gráfico
   return (
-    <div className="dashboard-card card-large">
+    <div className="dashboard-card card-medium">
       <h3>Nível de Satisfação por Gênero</h3>
       
       {/* Container para o gráfico */}

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pesquisas") 
@@ -47,4 +48,13 @@ public class PesquisaStreamingController {
         pesquisaService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/satisfacao-por-genero")
+    public Map<String, Double> getMediaSatisfacaoPorGenero()
+    {
+        return pesquisaService.getMediaSatisfacaoPorGenero();
+    }
+
+    @GetMapping("/horas-semanais")
+    public Map<String, Long> getHorasSemanais() { return pesquisaService.getStreamingHoursCountsByValue(); }
 }
