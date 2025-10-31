@@ -7,6 +7,7 @@ import {
 import { Link } from 'react-router-dom';
 
 import SatisfacaoChart from '../components/SatisfacaoChart';
+import { DistribuicaoHorasSemanaisChart } from '../components/DistribuicaoHorasSemanaisChart';
 import GeneroPorAssistidoChart from '../components/GeneroPorAssistidoChart';
 import InserirUsuario from '../components/InserirUsuario';
 
@@ -74,6 +75,10 @@ function Home() {
 
             <div className="dashboard-card card-large">
               <GeneroPorAssistidoChart />
+            </div>
+
+            <div className="dashboard-card card-medium">
+              <DistribuicaoHorasSemanaisChart />
             </div>
 
             <div className="dashboard-card card-medium">
