@@ -56,7 +56,20 @@ public class PesquisaStreamingServiceImpl implements PesquisaStreamingService {
         }
         pesquisaRepository.delete(id);
     }
-    public Map<String, Double> getMediaSatisfacaoPorGenero() { return pesquisaRepository.getMediaSatisfacaoPorGenero(); }
 
-    public Map<String, Long> getStreamingHoursCountsByValue() { return pesquisaRepository.getStreamingHoursCountsByValue(); }
+    @Override
+    public Map<String, Double> getMediaSatisfacaoPorGenero() {
+        return pesquisaRepository.getMediaSatisfacaoPorGenero();
+    }
+
+    @Override
+    public Map<String, Long> getStreamingHoursCountsByValue() {
+        return pesquisaRepository.getStreamingHoursCountsByValue();
+    }
+
+    // NOVO
+    @Override
+    public Map<String, Long> getGeneroPorAssistido() {
+        return pesquisaRepository.getGeneroPorAssistido();
+    }
 }

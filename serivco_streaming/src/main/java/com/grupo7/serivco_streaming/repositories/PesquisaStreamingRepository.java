@@ -252,8 +252,29 @@ public class PesquisaStreamingRepository {
                 p.dispositivosUtilizados, p.precoIdealMensal, id);
     }
 
-    // DELETE
     public int delete(int id) {
         return jdbc.update("DELETE FROM pesquisa_streaming WHERE id_resposta = ?", id);
+    }
+    public Map<String, Long> getGeneroPorAssistido() {
+        List<String> generosList = jdbc.queryForList(
+            "SELECT generos_assistidos FROM pesquisa_streaming WHERE generos_assistidos IS NOT NULL",
+            String.class
+        );
+
+        Map<String, Long> contador = new HashMap<>();
+
+        for (String generos : generosList) {
+            if (generos != null && !generos.isEmpty()) {
+                String[] splitGeneros = generos.split(",");
+                for (String g : splitGeneros) {
+                    String generoLimpo = g.trim();
+                    if (!generoLimpo.isEmpty()) {
+                        contador.put(generoLimpo, contador.getOrDefault(generoLimpo, 0L) + 1);
+                    }
+                }
+            }
+        }
+
+        return contador;
     }
 }

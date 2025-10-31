@@ -57,4 +57,9 @@ public class PesquisaStreamingController {
 
     @GetMapping("/horas-semanais")
     public Map<String, Long> getHorasSemanais() { return pesquisaService.getStreamingHoursCountsByValue(); }
+    
+    @GetMapping("/genero-por-assistido")
+    public Map<String, Long> getGeneroPorAssistido() {
+        return pesquisaService.getGeneroPorAssistido();
+    }
 }
