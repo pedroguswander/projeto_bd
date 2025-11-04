@@ -27,10 +27,10 @@ public class DetalheAvaliacaoController {
      */
     @GetMapping("/filter")
     public ResponseEntity<List<DetalheAvaliacaoDTO>> GetDetalheAvaliacaoObraUsuarios(
-            @RequestParam(name = "nome_usuario", required = false) String nomeUsuario) {
+            @RequestParam(required = false) String nome_usuario) {
 
         // Chama o método do repositório, passando o parâmetro (que pode ser nulo)
-        List<DetalheAvaliacaoDTO> detalhes = repository.getDetalheAvaliacaoObraUsuarios(nomeUsuario);
+        List<DetalheAvaliacaoDTO> detalhes = repository.getDetalheAvaliacaoObraUsuarios(nome_usuario);
 
         // Retorna a lista (pode ser vazia) com status 200 OK
         return ResponseEntity.ok(detalhes);

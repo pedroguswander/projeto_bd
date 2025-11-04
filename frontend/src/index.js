@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import Home from './pages/Home';
 import InserirUsuario from './components/InserirUsuario';
+import VerDetalheAvaliacao from './components/VerDetalheAvaliacao';
 
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
@@ -18,6 +19,11 @@ const router = createBrowserRouter([
   {
     path: '/inserir-usuario',
     element: <InserirUsuario onClose={() => {}} />,
+    errorElement: <div>Página não encontrada</div>,
+  },
+    {
+    path: '/ver-detalhes-avaliacao',
+    element: <VerDetalheAvaliacao />,
     errorElement: <div>Página não encontrada</div>,
   },
 ]);

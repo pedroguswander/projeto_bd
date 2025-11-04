@@ -34,11 +34,11 @@ public class DetalheAvaliacaoRepository { // Ou adicione ao seu ObraRepository
      * Se 'nomeUsuario' for fornecido, filtra por esse usuário.
      * Se 'nomeUsuario' for nulo ou vazio, retorna todos os detalhes.
      */
-    public List<DetalheAvaliacaoDTO> getDetalheAvaliacaoObraUsuarios(String nomeUsuario) {
+    public List<DetalheAvaliacaoDTO> getDetalheAvaliacaoObraUsuarios(String nome_usuario) {
 
         // StringUtils.hasText() checa se a string não é nula, nem vazia,
         // e nem contém apenas espaços em branco.
-        if (StringUtils.hasText(nomeUsuario)) {
+        if (nome_usuario != null && !nome_usuario.isEmpty()) {
 
             // LÓGICA CORRETA: Se um nome foi fornecido, usamos a consulta com WHERE.
             // Esta é a consulta que você especificou para "nome vazio",
@@ -46,7 +46,7 @@ public class DetalheAvaliacaoRepository { // Ou adicione ao seu ObraRepository
             String sql = "SELECT * FROM vw_detalhes_avaliacao WHERE nome_usuario = ?;";
 
             // Passamos o mapper e os argumentos (nomeUsuario)
-            return jdbc.query(sql, detalheMapper, nomeUsuario);
+            return jdbc.query(sql, detalheMapper, nome_usuario);
 
         } else {
 
