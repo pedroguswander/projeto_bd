@@ -6,14 +6,17 @@ import {
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-import SatisfacaoChart from '../components/SatisfacaoChart';
-import { DistribuicaoHorasSemanaisChart } from '../components/DistribuicaoHorasSemanaisChart';
-import GeneroPorAssistidoChart from '../components/GeneroPorAssistidoChart';
+// Importe os modais e os novos componentes de "aba"
 import InserirUsuario from '../components/InserirUsuario';
+import Dashboard from '../components/Dashboard';
+import Views from '../components/Views';
 
 function Home() {
   const [openMenu, setOpenMenu] = useState(null);
   const [isUsuarioModalOpen, setUsuarioModalOpen] = useState(false);
+  
+  // Novo estado para controlar a aba ativa
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   const handleMenuClick = (menuKey) => {
     setOpenMenu(openMenu === menuKey ? null : menuKey);
@@ -23,7 +26,7 @@ function Home() {
     <div className="home-wrapper">
       <div className="home-container">
 
-        {/* SIDEBAR */}
+        {/* SIDEBAR (Sem alterações) */}
         <nav className="sidebar">
           <div className="sidebar-logo">StreamAnalytics</div>
           <ul className="sidebar-menu">
@@ -53,7 +56,7 @@ function Home() {
           </ul>
         </nav>
 
-        {/* CONTEÚDO PRINCIPAL */}
+        {/* CONTEÚDO PRINCIPAL (Atualizado com Abas) */}
         <main className="main-content">
           <header className="dashboard-header">
             <div className="search-bar">
@@ -66,35 +69,32 @@ function Home() {
             </div>
           </header>
 
-          <h1>Dashboard</h1>
+          {/* NAVEGAÇÃO DAS ABAS */}
+          <nav className="tab-navigation">
+            <button
+              className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`}
+              onClick={() => setActiveTab('dashboard')}
+            >
+              Dashboard
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'consultas' ? 'active' : ''}`}
+              onClick={() => setActiveTab('consultas')}
+            >
+              Views
+            </button>
+          </nav>
 
-          <section className="dashboard-grid">
-            <div className="dashboard-card card-medium">
-              <SatisfacaoChart />
-            </div>
+          {/* CONTEÚDO DAS ABAS (Renderização Condicional) */}
+          <div className="tab-content">
+            {activeTab === 'dashboard' && <Dashboard />}
+            {activeTab === 'consultas' && <Views />}
+          </div>
 
-            <div className="dashboard-card card-large">
-              <GeneroPorAssistidoChart />
-            </div>
-
-            <div className="dashboard-card card-medium">
-              <DistribuicaoHorasSemanaisChart />
-            </div>
-
-            <div className="dashboard-card card-medium">
-              <h3>Conteúdo Mais Visto</h3>
-              <ul className="top-content-list">
-                <li><span>1. A Origem da Matrix</span> <span>1.2M views</span></li>
-                <li><span>2. Conexões Perdidas</span> <span>980K views</span></li>
-                <li><span>3. O Último Horizonte</span> <span>750K views</span></li>
-                <li><span>4. Crônicas de Neon</span> <span>610K views</span></li>
-              </ul>
-            </div>
-          </section>
         </main>
       </div>
 
-      {/* MODAIS */}
+      {/* MODAIS (Sem alterações) */}
       {isUsuarioModalOpen && <InserirUsuario onClose={() => setUsuarioModalOpen(false)} />}
     </div>
   );

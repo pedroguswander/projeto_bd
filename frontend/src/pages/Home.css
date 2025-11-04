@@ -300,3 +300,45 @@ body {
   width: 100%;
   margin-top: 20px;
 }
+
+/* ... (Mantenha todos os seus estilos existentes) ... */
+
+/* ESTILOS PARA AS ABAS */
+.tab-navigation {
+  display: flex;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 24px;
+}
+
+.tab-button {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #888;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: -2px; /* Alinha com a borda inferior do contêiner */
+}
+
+.tab-button:hover {
+  color: #555;
+}
+
+.tab-button.active {
+  color: #333; /* Cor da aba ativa */
+  border-bottom-color: #007bff; /* Cor da borda da aba ativa */
+}
+
+/* ESTILO PARA O CARD DE LARGURA TOTAL (para a tabela) */
+.dashboard-card.card-full-width {
+  grid-column: 1 / -1; /* Faz o card ocupar todas as colunas da grid */
+}
+
+/* Ajuste para a tabela dentro do card (opcional, mas recomendado) */
+.dashboard-card.card-full-width table {
+  width: 100%;
+  margin-top: 16px;
+}
