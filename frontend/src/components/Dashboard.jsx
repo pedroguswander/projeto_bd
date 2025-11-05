@@ -4,6 +4,7 @@ import React from 'react';
 import SatisfacaoChart from './SatisfacaoChart';
 import { DistribuicaoHorasSemanaisChart } from './DistribuicaoHorasSemanaisChart';
 import GeneroPorAssistidoChart from './GeneroPorAssistidoChart';
+import { QtdServicosPorPrecoIdealChart } from './QtdServicosPorPrecoIdealChart';
 
 // Importe o CSS da Home, pois ele contém os estilos dos cards
 import '../pages/Home.css'; 
@@ -24,6 +25,9 @@ function Dashboard() {
 
         <div className="dashboard-card card-medium">
           <DistribuicaoHorasSemanaisChart />
+        </div>
+
+        <div className="dashboard-card card-large">
         </div>
 
         <div className="dashboard-card card-medium">

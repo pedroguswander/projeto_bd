@@ -1,4 +1,4 @@
-USE streamingatualizado;
+USE streamingatualizado2;
 
 ALTER TABLE obra ADD INDEX nome_index(nome);
 
@@ -47,15 +47,22 @@ UNION
        OR ps.fk_usuario_id IS NULL
 );
 
-SELECT nome, email FROM usuario WHERE
-    usuario_id IN (
+SELECT
+    u.nome,
+    u.email
+FROM
+    usuario u
+        INNER JOIN
+    conta c ON u.usuario_id = c.fk_usuario_id -- Junta usuário com a sua conta
+WHERE
+    c.codigo IN ( -- Filtra as contas cujo código está na subconsulta
         SELECT DISTINCT
-            fk_usuario_id
+            fk_conta_cod -- Seleciona os códigos de conta distintos
         FROM
-            avaliacao
+            avaliacao -- Da tabela avaliação
         WHERE
             nota IS NOT NULL
-          AND nota > 0
+          AND nota > 0 -- Onde a nota não é nula e é maior que 0
     );
 
 
@@ -86,7 +93,9 @@ SELECT
 FROM
     avaliacao a
         INNER JOIN
-    usuario u ON a.fk_usuario_id = u.usuario_id
+        conta c ON c.codigo=a.fk_conta_cod
+        INNER JOIN
+    usuario u ON c.fk_usuario_id = u.usuario_id
         INNER JOIN
     obra o ON a.fk_obra_codigo = o.codigo
         INNER JOIN

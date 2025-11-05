@@ -1,7 +1,9 @@
 package com.grupo7.serivco_streaming.controllers;
 
+import com.grupo7.serivco_streaming.dto.PesquisaProcessadaDTO;
 import com.grupo7.serivco_streaming.dto.PesquisaStreaming;
 import com.grupo7.serivco_streaming.services.PesquisaStreamingService;
+import com.grupo7.serivco_streaming.services.PesquisaStreamingServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
@@ -13,9 +15,11 @@ import java.util.Map;
 public class PesquisaStreamingController {
 
     private final PesquisaStreamingService pesquisaService;
+    private final PesquisaStreamingServiceImpl pesquisaServiceImpl;
 
-    public PesquisaStreamingController(PesquisaStreamingService pesquisaService) {
+    public PesquisaStreamingController(PesquisaStreamingService pesquisaService, PesquisaStreamingServiceImpl pesquisaServiceImpl) {
         this.pesquisaService = pesquisaService;
+        this.pesquisaServiceImpl = pesquisaServiceImpl;
     }
 
     @PostMapping
@@ -61,5 +65,11 @@ public class PesquisaStreamingController {
     @GetMapping("/genero-por-assistido")
     public Map<String, Long> getGeneroPorAssistido() {
         return pesquisaService.getGeneroPorAssistido();
+    }
+
+    @GetMapping("/qtd-servicos-por-preco-ideal")
+    public ResponseEntity<List<PesquisaProcessadaDTO>> getDadosProcessados() {
+        List<PesquisaProcessadaDTO> dados = pesquisaServiceImpl.getDadosProcessados();
+        return ResponseEntity.ok(dados);
     }
 }

@@ -1,7 +1,9 @@
 package com.grupo7.serivco_streaming.repositories;
 
+import com.grupo7.serivco_streaming.dto.PesquisaRawDTO;
 import com.grupo7.serivco_streaming.dto.PesquisaStreaming;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -59,6 +61,15 @@ public class PesquisaStreamingRepository {
 
         return p;
     };
+
+    public List<PesquisaRawDTO> getPrecoIdealEQuantidadeAssinaturas() {
+        // SQL para selecionar apenas as colunas necessárias
+        String sql = "SELECT preco_ideal_menos, qtd_assinaturas FROM pesquisa_streaming";
+
+        // Usamos BeanPropertyRowMapper para mapear o resultado (snake_case)
+        // para o nosso DTO (camelCase) automaticamente.
+        return jdbc.query(sql, new BeanPropertyRowMapper<>(PesquisaRawDTO.class));
+    }
 
 // Assumindo que você tem uma classe PesquisaStreaming
 // e que 'jdbc' é uma instância de JdbcTemplate

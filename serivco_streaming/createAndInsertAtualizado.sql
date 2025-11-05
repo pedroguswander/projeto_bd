@@ -1,5 +1,6 @@
-CREATE DATABASE IF NOT EXISTS StreamingAtualizado;
-USE StreamingAtualizado;
+
+CREATE DATABASE IF NOT EXISTS StreamingAtualizado2;
+USE StreamingAtualizado2;
 
 CREATE TABLE genero (
                         genero_PK INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -78,50 +79,50 @@ CREATE TABLE assinatura_assina (
 );
 
 CREATE TABLE assiste (
-                         fk_usuario_id INT NOT NULL,
+                         fk_conta_cod INT NOT NULL,
                          fk_obra_codigo INT NOT NULL,
-                         PRIMARY KEY (fk_usuario_id, fk_obra_codigo),
-                         FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                         PRIMARY KEY (fk_conta_cod, fk_obra_codigo),
+                         FOREIGN KEY (fk_conta_cod) REFERENCES conta(codigo) ON DELETE CASCADE,
                          FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
 );
 
 CREATE TABLE avaliacao (
-                           fk_usuario_id INT NOT NULL,
+                           fk_conta_cod INT NOT NULL,
                            fk_obra_codigo INT NOT NULL,
                            nota INT DEFAULT 0 CHECK (nota BETWEEN 1 AND 5),
                            data_avaliacao DATE,
                            texto VARCHAR(500),
-                           PRIMARY KEY (fk_usuario_id, fk_obra_codigo),
-                           FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                           PRIMARY KEY (fk_conta_cod, fk_obra_codigo),
+                           FOREIGN KEY (fk_conta_cod) REFERENCES conta(codigo) ON DELETE CASCADE,
                            FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
 );
 
 CREATE TABLE comentario (
                             codigo INT PRIMARY KEY AUTO_INCREMENT,
-                            fk_usuario_id INT NOT NULL,
+                            fk_conta_cod INT NOT NULL,
                             fk_obra_codigo INT NOT NULL,
                             texto VARCHAR(500),
                             gostei BOOLEAN,
-                            FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                            FOREIGN KEY (fk_conta_cod) REFERENCES conta(codigo) ON DELETE CASCADE,
                             FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
 );
 
 CREATE TABLE historico_de_visualizacao (
-                                           fk_usuario_id INT NOT NULL,
+                                           fk_conta_cod INT NOT NULL,
                                            fk_obra_codigo INT NOT NULL,
                                            tempo_assistido DECIMAL(10,2) CHECK (tempo_assistido >= 0),
                                            progresso_percentual DECIMAL(5,2) CHECK (progresso_percentual BETWEEN 0 AND 100),
-                                           PRIMARY KEY (fk_usuario_id, fk_obra_codigo),
-                                           FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                                           PRIMARY KEY (fk_conta_cod, fk_obra_codigo),
+                                           FOREIGN KEY (fk_conta_cod) REFERENCES conta(codigo) ON DELETE CASCADE,
                                            FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
 );
 
 CREATE TABLE lista_de_favoritos (
-                                    fk_usuario_id INT NOT NULL,
+                                    fk_conta_cod INT NOT NULL,
                                     fk_obra_codigo INT NOT NULL,
                                     ordem_de_exibicao INT,
-                                    PRIMARY KEY (fk_usuario_id, fk_obra_codigo),
-                                    FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE,
+                                    PRIMARY KEY (fk_conta_cod, fk_obra_codigo),
+                                    FOREIGN KEY (fk_conta_cod) REFERENCES conta(codigo) ON DELETE CASCADE,
                                     FOREIGN KEY (fk_obra_codigo) REFERENCES obra(codigo) ON DELETE CASCADE
 );
 
@@ -153,7 +154,6 @@ CREATE TABLE pesquisa_streaming (
                                     preco_ideal_menos VARCHAR(50),
                                     FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id)
 );
-
 
 INSERT INTO genero (nome) VALUES
                               ('Ação'), ('Comédia'), ('Drama'), ('Ficção Científica'), ('Terror'),
@@ -337,48 +337,48 @@ INSERT INTO assinatura_assina (fk_usuario_id, fk_plano_tipo_do_plano) VALUES
                                                                           (29, 'Básico com Anúncios'),
                                                                           (30, 'Família 4K');
 
-INSERT INTO assiste (fk_usuario_id, fk_obra_codigo) VALUES
-                                                        (1, 1), (1, 5), (2, 2), (3, 7), (4, 11), (5, 15), (6, 24), (7, 8), (8, 25), (9, 1),
-                                                        (10, 10), (11, 16), (12, 20), (13, 21), (14, 4), (15, 6), (16, 18), (17, 22), (18, 3), (19, 12),
-                                                        (20, 13), (21, 17), (22, 26), (23, 29), (24, 30), (25, 9), (26, 27), (27, 11), (28, 24), (29, 1);
+INSERT INTO assiste (fk_conta_cod, fk_obra_codigo) VALUES
+                                                       (1, 1), (1, 5), (2, 2), (3, 7), (4, 11), (5, 15), (6, 24), (7, 8), (8, 25), (9, 1),
+                                                       (10, 10), (11, 16), (12, 20), (13, 21), (14, 4), (15, 6), (16, 18), (17, 22), (18, 3), (19, 12),
+                                                       (20, 13), (21, 17), (22, 26), (23, 29), (24, 30), (25, 9), (26, 27), (27, 11), (28, 24), (29, 1);
 
-INSERT INTO avaliacao (fk_usuario_id, fk_obra_codigo, nota, data_avaliacao, texto) VALUES
-                                                                                       (1, 1, 5, '2025-09-10', 'Excelente!'), (2, 2, 4, '2025-09-11', 'Muito bom, recomendo.'), (3, 7, 3, '2025-09-12', 'Razoável, esperava mais.'),
-                                                                                       (4, 11, 5, '2025-09-13', 'Perfeito, um dos melhores que já vi.'), (5, 15, 2, '2025-09-14', 'Não gostei, enredo fraco.'),
-                                                                                       (6, 24, 4, '2025-09-15', 'Ótima atuação.'), (7, 8, 1, '2025-09-16', 'Péssimo, perdi meu tempo.'), (8, 25, 5, '2025-09-17', 'Fotografia impecável.'),
-                                                                                       (9, 1, 3, '2025-09-18', 'Começa bem, mas se perde no final.'), (10, 10, 4, '2025-09-19', 'Divertido.'),
-                                                                                       (11, 16, 5, '2025-08-01', 'Obra de arte!'), (12, 20, 4, '2025-08-02', 'Surpreendente.'), (13, 21, 3, '2025-08-03', 'Ok.'),
-                                                                                       (14, 4, 5, '2025-08-04', 'Inesquecível.'), (15, 6, 2, '2025-08-05', 'Decepcionante.'), (16, 18, 4, '2025-08-06', 'Vale a pena assistir.'),
-                                                                                       (17, 22, 1, '2025-08-07', 'Muito ruim.'), (18, 3, 5, '2025-08-08', 'Fantástico!'), (19, 12, 3, '2025-08-09', 'Mediano.'),
-                                                                                       (20, 13, 4, '2025-08-10', 'Inteligente.'), (21, 17, 5, '2025-07-20', 'Maravilhoso.'), (22, 26, 4, '2025-07-21', 'Prende a atenção.'),
-                                                                                       (23, 29, 3, '2025-07-22', 'Poderia ser melhor.'), (24, 30, 5, '2025-07-23', 'Genial.'), (25, 9, 2, '2025-07-24', 'Chato.'),
-                                                                                       (26, 27, 4, '2025-07-25', 'Emocionante.'), (27, 11, 1, '2025-07-26', 'Terrível.'), (28, 24, 5, '2025-07-27', 'Espetacular.'),
-                                                                                       (29, 1, 3, '2025-07-28', 'Regular.'), (30, 5, 4, '2025-07-29', 'Muito bem feito.');
+INSERT INTO avaliacao (fk_conta_cod, fk_obra_codigo, nota, data_avaliacao, texto) VALUES
+                                                                                      (1, 1, 5, '2025-09-10', 'Excelente!'), (2, 2, 4, '2025-09-11', 'Muito bom, recomendo.'), (3, 7, 3, '2025-09-12', 'Razoável, esperava mais.'),
+                                                                                      (4, 11, 5, '2025-09-13', 'Perfeito, um dos melhores que já vi.'), (5, 15, 2, '2025-09-14', 'Não gostei, enredo fraco.'),
+                                                                                      (6, 24, 4, '2025-09-15', 'Ótima atuação.'), (7, 8, 1, '2025-09-16', 'Péssimo, perdi meu tempo.'), (8, 25, 5, '2025-09-17', 'Fotografia impecável.'),
+                                                                                      (9, 1, 3, '2025-09-18', 'Começa bem, mas se perde no final.'), (10, 10, 4, '2025-09-19', 'Divertido.'),
+                                                                                      (11, 16, 5, '2025-08-01', 'Obra de arte!'), (12, 20, 4, '2025-08-02', 'Surpreendente.'), (13, 21, 3, '2025-08-03', 'Ok.'),
+                                                                                      (14, 4, 5, '2025-08-04', 'Inesquecível.'), (15, 6, 2, '2025-08-05', 'Decepcionante.'), (16, 18, 4, '2025-08-06', 'Vale a pena assistir.'),
+                                                                                      (17, 22, 1, '2025-08-07', 'Muito ruim.'), (18, 3, 5, '2025-08-08', 'Fantástico!'), (19, 12, 3, '2025-08-09', 'Mediano.'),
+                                                                                      (20, 13, 4, '2025-08-10', 'Inteligente.'), (21, 17, 5, '2025-07-20', 'Maravilhoso.'), (22, 26, 4, '2025-07-21', 'Prende a atenção.'),
+                                                                                      (23, 29, 3, '2025-07-22', 'Poderia ser melhor.'), (24, 30, 5, '2025-07-23', 'Genial.'), (25, 9, 2, '2025-07-24', 'Chato.'),
+                                                                                      (26, 27, 4, '2025-07-25', 'Emocionante.'), (27, 11, 1, '2025-07-26', 'Terrível.'), (28, 24, 5, '2025-07-27', 'Espetacular.'),
+                                                                                      (29, 1, 3, '2025-07-28', 'Regular.'), (30, 5, 4, '2025-07-29', 'Muito bem feito.');
 
-INSERT INTO comentario (fk_usuario_id, fk_obra_codigo, texto, gostei) VALUES
-                                                                          (1, 1, 'Adorei o final!', TRUE), (2, 2, 'O protagonista é irritante.', FALSE), (3, 7, 'Que plot twist!', TRUE),
-                                                                          (4, 11, 'A trilha sonora é incrível.', TRUE), (5, 15, 'Achei o ritmo muito lento.', FALSE), (6, 24, 'Me fez chorar.', TRUE),
-                                                                          (7, 8, 'Não entendi nada.', FALSE), (8, 25, 'Maratonei em um dia!', TRUE), (9, 1, 'Cenas de ação bem coreografadas.', TRUE),
-                                                                          (10, 10, 'Personagens sem profundidade.', FALSE), (11, 16, 'Figurino impecável.', TRUE), (12, 20, 'O humor é muito forçado.', FALSE),
-                                                                          (13, 21, 'Reassistindo pela terceira vez.', TRUE), (14, 4, 'O livro é bem melhor.', FALSE), (15, 6, 'Me identifiquei com a história.', TRUE),
-                                                                          (16, 18, 'Ansioso pela próxima temporada.', TRUE), (17, 22, 'Cancelaram a série, que ódio.', FALSE), (18, 3, 'Atuação de gala.', TRUE),
-                                                                          (19, 12, 'Efeitos especiais deixaram a desejar.', FALSE), (20, 13, 'Um clássico moderno.', TRUE), (21, 17, 'Superestimado.', FALSE),
-                                                                          (22, 26, 'Me surpreendeu positivamente.', TRUE), (23, 29, 'O vilão rouba a cena.', TRUE), (24, 30, 'Merecia mais reconhecimento.', TRUE),
-                                                                          (25, 9, 'Final decepcionante.', FALSE), (26, 27, 'Para assistir com a família.', TRUE), (27, 11, 'Muito pesado.', FALSE),
-                                                                          (28, 24, 'Direção genial.', TRUE), (29, 1, 'História clichê.', FALSE), (30, 5, 'Recomendo a todos.', TRUE);
+INSERT INTO comentario (fk_conta_cod, fk_obra_codigo, texto, gostei) VALUES
+                                                                         (1, 1, 'Adorei o final!', TRUE), (2, 2, 'O protagonista é irritante.', FALSE), (3, 7, 'Que plot twist!', TRUE),
+                                                                         (4, 11, 'A trilha sonora é incrível.', TRUE), (5, 15, 'Achei o ritmo muito lento.', FALSE), (6, 24, 'Me fez chorar.', TRUE),
+                                                                         (7, 8, 'Não entendi nada.', FALSE), (8, 25, 'Maratonei em um dia!', TRUE), (9, 1, 'Cenas de ação bem coreografadas.', TRUE),
+                                                                         (10, 10, 'Personagens sem profundidade.', FALSE), (11, 16, 'Figurino impecável.', TRUE), (12, 20, 'O humor é muito forçado.', FALSE),
+                                                                         (13, 21, 'Reassistindo pela terceira vez.', TRUE), (14, 4, 'O livro é bem melhor.', FALSE), (15, 6, 'Me identifiquei com a história.', TRUE),
+                                                                         (16, 18, 'Ansioso pela próxima temporada.', TRUE), (17, 22, 'Cancelaram a série, que ódio.', FALSE), (18, 3, 'Atuação de gala.', TRUE),
+                                                                         (19, 12, 'Efeitos especiais deixaram a desejar.', FALSE), (20, 13, 'Um clássico moderno.', TRUE), (21, 17, 'Superestimado.', FALSE),
+                                                                         (22, 26, 'Me surpreendeu positivamente.', TRUE), (23, 29, 'O vilão rouba a cena.', TRUE), (24, 30, 'Merecia mais reconhecimento.', TRUE),
+                                                                         (25, 9, 'Final decepcionante.', FALSE), (26, 27, 'Para assistir com a família.', TRUE), (27, 11, 'Muito pesado.', FALSE),
+                                                                         (28, 24, 'Direção genial.', TRUE), (29, 1, 'História clichê.', FALSE), (30, 5, 'Recomendo a todos.', TRUE);
 
-INSERT INTO historico_de_visualizacao (fk_usuario_id, fk_obra_codigo, tempo_assistido, progresso_percentual) VALUES
-                                                                                                                 (1, 1, 7800.50, 99.50), (2, 2, 3200.00, 45.10), (3, 7, 8820.00, 100.00), (4, 11, 1500.75, 25.00), (5, 15, 4500.00, 50.25),
-                                                                                                                 (6, 24, 9200.00, 100.00), (7, 8, 650.20, 10.80), (8, 25, 2400.00, 33.33), (9, 1, 5600.00, 80.00), (10, 10, 1234.56, 15.70),
-                                                                                                                 (11, 16, 6800.00, 100.00), (12, 20, 4980.00, 75.00), (13, 21, 300.00, 5.00), (14, 4, 7100.00, 92.40), (15, 6, 10800.00, 100.00),
-                                                                                                                 (16, 18, 999.00, 12.00), (17, 22, 4250.50, 55.50), (18, 3, 5400.00, 68.90), (19, 12, 8100.00, 99.00), (20, 13, 3300.00, 40.00),
-                                                                                                                 (21, 17, 5000.00, 100.00), (22, 26, 1800.00, 22.80), (23, 29, 750.00, 9.50), (24, 30, 6320.00, 81.20), (25, 9, 11000.00, 100.00),
-                                                                                                                 (26, 27, 2040.00, 30.00), (27, 11, 4800.00, 66.70), (28, 24, 3150.80, 45.00), (29, 1, 9500.00, 100.00), (30, 5, 800.00, 8.80);
+INSERT INTO historico_de_visualizacao (fk_conta_cod, fk_obra_codigo, tempo_assistido, progresso_percentual) VALUES
+                                                                                                                (1, 1, 7800.50, 99.50), (2, 2, 3200.00, 45.10), (3, 7, 8820.00, 100.00), (4, 11, 1500.75, 25.00), (5, 15, 4500.00, 50.25),
+                                                                                                                (6, 24, 9200.00, 100.00), (7, 8, 650.20, 10.80), (8, 25, 2400.00, 33.33), (9, 1, 5600.00, 80.00), (10, 10, 1234.56, 15.70),
+                                                                                                                (11, 16, 6800.00, 100.00), (12, 20, 4980.00, 75.00), (13, 21, 300.00, 5.00), (14, 4, 7100.00, 92.40), (15, 6, 10800.00, 100.00),
+                                                                                                                (16, 18, 999.00, 12.00), (17, 22, 4250.50, 55.50), (18, 3, 5400.00, 68.90), (19, 12, 8100.00, 99.00), (20, 13, 3300.00, 40.00),
+                                                                                                                (21, 17, 5000.00, 100.00), (22, 26, 1800.00, 22.80), (23, 29, 750.00, 9.50), (24, 30, 6320.00, 81.20), (25, 9, 11000.00, 100.00),
+                                                                                                                (26, 27, 2040.00, 30.00), (27, 11, 4800.00, 66.70), (28, 24, 3150.80, 45.00), (29, 1, 9500.00, 100.00), (30, 5, 800.00, 8.80);
 
-INSERT INTO lista_de_favoritos (fk_usuario_id, fk_obra_codigo, ordem_de_exibicao) VALUES
-                                                                                      (1, 1, 1), (2, 2, 2), (3, 7, 1), (4, 11, 3), (5, 15, 1), (6, 24, 2), (7, 8, 1), (8, 25, 1), (9, 1, 3), (10, 10, 2),
-                                                                                      (11, 16, 1), (12, 20, 1), (13, 21, 2), (14, 4, 1), (15, 6, 2), (16, 18, 3), (17, 22, 1), (18, 3, 1), (19, 12, 2), (20, 13, 1),
-                                                                                      (21, 17, 3), (22, 26, 2), (23, 29, 1), (24, 30, 1), (25, 9, 2), (26, 27, 1), (27, 11, 3), (28, 24, 1), (29, 1, 2), (30, 5, 1);
+INSERT INTO lista_de_favoritos (fk_conta_cod, fk_obra_codigo, ordem_de_exibicao) VALUES
+                                                                                     (1, 1, 1), (2, 2, 2), (3, 7, 1), (4, 11, 3), (5, 15, 1), (6, 24, 2), (7, 8, 1), (8, 25, 1), (9, 1, 3), (10, 10, 2),
+                                                                                     (11, 16, 1), (12, 20, 1), (13, 21, 2), (14, 4, 1), (15, 6, 2), (16, 18, 3), (17, 22, 1), (18, 3, 1), (19, 12, 2), (20, 13, 1),
+                                                                                     (21, 17, 3), (22, 26, 2), (23, 29, 1), (24, 30, 1), (25, 9, 2), (26, 27, 1), (27, 11, 3), (28, 24, 1), (29, 1, 2), (30, 5, 1);
 
 INSERT INTO pesquisa_streaming (
     fk_usuario_id,
