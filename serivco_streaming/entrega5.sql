@@ -1,4 +1,4 @@
-USE StreamingAtualizado;
+USE StreamingAtualizado2;
 
 CREATE TABLE IF NOT EXISTS log_reclamacoes (
                                                log_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -68,11 +68,13 @@ END$$
 CREATE PROCEDURE AJUSTAR_PROGRESSO_CONCLUIDO()
 BEGIN
     DECLARE done INT DEFAULT 0;
-    DECLARE v_usuario_id INT;
+    -- v_usuario_id precisa ser mudada para v_conta_cod
+    DECLARE v_conta_cod INT;
     DECLARE v_obra_codigo INT;
 
     DECLARE cur CURSOR FOR
-        SELECT fk_usuario_id, fk_obra_codigo
+        -- fk_usuario_id precisa ser mudada para fk_conta_cod
+        SELECT fk_conta_cod, fk_obra_codigo
         FROM historico_de_visualizacao
         WHERE progresso_percentual >= 99.50 AND progresso_percentual < 100.00;
 
@@ -81,14 +83,16 @@ BEGIN
     OPEN cur;
 
     read_loop: LOOP
-        FETCH cur INTO v_usuario_id, v_obra_codigo;
+        -- FETCH cur INTO v_usuario_id, v_obra_codigo; precisa ser mudada para v_conta_cod
+        FETCH cur INTO v_conta_cod, v_obra_codigo;
         IF done THEN
             LEAVE read_loop;
         END IF;
 
         UPDATE historico_de_visualizacao
         SET progresso_percentual = 100.00
-        WHERE fk_usuario_id = v_usuario_id AND fk_obra_codigo = v_obra_codigo;
+        -- O WHERE precisa ser ajustado para fk_conta_cod
+        WHERE fk_conta_cod = v_conta_cod AND fk_obra_codigo = v_obra_codigo;
 
     END LOOP;
 

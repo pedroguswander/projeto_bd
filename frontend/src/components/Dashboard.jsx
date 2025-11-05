@@ -27,7 +27,8 @@ function Dashboard() {
           <DistribuicaoHorasSemanaisChart />
         </div>
 
-        <div className="dashboard-card card-large">
+        <div className="dashboard-card card-medium">
+          <QtdServicosPorPrecoIdealChart />
         </div>
 
         <div className="dashboard-card card-medium">

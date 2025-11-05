@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Bubble } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -7,13 +7,14 @@ import {
   Tooltip,
   Legend,
   Title,
-} from 'chart.js'; // Importa o plugin
+} from 'chart.js';
 import { useQtdServicosPorPrecoIdeal } from '../hooks/useQtdServicosPorPrecoIdeal';
 
-// Registra todos os componentes necessários do Chart.js, incluindo o plugin
+// 1. REGISTRO DO CHARTJS ATUALIZADO:
+// Removidos LineElement e LineController, mantendo apenas o necessário para o Bubble Chart.
 ChartJS.register(
-  LinearScale,
-  PointElement,
+  LinearScale,   // Necessário para as escalas X e Y
+  PointElement,  // Usado para desenhar as bolhas
   Tooltip,
   Legend,
   Title
@@ -40,7 +41,7 @@ const processDataForBubbleChart = (data) => {
         r: 0, // 'r' é o raio da bolha
       });
     }
-    // Aumenta o raio para cada ocorrência. Ajuste o multiplicador (ex: * 4) se quiser bolhas maiores.
+    // Aumenta o raio para cada ocorrência.
     concentrationMap.get(key).r += 3;
   });
 
@@ -48,11 +49,11 @@ const processDataForBubbleChart = (data) => {
 };
 
 export const QtdServicosPorPrecoIdealChart = () => {
-  // 1. Busca os dados com React Query
+  // 1. Hooks no topo (corrigido anteriormente)
   const { data: rawData, isLoading, isError } = useQtdServicosPorPrecoIdeal();
-
-  // 2. Processa os dados para o formato do gráfico
   const processedData = useMemo(() => processDataForBubbleChart(rawData), [rawData]);
+
+  // 2. useEffect removido, eliminando potencial problema de dependência.
 
   if (isLoading) {
     return <div>Carregando gráfico...</div>;
@@ -61,10 +62,12 @@ export const QtdServicosPorPrecoIdealChart = () => {
   if (isError) {
     return <div>Erro ao carregar os dados.</div>;
   }
+  
+  // Condição para tratar o caso de dados vazios após o carregamento
+  if (!processedData || processedData.length === 0) {
+    return <div>Nenhum dado de serviço encontrado para o gráfico.</div>;
+  }
 
-  useEffect(() => {
-    
-  }, [])
 
   // 3. Define a estrutura de dados para o Chart.js
   const chartData = {
@@ -76,17 +79,7 @@ export const QtdServicosPorPrecoIdealChart = () => {
         backgroundColor: 'rgba(54, 162, 235, 0.6)',
         borderColor: 'rgba(54, 162, 235, 1)',
       },
-      {
-        type: 'line', // Tipo 'line' para a curva de regressão
-        label: 'Curva Ideal (Polinomial)',
-        data: processedData, // O plugin usa esses dados para calcular a curva
-        borderColor: 'rgba(211, 47, 47, 0.8)',
-        backgroundColor: 'transparent',
-        borderWidth: 2,
-        pointRadius: 0, // Não mostrar pontos, apenas a linha
-        // Configuração do plugin de regressão
-
-      },
+      // ⚠️ LINHA REMOVIDA AQUI: O dataset 'line' foi removido
     ],
   };
 
@@ -111,10 +104,11 @@ export const QtdServicosPorPrecoIdealChart = () => {
             // Tooltip customizado para mostrar X, Y e o Raio (Concentração)
             const label = context.dataset.label || '';
             if (context.dataset.type === 'bubble') {
+              // Note: 'context.raw' só existe para datasets do tipo Bubble
               const rawValue = context.raw.r / 3; // Inverte o cálculo do raio
               return `${label}: (Preço: R$${context.parsed.x}, Qtd: ${context.parsed.y}, Contagem: ${rawValue})`;
             }
-            return false; // Esconde o tooltip para a linha de regressão
+            return label; // Retorno padrão para outros tipos, embora só haja Bubble agora.
           },
         },
       },
@@ -126,24 +120,28 @@ export const QtdServicosPorPrecoIdealChart = () => {
           text: 'Quantidade de serviços assinados',
         },
         min: 0,
-        max: 7, // Ajustado para corresponder à imagem
+        max: 7,
       },
       x: {
         title: {
           display: true,
           text: 'Preço Ideal (R$)',
         },
-        min: 5,
-        max: 55, // Ajustado para corresponder à imagem
+        min: 10,
+        max: 55,
       },
     },
   };
 
   return (
     <div style={{ height: '500px', width: '100%' }}>
-      <Bubble key={processedData.length > 0 ? 'data-loaded' : 'no-data'} 
-           options={options} 
-           data={chartData} />
+      <Bubble 
+        // A 'key' anterior não é estritamente necessária se o componente for destruído corretamente
+        // Mas se precisar dela para forçar a re-renderização em caso de dados vazios:
+        key={processedData.length > 0 ? 'data-loaded' : 'no-data'} 
+        options={options} 
+        data={chartData} 
+      />
     </div>
   );
 };
