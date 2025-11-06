@@ -128,6 +128,32 @@ END$$
 
 DELIMITER ;
 
+-- DELIMITER é usado para permitir que o corpo do trigger contenha ponto e vírgula
+DELIMITER //
+
+CREATE TRIGGER prevent_duplicate_obra
+    BEFORE INSERT ON obra
+    FOR EACH ROW
+BEGIN
+    DECLARE nome_count INT;
+
+    -- Verifica se já existe uma obra com o mesmo nome (case-insensitive)
+    SELECT COUNT(*)
+    INTO nome_count
+    FROM obra
+    WHERE nome = NEW.nome;
+
+    -- Se a contagem for maior que 0, significa que o nome já existe
+    IF nome_count > 0 THEN
+        -- Sinaliza um erro para impedir a inserção da linha
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'ERRO: Nao e permitido inserir obras com nomes duplicados.';
+    END IF;
+END //
+
+-- Retorna o delimitador ao padrão (ponto e vírgula)
+DELIMITER ;
+
 
 SELECT '--- TESTE FUNÇÕES ---' AS Info;
 SELECT tipo_do_plano, preco, CLASSIFICAR_PLANO_POR_PRECO(preco) AS Nivel FROM plano;

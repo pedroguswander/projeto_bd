@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import './Home.css';
 import {
   FaFilm, FaUsers, FaUserCog, FaTags, FaSearch,
-  FaUserCircle, FaChartBar, FaChevronDown
+  FaUserCircle, FaChartBar, FaChevronDown,
 } from 'react-icons/fa';
+import { SlEnvolopeLetter } from "react-icons/sl";
+import { MdLocalMovies, MdAnimation } from "react-icons/md";
 import { Link } from 'react-router-dom';
 
 // Importe os modais e os novos componentes de "aba"
@@ -15,7 +17,9 @@ import Procedures from '../components/Procedures';
 function Home() {
   const [openMenu, setOpenMenu] = useState(null);
   const [isUsuarioModalOpen, setUsuarioModalOpen] = useState(false);
-  
+  const [isContaModalOpen, setContaModalOpen] = useState(false);
+  const [isObraModalOpen, setObraModalOpen] = useState(false);
+  const [isGeneroModalOpen, setGeneroModalOpen] = useState(false);
   // Novo estado para controlar a aba ativa
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -50,6 +54,48 @@ function Home() {
               </div>
               <ul className="submenu">
                 <li><a onClick={() => setUsuarioModalOpen(true)}>Adicionar</a></li>
+                <li><Link to="/usuarios/atualizar">Atualizar</Link></li>
+                <li><Link to="/usuarios/deletar">Deletar</Link></li>
+              </ul>
+            </li>
+
+            <li className={`menu-item-dropdown ${openMenu === 'contas' ? 'open' : ''}`}>
+              <div className="menu-item" onClick={() => handleMenuClick('contas')}>
+                <div className="menu-item-content">
+                  <SlEnvolopeLetter /> Gerenciar Contas
+                </div>
+                <FaChevronDown className="dropdown-icon" />
+              </div>
+              <ul className="submenu">
+                <li><a onClick={() => setContaModalOpen(true)}>Adicionar</a></li>
+                <li><Link to="/usuarios/atualizar">Atualizar</Link></li>
+                <li><Link to="/usuarios/deletar">Deletar</Link></li>
+              </ul>
+            </li>
+
+            <li className={`menu-item-dropdown ${openMenu === 'obras' ? 'open' : ''}`}>
+              <div className="menu-item" onClick={() => handleMenuClick('obras')}>
+                <div className="menu-item-content">
+                  <MdLocalMovies /> Gerenciar Obras
+                </div>
+                <FaChevronDown className="dropdown-icon" />
+              </div>
+              <ul className="submenu">
+                <li><a onClick={() => setObraModalOpen(true)}>Adicionar</a></li>
+                <li><Link to="/usuarios/atualizar">Atualizar</Link></li>
+                <li><Link to="/usuarios/deletar">Deletar</Link></li>
+              </ul>
+            </li>
+
+            <li className={`menu-item-dropdown ${openMenu === 'generos' ? 'open' : ''}`}>
+              <div className="menu-item" onClick={() => handleMenuClick('generos')}>
+                <div className="menu-item-content">
+                  <MdAnimation /> Gerenciar Generos
+                </div>
+                <FaChevronDown className="dropdown-icon" />
+              </div>
+              <ul className="submenu">
+                <li><a onClick={() => setGeneroModalOpen(true)}>Adicionar</a></li>
                 <li><Link to="/usuarios/atualizar">Atualizar</Link></li>
                 <li><Link to="/usuarios/deletar">Deletar</Link></li>
               </ul>
@@ -104,6 +150,9 @@ function Home() {
 
       {/* MODAIS (Sem alterações) */}
       {isUsuarioModalOpen && <InserirUsuario onClose={() => setUsuarioModalOpen(false)} />}
+      {isContaModalOpen && <InserirUsuario onClose={() => setContaModalOpen(false)} />}
+      {isObraModalOpen && <InserirUsuario onClose={() => setObraModalOpen(false)} />}
+      {isGeneroModalOpen && <InserirUsuario onClose={() => setGeneroModalOpen(false)} />}
     </div>
   );
 }
