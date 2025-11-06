@@ -13,12 +13,19 @@ import InserirUsuario from '../components/InserirUsuario';
 import Dashboard from '../components/Dashboard';
 import Views from '../components/Views';
 import Procedures from '../components/Procedures';
+import InserirObra from '../components/InserirObra';
+import AtualizarObra from '../components/AtualizarObra';
+import DeletarObra from '../components/DeletarObra';
 
 function Home() {
   const [openMenu, setOpenMenu] = useState(null);
   const [isUsuarioModalOpen, setUsuarioModalOpen] = useState(false);
   const [isContaModalOpen, setContaModalOpen] = useState(false);
+
   const [isObraModalOpen, setObraModalOpen] = useState(false);
+  const [isObraAtualizarOpen, setObraAtualizarOpen] = useState(false);
+  const [isObraDeletarOpen, setObraDeletarOpen] = useState(false);
+
   const [isGeneroModalOpen, setGeneroModalOpen] = useState(false);
   // Novo estado para controlar a aba ativa
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -82,8 +89,8 @@ function Home() {
               </div>
               <ul className="submenu">
                 <li><a onClick={() => setObraModalOpen(true)}>Adicionar</a></li>
-                <li><Link to="/usuarios/atualizar">Atualizar</Link></li>
-                <li><Link to="/usuarios/deletar">Deletar</Link></li>
+                <li><a onClick={() => setObraAtualizarOpen(true)}>Atualizar</a></li>
+                <li><a onClick={() => setObraDeletarOpen(true)}>Deletar</a></li>
               </ul>
             </li>
 
@@ -151,7 +158,11 @@ function Home() {
       {/* MODAIS (Sem alterações) */}
       {isUsuarioModalOpen && <InserirUsuario onClose={() => setUsuarioModalOpen(false)} />}
       {isContaModalOpen && <InserirUsuario onClose={() => setContaModalOpen(false)} />}
-      {isObraModalOpen && <InserirUsuario onClose={() => setObraModalOpen(false)} />}
+        
+      {isObraModalOpen && <InserirObra onClose={() => setObraModalOpen(false)} />}
+      {isObraAtualizarOpen && <AtualizarObra onClose={() => setObraAtualizarOpen(false)} />}
+      {isObraDeletarOpen && <DeletarObra onClose={() => setObraDeletarOpen(false)} />}        
+
       {isGeneroModalOpen && <InserirUsuario onClose={() => setGeneroModalOpen(false)} />}
     </div>
   );
