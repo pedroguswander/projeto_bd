@@ -4,6 +4,7 @@ import './index.css';
 import Home from './pages/Home';
 import InserirUsuario from './components/InserirUsuario';
 import VerDetalheAvaliacao from './components/VerDetalheAvaliacao';
+import UsuarioStatusConta from './components/UsuarioStatusConta';
 
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
@@ -21,9 +22,14 @@ const router = createBrowserRouter([
     element: <InserirUsuario onClose={() => {}} />,
     errorElement: <div>Página não encontrada</div>,
   },
-    {
+  {
     path: '/ver-detalhes-avaliacao',
     element: <VerDetalheAvaliacao />,
+    errorElement: <div>Página não encontrada</div>,
+  },
+  {
+    path: '/usuario-conta-status',
+    element: <UsuarioStatusConta />,
     errorElement: <div>Página não encontrada</div>,
   },
 ]);

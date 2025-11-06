@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import InserirUsuario from '../components/InserirUsuario';
 import Dashboard from '../components/Dashboard';
 import Views from '../components/Views';
+import Procedures from '../components/Procedures';
 
 function Home() {
   const [openMenu, setOpenMenu] = useState(null);
@@ -83,12 +84,19 @@ function Home() {
             >
               Views
             </button>
+                        <button
+              className={`tab-button ${activeTab === 'procedures' ? 'active' : ''}`}
+              onClick={() => setActiveTab('procedures')}
+            >
+              Procedures
+            </button>
           </nav>
 
           {/* CONTEÚDO DAS ABAS (Renderização Condicional) */}
           <div className="tab-content">
             {activeTab === 'dashboard' && <Dashboard />}
             {activeTab === 'consultas' && <Views />}
+            {activeTab === 'procedures' && <Procedures />}
           </div>
 
         </main>
