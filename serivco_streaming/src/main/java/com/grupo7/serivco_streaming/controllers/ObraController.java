@@ -39,6 +39,13 @@ public class ObraController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/buscarNome/{name}")
+    public ResponseEntity<Obra> getObraByName(@PathVariable String name) {
+        return obraService.findByName(name)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/{codigo}")
     public ResponseEntity<Obra> updateObra(@PathVariable int codigo, @RequestBody Obra body) {
         Obra obraAtualizada = obraService.update(codigo, body);
@@ -79,5 +86,5 @@ public class ObraController {
 
         // Retorna o Map com status HTTP 200 OK
         return ResponseEntity.ok(metricas);
-    }
+    }  
 }

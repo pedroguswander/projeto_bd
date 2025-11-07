@@ -58,6 +58,9 @@ public class ObraServiceImpl implements ObraService {
     }
 
     @Override
+    public Optional<Obra> findByName(String nome) { return obraRepository.findByName(nome); }
+
+    @Override
     public List<String> getUsuariosSemPlano() { return obraRepository.getUsuariosSemPlano();};
 
     @Override

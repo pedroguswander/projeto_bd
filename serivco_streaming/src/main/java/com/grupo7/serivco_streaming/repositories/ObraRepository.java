@@ -90,6 +90,15 @@ public class ObraRepository {
         }
     }
 
+    public Optional<Obra> findByName(String nome) {
+        try {
+            Obra o = jdbc.queryForObject("SELECT * FROM obra WHERE nome = ?", mapper, nome);
+            return Optional.ofNullable(o);
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
     public boolean existsById(int codigo) {
         Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM obra WHERE codigo = ?", Integer.class, codigo);
         return count != null && count > 0;

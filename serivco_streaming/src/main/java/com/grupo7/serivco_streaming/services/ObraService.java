@@ -28,4 +28,6 @@ public interface ObraService {
     public List<String> getUsuariosSemPlano();
 
     public Map<String, Object> obterMetricasVisualizacao(int codigoObra);
+
+    public Optional<Obra> findByName(String nome);
 }

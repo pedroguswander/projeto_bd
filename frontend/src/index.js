@@ -10,6 +10,7 @@ import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
 import { createBrowserRouter, RouterProvider }  from "react-router-dom"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { HorasAssistidasPorObra } from './components/HorasAssistidasPorObra';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
   {
     path: '/usuario-conta-status',
     element: <UsuarioStatusConta />,
+    errorElement: <div>Página não encontrada</div>,
+  },
+  {
+    path: '/horas-assistidas-obra',
+    element: <HorasAssistidasPorObra />,
     errorElement: <div>Página não encontrada</div>,
   },
 ]);
