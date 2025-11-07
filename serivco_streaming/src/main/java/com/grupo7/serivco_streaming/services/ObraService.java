@@ -4,6 +4,7 @@ package com.grupo7.serivco_streaming.services;
 import com.grupo7.serivco_streaming.dto.Obra;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ObraService {
@@ -25,4 +26,6 @@ public interface ObraService {
     List<Obra> findByDataLancamento(LocalDate data);
 
     public List<String> getUsuariosSemPlano();
+
+    public Map<String, Object> obterMetricasVisualizacao(int codigoObra);
 }

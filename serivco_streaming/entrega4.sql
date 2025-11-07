@@ -102,3 +102,17 @@ FROM
     genero g ON o.fk_genero_genero_PK = g.genero_PK
 WHERE
     a.nota IS NOT NULL;
+
+
+SELECT
+    o.nome AS Nome_da_Obra,
+    COALESCE(SUM(h.tempo_assistido), 0.00) AS Total_Horas_Assistidas,
+    COUNT(DISTINCT h.fk_conta_cod) AS Quantidade_De_Contas_Unicas
+FROM
+    obra o
+        LEFT JOIN
+    historico_de_visualizacao h ON o.codigo = h.fk_obra_codigo
+GROUP BY
+    o.codigo, o.nome
+ORDER BY
+    Total_Horas_Assistidas DESC;

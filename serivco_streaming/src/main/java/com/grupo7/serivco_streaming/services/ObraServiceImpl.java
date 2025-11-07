@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -73,4 +74,7 @@ public class ObraServiceImpl implements ObraService {
     public List<Obra> findByDataLancamento(LocalDate data) {
         return obraRepository.findByDataLancamento(data);
     }
+
+    @Override
+    public Map<String, Object> obterMetricasVisualizacao(int codigoObra) { return obraRepository.obterMetricasVisualizacao(codigoObra); }
 }

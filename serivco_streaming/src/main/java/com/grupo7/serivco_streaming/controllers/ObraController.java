@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/obras")
@@ -68,5 +69,15 @@ public class ObraController {
     @GetMapping("/usuarios-sem-plano")
     public List<String> getUsuariosSemPlano() {
         return obraService.getUsuariosSemPlano();
+    }
+
+    @GetMapping("/{codigoObra}/metricas")
+    public ResponseEntity<Map<String, Object>> getMetricasVisualizacao(@PathVariable int codigoObra) {
+
+        // O resultado é um Map, que é serializado para JSON
+        Map<String, Object> metricas = obraService.obterMetricasVisualizacao(codigoObra);
+
+        // Retorna o Map com status HTTP 200 OK
+        return ResponseEntity.ok(metricas);
     }
 }

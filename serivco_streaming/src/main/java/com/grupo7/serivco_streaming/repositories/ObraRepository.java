@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -35,6 +36,23 @@ public class ObraRepository {
         o.obraTIPO = rs.getInt("obra_TIPO");
         return o;
     };
+
+    public Map<String, Object> obterMetricasVisualizacao(int codigoObra) {
+
+        // 1. Chama a Stored Procedure.
+        String callProcedureSql =
+                "CALL ObterMetricasVisualizacaoObra(?, @horas, @contas)";
+
+        jdbc.update(callProcedureSql, codigoObra);
+
+        // 2. Recupera os valores de saída das variáveis de sessão.
+        String selectVariablesSql =
+                "SELECT @horas AS totalHorasAssistidas, @contas AS totalContasAssistindo";
+
+        // Usando queryForMap para retornar diretamente um Map da única linha de resultado.
+        // O Spring fará o mapeamento automático dos tipos (DECIMAL para Double, INT para Integer).
+        return jdbc.queryForMap(selectVariablesSql);
+    }
 
     public int insert(Obra obra) {
         String sql = "INSERT INTO obra (fk_genero_genero_PK, nome, sinopse, data_lancamento, qnt_temporadas, duracao, obra_TIPO) " +

@@ -154,6 +154,26 @@ END //
 -- Retorna o delimitador ao padrão (ponto e vírgula)
 DELIMITER ;
 
+CREATE PROCEDURE ObterMetricasVisualizacaoObra (
+    IN obra_codigo_param INT,
+    OUT total_horas_assistidas DECIMAL(10,2),
+    OUT total_contas_assistindo INT
+)
+BEGIN
+    -- 1. Calcula o total de horas assistidas para a obra
+    SELECT COALESCE(SUM(tempo_assistido), 0.00)
+    INTO total_horas_assistidas
+    FROM historico_de_visualizacao
+    WHERE fk_obra_codigo = obra_codigo_param;
+
+    -- 2. Conta a quantidade de contas que assistiram a obra (tendo registro no histórico)
+    SELECT COUNT(DISTINCT fk_conta_cod)
+    INTO total_contas_assistindo
+    FROM historico_de_visualizacao
+    WHERE fk_obra_codigo = obra_codigo_param;
+END;
+
+
 
 SELECT '--- TESTE FUNÇÕES ---' AS Info;
 SELECT tipo_do_plano, preco, CLASSIFICAR_PLANO_POR_PRECO(preco) AS Nivel FROM plano;
