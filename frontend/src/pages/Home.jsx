@@ -51,11 +51,26 @@ function Home() {
 
             <li className="menu-header">Gerenciar Entidades</li>
 
+
+            <li className={`menu-item-dropdown ${openMenu === 'usuarios' ? 'open' : ''}`}>
+              <div className="menu-item" onClick={() => handleMenuClick('usuarios')}>
+                <div className="menu-item-content">
+                  <FaUserCog /> Gerenciar Pesquisa
+                </div>
+                <FaChevronDown className="dropdown-icon" />
+              </div>
+              <ul className="submenu">
+                <li><a onClick={() => setUsuarioModalOpen(true)}>Adicionar</a></li>
+                <li><Link to="/usuarios/atualizar">Atualizar</Link></li>
+                <li><Link to="/usuarios/deletar">Deletar</Link></li>
+              </ul>
+            </li>
+
             {/* Usuários */}
             <li className={`menu-item-dropdown ${openMenu === 'usuarios' ? 'open' : ''}`}>
               <div className="menu-item" onClick={() => handleMenuClick('usuarios')}>
                 <div className="menu-item-content">
-                  <FaUserCog /> Gerenciar Usuários
+                  <FaUserCog /> Gerenciar Usuario
                 </div>
                 <FaChevronDown className="dropdown-icon" />
               </div>

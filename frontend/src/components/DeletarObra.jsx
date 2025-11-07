@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
 import './Obra.css'; // Reutilizando o mesmo CSS
+import { useDeleteObra } from '../hooks/useDeleteObra'; // Importando o Hook
 
 function DeletarObra({ onClose }) {
   const [idDeletar, setIdDeletar] = useState('');
+  
+  // Hook de deleção
+  const { deleteObra, isLoading, error: apiError } = useDeleteObra();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Confirmação extra antes de deletar
-    if (window.confirm(`Tem certeza que deseja deletar a obra com ID: ${idDeletar}? Esta ação não pode ser desfeita.`)) {
-      console.log('Deletando obra com ID:', idDeletar);
-      // Aqui você adicionaria a lógica de API (DELETE)
+    
+    // Substituímos o window.confirm por uma UI mais limpa.
+    // Para este exemplo, o duplo clique no botão (após inserir o ID) é a confirmação.
+    // Em uma app real, você poderia adicionar um segundo estado de confirmação.
+    
+    try {
+      await deleteObra(idDeletar);
+      console.log('Obra deletada com sucesso!');
       onClose(); // Fecha o modal após deletar
+    } catch (err) {
+      // Erro já tratado pelo hook (estado apiError)
+      console.log("Falha ao deletar obra.");
     }
   };
 
@@ -23,7 +34,7 @@ function DeletarObra({ onClose }) {
         </div>
         <form onSubmit={handleSubmit} className="modal-body">
           <div className="form-group">
-            <label htmlFor="idDeletar">ID da Obra a ser Deletada</label>
+            <label htmlFor="idDeletar">Código (ID) da Obra a ser Deletada</label>
             <input
               type="text"
               id="idDeletar"
@@ -31,6 +42,7 @@ function DeletarObra({ onClose }) {
               value={idDeletar}
               onChange={(e) => setIdDeletar(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
           
@@ -38,12 +50,14 @@ function DeletarObra({ onClose }) {
             <strong>Atenção:</strong> Esta ação é irreversível.
           </p>
 
+          {apiError && <p className="error-text">Erro: {apiError.message || 'Não foi possível deletar.'}</p>}
+
           <div className="modal-footer">
-            <button type="button" onClick={onClose} className="button-secondary">
+            <button type="button" onClick={onClose} className="button-secondary" disabled={isLoading}>
               Cancelar
             </button>
-            <button type="submit" className="button-danger">
-              Deletar Obra
+            <button type="submit" className="button-danger" disabled={isLoading}>
+              {isLoading ? 'Deletando...' : 'Deletar Obra'}
             </button>
           </div>
         </form>
