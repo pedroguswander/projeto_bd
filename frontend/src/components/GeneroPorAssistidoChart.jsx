@@ -11,6 +11,7 @@ import {
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { useGeneroPorAssistido } from '../hooks/useGeneroPorAssistido';
+import { useTotaisPorGenero } from '../hooks/useTotalPorGenero'; // hook correto
 
 ChartJS.register(
   CategoryScale,
@@ -24,12 +25,16 @@ ChartJS.register(
 
 const GeneroPorAssistidoChart = () => {
   const { data, isLoading, isError } = useGeneroPorAssistido();
+  const { data: totalData } = useTotaisPorGenero(); // pega total absoluto
 
-  if (isLoading) {
+  if (isLoading || !totalData) {
     return (
       <div className="dashboard-card card-medium">
         <h3>Gênero por Assistido</h3>
-        <div className="chart-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div
+          className="chart-wrapper"
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
           <p>Carregando dados do gráfico...</p>
         </div>
       </div>
@@ -40,26 +45,48 @@ const GeneroPorAssistidoChart = () => {
     return (
       <div className="dashboard-card card-medium">
         <h3>Gênero por Assistido</h3>
-        <div className="chart-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div
+          className="chart-wrapper"
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
           <p>Erro ao carregar os dados.</p>
         </div>
       </div>
     );
   }
 
-  const labels = Object.keys(data);
-  const valores = Object.values(data);
+  // Labels dos gêneros assistidos
+  const labels = [...Object.keys(data)];
+
+  // Arrays de dados por gênero
+  const feminino = labels.map(label => data[label]?.Feminino || 0);
+  const masculino = labels.map(label => data[label]?.Masculino || 0);
+
+  // Adiciona barra "Total" com valores absolutos do banco
+  labels.push('Total');
+  feminino.push(totalData.Feminino);
+  masculino.push(totalData.Masculino);
 
   const chartData = {
     labels,
-    datasets: [{
-      label: 'Número de pessoas que assistiram',
-      data: valores,
-      backgroundColor: 'rgba(135, 206, 250, 0.8)',
-      borderColor: 'rgb(135, 206, 250)',
-      borderWidth: 1,
-      borderRadius: 5
-    }]
+    datasets: [
+      {
+        label: 'Feminino',
+        data: feminino,
+        backgroundColor: 'rgba(255, 105, 180, 0.7)',
+        borderColor: 'rgb(255, 105, 180)',
+        borderWidth: 1,
+        borderRadius: 5
+      },
+      {
+        label: 'Masculino',
+        data: masculino,
+        backgroundColor: 'rgba(100, 149, 237, 0.7)',
+        borderColor: 'rgb(100, 149, 237)',
+        borderWidth: 1,
+        borderRadius: 5
+      }
+    ]
   };
 
   const chartOptions = {
@@ -103,7 +130,7 @@ const GeneroPorAssistidoChart = () => {
 
   return (
     <div className="dashboard-card card-medium">
-      <h3>Gênero por Assistido</h3>
+      <h3>Gêneros X Gênero Assistido</h3>
       <div className="chart-wrapper">
         <Bar options={chartOptions} data={chartData} />
       </div>

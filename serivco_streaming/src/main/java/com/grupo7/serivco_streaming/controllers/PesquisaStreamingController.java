@@ -63,7 +63,7 @@ public class PesquisaStreamingController {
     public Map<String, Long> getHorasSemanais() { return pesquisaService.getStreamingHoursCountsByValue(); }
     
     @GetMapping("/genero-por-assistido")
-    public Map<String, Long> getGeneroPorAssistido() {
+    public Map<String, Map<String, Long>> getGeneroPorAssistido() {
         return pesquisaService.getGeneroPorAssistido();
     }
 
@@ -72,4 +72,9 @@ public class PesquisaStreamingController {
         List<PesquisaProcessadaDTO> dados = pesquisaServiceImpl.getDadosProcessados();
         return ResponseEntity.ok(dados);
     }
+    @GetMapping("/totais-por-genero")
+    public Map<String, Long> getTotaisPorGenero() {
+        return pesquisaService.getTotalPorGenero();
+    }
+
 }

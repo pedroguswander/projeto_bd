@@ -266,26 +266,65 @@ public class PesquisaStreamingRepository {
     public int delete(int id) {
         return jdbc.update("DELETE FROM pesquisa_streaming WHERE id_resposta = ?", id);
     }
-    public Map<String, Long> getGeneroPorAssistido() {
-        List<String> generosList = jdbc.queryForList(
-            "SELECT generos_assistidos FROM pesquisa_streaming WHERE generos_assistidos IS NOT NULL",
-            String.class
-        );
+    public Map<String, Map<String, Long>> getGeneroPorAssistido() {
+        String sql = """
+            SELECT 
+                p.genero AS genero_usuario,
+                TRIM(j.genero_assistido) AS genero_assistido,
+                COUNT(*) AS total
+            FROM pesquisa_streaming p
+            JOIN JSON_TABLE(
+                CONCAT('[\"', REPLACE(p.generos_assistidos, ',', '\",\"'), '\"]'),
+                "$[*]" COLUMNS (genero_assistido VARCHAR(255) PATH "$")
+            ) j
+            WHERE 
+                p.genero IS NOT NULL
+                AND p.genero <> ''
+                AND p.generos_assistidos IS NOT NULL
+                AND p.generos_assistidos <> ''
+            GROUP BY 
+                genero_assistido, genero_usuario
+            ORDER BY 
+                genero_assistido, genero_usuario
+            """;
 
-        Map<String, Long> contador = new HashMap<>();
+        List<Map.Entry<String, Map<String, Long>>> results = jdbc.query(sql, (rs, rowNum) -> {
+            String generoAssistido = rs.getString("genero_assistido");
+            String generoUsuario = rs.getString("genero_usuario");
+            Long total = rs.getLong("total");
 
-        for (String generos : generosList) {
-            if (generos != null && !generos.isEmpty()) {
-                String[] splitGeneros = generos.split(",");
-                for (String g : splitGeneros) {
-                    String generoLimpo = g.trim();
-                    if (!generoLimpo.isEmpty()) {
-                        contador.put(generoLimpo, contador.getOrDefault(generoLimpo, 0L) + 1);
-                    }
-                }
-            }
+            return Map.entry(generoAssistido, Map.of(generoUsuario, total));
+        });
+
+        Map<String, Map<String, Long>> agrupado = new HashMap<>();
+        for (Map.Entry<String, Map<String, Long>> entry : results) {
+            String generoAssistido = entry.getKey();
+            Map<String, Long> generoMap = agrupado.getOrDefault(generoAssistido, new HashMap<>());
+            generoMap.putAll(entry.getValue());
+            agrupado.put(generoAssistido, generoMap);
         }
 
-        return contador;
+        return agrupado;
     }
+    public Map<String, Long> getTotalPorGenero() {
+        String sql = """
+            SELECT genero, COUNT(*) AS total
+            FROM pesquisa_streaming
+            WHERE genero IS NOT NULL AND genero <> ''
+            GROUP BY genero
+        """;
+
+        List<Map<String, Object>> rows = jdbc.queryForList(sql);
+
+        Map<String, Long> totals = new HashMap<>();
+        for (Map<String, Object> row : rows) {
+            String genero = (String) row.get("genero");
+            Long total = ((Number) row.get("total")).longValue();
+            totals.put(genero, total);
+        }
+
+        return totals;
+    }
+
+
 }

@@ -72,7 +72,7 @@ public class PesquisaStreamingServiceImpl implements PesquisaStreamingService {
 
     // NOVO
     @Override
-    public Map<String, Long> getGeneroPorAssistido() {
+    public Map<String, Map<String, Long>> getGeneroPorAssistido() {
         return pesquisaRepository.getGeneroPorAssistido();
     }
 
@@ -143,4 +143,8 @@ public class PesquisaStreamingServiceImpl implements PesquisaStreamingService {
                 return 0; // Valor padrão
         }
     }
+    public Map<String, Long> getTotalPorGenero() {
+        return pesquisaRepository.getTotalPorGenero();
+    }
+
 }
