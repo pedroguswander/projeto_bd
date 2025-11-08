@@ -86,5 +86,23 @@ public class ObraController {
 
         // Retorna o Map com status HTTP 200 OK
         return ResponseEntity.ok(metricas);
-    }  
+    }
+
+    @GetMapping("/medias-das-notas")
+    public ResponseEntity<List<Map<String, Object>>> getMediaNotasObras(
+            @RequestParam(required = false) Integer obraCodigo) {
+
+        // O repositório agora retorna List<Map<String, Object>>
+        List<Map<String, Object>> medias = obraService.calcularMedias(obraCodigo);
+
+        if (medias.isEmpty()) {
+            // Retorna 404 Not Found se um código específico foi passado e não encontrou a obra.
+            if (obraCodigo != null) {
+                return ResponseEntity.notFound().build();
+            }
+        }
+
+        // Retorna 200 OK com a lista de mapas.
+        return ResponseEntity.ok(medias);
+    }
 }

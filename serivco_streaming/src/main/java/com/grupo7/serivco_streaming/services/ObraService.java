@@ -30,4 +30,6 @@ public interface ObraService {
     public Map<String, Object> obterMetricasVisualizacao(int codigoObra);
 
     public Optional<Obra> findByName(String nome);
+
+    public List<Map<String, Object>> calcularMedias(Integer obraCodigo);
 }
