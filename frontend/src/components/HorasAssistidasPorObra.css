@@ -1,0 +1,244 @@
+/* ================================
+   Estilos do componente HorasAssistidasPorObra
+   Paleta: White / OffWhite
+   Tema Claro com detalhes em Preto
+=================================== */
+
+/* Variáveis de Cores */
+:root {
+  --cor-fundo: #fafafa; /* OffWhite */
+  --cor-card-fundo: #ffffff; /* Branco */
+  --cor-card-secundaria: #f3f3f3; /* OffWhite 2 */
+  --cor-primaria: #000000; /* Preto */
+  --cor-texto: #111111; /* Preto Suave */
+  --cor-texto-secundario: #4b5563; /* Cinza Escuro */
+  --cor-erro: #b91c1c; /* Vermelho Escuro */
+  --cor-aviso: #ca8a04; /* Amarelo Escuro */
+  --sombra-card: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Container Principal */
+.analisador-container {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+}
+
+/* Centralização e Largura */
+.conteudo-central {
+  max-width: 640px; /* reduzido de 768px */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Título */
+.titulo-principal {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 28px;
+  color: var(--cor-primaria);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.icone-titulo {
+  width: 36px;
+  height: 36px;
+}
+
+/* Formulário de Busca */
+.formulario-busca {
+  display: flex;
+  margin-bottom: 20px;
+  box-shadow: var(--sombra-card);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.input-busca {
+  flex-grow: 1;
+  padding: 14px;
+  background-color: var(--cor-card-secundaria);
+  border: 1px solid #d1d5db;
+  color: var(--cor-texto);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.input-busca::placeholder {
+  color: #9ca3af;
+}
+.input-busca:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 2px var(--cor-primaria);
+}
+
+.botao-busca {
+  padding: 14px 16px;
+  background-color: var(--cor-primaria);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+.botao-busca:hover:not(:disabled) {
+  background-color: #222222;
+}
+.botao-busca:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Ícones */
+.icone-spin {
+  animation: spin 1s linear infinite;
+}
+.icone-grande {
+  width: 48px;
+  height: 48px;
+}
+
+/* Área de Resultados */
+.area-resultados {
+  margin-top: 28px;
+  min-height: 250px;
+}
+
+/* Mensagens de Estado */
+.estado-mensagem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 48px 20px;
+  text-align: center;
+  border-radius: 8px;
+}
+.loading-msg {
+  color: var(--cor-primaria);
+}
+.erro-card {
+  background-color: rgba(185, 28, 28, 0.1);
+  color: var(--cor-erro);
+  border: 1px solid var(--cor-erro);
+}
+.aviso-card {
+  background-color: rgba(234, 179, 8, 0.15);
+  color: var(--cor-aviso);
+  border: 1px solid var(--cor-aviso);
+}
+.erro-titulo {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.erro-descricao {
+  color: var(--cor-texto-secundario);
+}
+
+/* Card de Métricas */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-metricas {
+  background-color: var(--cor-card-fundo);
+  border-radius: 12px;
+  box-shadow: var(--sombra-card);
+  overflow: hidden;
+  animation: fade-in 0.5s ease-out;
+}
+
+/* Cabeçalho do Card */
+.card-cabecalho {
+  padding: 24px;
+}
+.nome-obra {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--cor-texto);
+  margin-bottom: 6px;
+}
+.sinopse-obra {
+  color: var(--cor-texto-secundario);
+  font-size: 0.95rem;
+}
+
+/* Corpo de Métricas */
+.corpo-metricas {
+  background-color: var(--cor-card-secundaria);
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+@media (min-width: 768px) {
+  .corpo-metricas {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.item-metrica {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: rgba(243, 244, 246, 0.8);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.icone-metrica {
+  width: 44px;
+  height: 44px;
+  color: var(--cor-primaria);
+  flex-shrink: 0;
+}
+.titulo-metrica {
+  font-size: 0.875rem;
+  color: var(--cor-texto-secundario);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+}
+.valor-metrica {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--cor-texto);
+  line-height: 1.1;
+}
+
+/* Rodapé do Card */
+.card-rodape {
+  padding: 20px;
+  background-color: var(--cor-card-fundo);
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+}
+@media (min-width: 768px) {
+  .card-rodape {
+    flex-direction: row;
+  }
+}
+
+/* Animação Spin */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

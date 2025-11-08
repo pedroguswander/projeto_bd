@@ -152,7 +152,7 @@ function Home() {
             >
               Views
             </button>
-                        <button
+            <button
               className={`tab-button ${activeTab === 'procedures' ? 'active' : ''}`}
               onClick={() => setActiveTab('procedures')}
             >
