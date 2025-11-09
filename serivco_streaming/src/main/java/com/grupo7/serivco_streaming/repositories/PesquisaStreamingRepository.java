@@ -365,6 +365,55 @@ public class PesquisaStreamingRepository {
 
         return agrupado;
     }
+    public Map<String, Map<String, Long>> getDispositivosPorGeneroAssistido() {
+        String sql = """
+            SELECT
+                TRIM(j_genero.genero_assistido) AS genero_assistido,
+                TRIM(j_dispositivo.dispositivo_utilizado) AS dispositivo_utilizado,
+                COUNT(*) AS total
+            FROM pesquisa_streaming p
+            
+            -- Desagrega 'generos_assistidos'
+            JOIN JSON_TABLE(
+                CONCAT('["', REPLACE(p.generos_assistidos, ',', '","'), '"]'),
+                "$[*]" COLUMNS (genero_assistido VARCHAR(255) PATH "$")
+            ) j_genero
+            
+            -- Desagrega 'dispositivos_utilizados'
+            JOIN JSON_TABLE(
+                CONCAT('["', REPLACE(p.dispositivos_utilizados, ',', '","'), '"]'),
+                "$[*]" COLUMNS (dispositivo_utilizado VARCHAR(255) PATH "$")
+            ) j_dispositivo
+            
+            WHERE
+                p.generos_assistidos IS NOT NULL
+                AND p.generos_assistidos <> ''
+                AND p.dispositivos_utilizados IS NOT NULL
+                AND p.dispositivos_utilizados <> ''
+            GROUP BY
+                genero_assistido, dispositivo_utilizado
+            ORDER BY
+                genero_assistido, total DESC
+            """;
+
+        List<Map.Entry<String, Map<String, Long>>> results = jdbc.query(sql, (rs, rowNum) -> {
+            String generoAssistido = rs.getString("genero_assistido");
+            String dispositivoUtilizado = rs.getString("dispositivo_utilizado");
+            Long total = rs.getLong("total");
+
+            return Map.entry(generoAssistido, Map.of(dispositivoUtilizado, total));
+        });
+
+        Map<String, Map<String, Long>> agrupado = new HashMap<>();
+        for (Map.Entry<String, Map<String, Long>> entry : results) {
+            String generoAssistido = entry.getKey();
+            Map<String, Long> dispositivoMap = agrupado.getOrDefault(generoAssistido, new HashMap<>());
+            dispositivoMap.putAll(entry.getValue());
+            agrupado.put(generoAssistido, dispositivoMap);
+        }
+
+        return agrupado;
+    }
 
 
 }

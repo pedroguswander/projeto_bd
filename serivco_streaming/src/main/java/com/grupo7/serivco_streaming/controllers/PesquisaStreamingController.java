@@ -80,5 +80,9 @@ public class PesquisaStreamingController {
     public Map<String, Map<String, Long>> getGeneroPorHorasSemanais() {
         return pesquisaService.getGeneroPorHorasSemanais();
     }
+    @GetMapping("/dispositivos-por-genero")
+    public Map<String, Map<String, Long>> getDispositivosPorGeneroAssistido() {
+        return pesquisaService.getDispositivosPorGeneroAssistido();
+    }
 
 }

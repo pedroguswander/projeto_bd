@@ -150,5 +150,10 @@ public class PesquisaStreamingServiceImpl implements PesquisaStreamingService {
     public Map<String, Map<String, Long>> getGeneroPorHorasSemanais() {
         return pesquisaRepository.getGeneroPorHorasSemanais();
     }
+    
+    @Override
+    public Map<String, Map<String, Long>> getDispositivosPorGeneroAssistido() {
+        return pesquisaRepository.getDispositivosPorGeneroAssistido();
+    }
 
 }
