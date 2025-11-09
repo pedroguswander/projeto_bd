@@ -4,13 +4,14 @@ import SatisfacaoChart from './SatisfacaoChart';
 import { DistribuicaoHorasSemanaisChart } from './DistribuicaoHorasSemanaisChart';
 import GeneroPorAssistidoChart from './GeneroPorAssistidoChart';
 import { QtdServicosPorPrecoIdealChart } from './QtdServicosPorPrecoIdealChart';
+import { GeneroPorHorasChart } from './GeneroPorHorasChart'; 
 
 import { useTotaisPorGenero } from '../hooks/useTotalPorGenero';
 
 import '../pages/Home.css'; 
 
 function Dashboard() {
-  const { data: totais, isLoading: isLoadingTotais, isError: isErrorTotais } = useTotaisPorGenero();
+
 
   return (
     <>
@@ -25,6 +26,10 @@ function Dashboard() {
           <GeneroPorAssistidoChart />
         </div>
 
+        <div className="dashboard-card card-large"> 
+          <GeneroPorHorasChart />
+        </div>
+        
         <div className="dashboard-card card-medium">
           <DistribuicaoHorasSemanaisChart />
         </div>
@@ -32,6 +37,7 @@ function Dashboard() {
         <div className="dashboard-card card-medium">
           <QtdServicosPorPrecoIdealChart />
         </div>
+        
       </section>
     </>
   );

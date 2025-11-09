@@ -146,5 +146,9 @@ public class PesquisaStreamingServiceImpl implements PesquisaStreamingService {
     public Map<String, Long> getTotalPorGenero() {
         return pesquisaRepository.getTotalPorGenero();
     }
+    @Override
+    public Map<String, Map<String, Long>> getGeneroPorHorasSemanais() {
+        return pesquisaRepository.getGeneroPorHorasSemanais();
+    }
 
 }

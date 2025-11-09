@@ -16,5 +16,6 @@ public interface PesquisaStreamingService {
     Map<String, Double> getMediaSatisfacaoPorGenero();
     Map<String, Map<String, Long>> getGeneroPorAssistido();
 	Map<String, Long> getTotalPorGenero();
+	Map<String, Map<String, Long>> getGeneroPorHorasSemanais();
 }
 	

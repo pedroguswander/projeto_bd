@@ -325,6 +325,46 @@ public class PesquisaStreamingRepository {
 
         return totals;
     }
+    public Map<String, Map<String, Long>> getGeneroPorHorasSemanais() {
+        String sql = """
+            SELECT
+                p.horas_semanais AS horas_assistidas,
+                TRIM(j.genero_assistido) AS genero_assistido,
+                COUNT(*) AS total
+            FROM pesquisa_streaming p
+            JOIN JSON_TABLE(
+                CONCAT('["', REPLACE(p.generos_assistidos, ',', '","'), '"]'),
+                "$[*]" COLUMNS (genero_assistido VARCHAR(255) PATH "$")
+            ) j
+            WHERE
+                p.horas_semanais IS NOT NULL
+                AND p.horas_semanais <> ''
+                AND p.generos_assistidos IS NOT NULL
+                AND p.generos_assistidos <> ''
+            GROUP BY
+                horas_assistidas, genero_assistido
+            ORDER BY
+                horas_assistidas, genero_assistido
+            """;
+
+        List<Map.Entry<String, Map<String, Long>>> results = jdbc.query(sql, (rs, rowNum) -> {
+            String horasAssistidas = rs.getString("horas_assistidas");
+            String generoAssistido = rs.getString("genero_assistido");
+            Long total = rs.getLong("total");
+
+            return Map.entry(horasAssistidas, Map.of(generoAssistido, total));
+        });
+
+        Map<String, Map<String, Long>> agrupado = new HashMap<>();
+        for (Map.Entry<String, Map<String, Long>> entry : results) {
+            String horasAssistidas = entry.getKey();
+            Map<String, Long> generoMap = agrupado.getOrDefault(horasAssistidas, new HashMap<>());
+            generoMap.putAll(entry.getValue());
+            agrupado.put(horasAssistidas, generoMap);
+        }
+
+        return agrupado;
+    }
 
 
 }

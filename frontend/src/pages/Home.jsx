@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import './Home.css';
 import {
   FaFilm, FaUsers, FaUserCog, FaTags, FaSearch,
@@ -8,9 +8,8 @@ import { SlEnvolopeLetter } from "react-icons/sl";
 import { MdLocalMovies, MdAnimation } from "react-icons/md";
 import { Link } from 'react-router-dom';
 
-// Importe os modais e os novos componentes de "aba"
 import InserirUsuario from '../components/InserirUsuario';
-import Dashboard from '../components/Dashboard';
+import Dashboard from '../components/Dashboard'; 
 import Views from '../components/Views';
 import Procedures from '../components/Procedures';
 import InserirObra from '../components/InserirObra';
@@ -27,7 +26,7 @@ function Home() {
   const [isObraDeletarOpen, setObraDeletarOpen] = useState(false);
 
   const [isGeneroModalOpen, setGeneroModalOpen] = useState(false);
-  // Novo estado para controlar a aba ativa
+  // Estado para controlar a aba ativa (Dashboard, Views, Procedures)
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const handleMenuClick = (menuKey) => {
@@ -38,7 +37,7 @@ function Home() {
     <div className="home-wrapper">
       <div className="home-container">
 
-        {/* SIDEBAR (Sem alterações) */}
+        {/* SIDEBAR */}
         <nav className="sidebar">
           <div className="sidebar-logo">StreamAnalytics</div>
           <ul className="sidebar-menu">
@@ -50,7 +49,6 @@ function Home() {
             </li>
 
             <li className="menu-header">Gerenciar Entidades</li>
-
 
             <li className={`menu-item-dropdown ${openMenu === 'usuarios' ? 'open' : ''}`}>
               <div className="menu-item" onClick={() => handleMenuClick('usuarios')}>
@@ -125,7 +123,6 @@ function Home() {
           </ul>
         </nav>
 
-        {/* CONTEÚDO PRINCIPAL (Atualizado com Abas) */}
         <main className="main-content">
           <header className="dashboard-header">
             <div className="search-bar">
@@ -160,9 +157,8 @@ function Home() {
             </button>
           </nav>
 
-          {/* CONTEÚDO DAS ABAS (Renderização Condicional) */}
           <div className="tab-content">
-            {activeTab === 'dashboard' && <Dashboard />}
+            {activeTab === 'dashboard' && <Dashboard />} 
             {activeTab === 'consultas' && <Views />}
             {activeTab === 'procedures' && <Procedures />}
           </div>
@@ -170,13 +166,13 @@ function Home() {
         </main>
       </div>
 
-      {/* MODAIS (Sem alterações) */}
+      {/* MODAIS */}
       {isUsuarioModalOpen && <InserirUsuario onClose={() => setUsuarioModalOpen(false)} />}
       {isContaModalOpen && <InserirUsuario onClose={() => setContaModalOpen(false)} />}
         
       {isObraModalOpen && <InserirObra onClose={() => setObraModalOpen(false)} />}
       {isObraAtualizarOpen && <AtualizarObra onClose={() => setObraAtualizarOpen(false)} />}
-      {isObraDeletarOpen && <DeletarObra onClose={() => setObraDeletarOpen(false)} />}        
+      {isObraDeletarOpen && <DeletarObra onClose={() => setObraDeletarOpen(false)} />}        
 
       {isGeneroModalOpen && <InserirUsuario onClose={() => setGeneroModalOpen(false)} />}
     </div>

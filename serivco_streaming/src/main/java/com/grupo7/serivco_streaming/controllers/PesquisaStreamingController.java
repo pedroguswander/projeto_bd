@@ -76,5 +76,9 @@ public class PesquisaStreamingController {
     public Map<String, Long> getTotaisPorGenero() {
         return pesquisaService.getTotalPorGenero();
     }
+    @GetMapping("/genero-por-horas")
+    public Map<String, Map<String, Long>> getGeneroPorHorasSemanais() {
+        return pesquisaService.getGeneroPorHorasSemanais();
+    }
 
 }
