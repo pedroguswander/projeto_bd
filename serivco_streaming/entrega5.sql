@@ -68,12 +68,12 @@ END$$
 CREATE PROCEDURE AJUSTAR_PROGRESSO_CONCLUIDO()
 BEGIN
     DECLARE done INT DEFAULT 0;
-    -- v_usuario_id precisa ser mudada para v_conta_cod
+
     DECLARE v_conta_cod INT;
     DECLARE v_obra_codigo INT;
 
     DECLARE cur CURSOR FOR
-        -- fk_usuario_id precisa ser mudada para fk_conta_cod
+
         SELECT fk_conta_cod, fk_obra_codigo
         FROM historico_de_visualizacao
         WHERE progresso_percentual >= 99.50 AND progresso_percentual < 100.00;
@@ -83,7 +83,7 @@ BEGIN
     OPEN cur;
 
     read_loop: LOOP
-        -- FETCH cur INTO v_usuario_id, v_obra_codigo; precisa ser mudada para v_conta_cod
+
         FETCH cur INTO v_conta_cod, v_obra_codigo;
         IF done THEN
             LEAVE read_loop;
@@ -91,7 +91,7 @@ BEGIN
 
         UPDATE historico_de_visualizacao
         SET progresso_percentual = 100.00
-        -- O WHERE precisa ser ajustado para fk_conta_cod
+
         WHERE fk_conta_cod = v_conta_cod AND fk_obra_codigo = v_obra_codigo;
 
     END LOOP;
@@ -128,7 +128,7 @@ END$$
 
 DELIMITER ;
 
--- DELIMITER é usado para permitir que o corpo do trigger contenha ponto e vírgula
+
 DELIMITER //
 
 CREATE TRIGGER prevent_duplicate_obra
@@ -137,21 +137,21 @@ CREATE TRIGGER prevent_duplicate_obra
 BEGIN
     DECLARE nome_count INT;
 
-    -- Verifica se já existe uma obra com o mesmo nome (case-insensitive)
+
     SELECT COUNT(*)
     INTO nome_count
     FROM obra
     WHERE nome = NEW.nome;
 
-    -- Se a contagem for maior que 0, significa que o nome já existe
+
     IF nome_count > 0 THEN
-        -- Sinaliza um erro para impedir a inserção da linha
+
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'ERRO: Nao e permitido inserir obras com nomes duplicados.';
     END IF;
 END //
 
--- Retorna o delimitador ao padrão (ponto e vírgula)
+
 DELIMITER ;
 
 CREATE PROCEDURE ObterMetricasVisualizacaoObra (
@@ -160,13 +160,12 @@ CREATE PROCEDURE ObterMetricasVisualizacaoObra (
     OUT total_contas_assistindo INT
 )
 BEGIN
-    -- 1. Calcula o total de horas assistidas para a obra
+
     SELECT COALESCE(SUM(tempo_assistido), 0.00)
     INTO total_horas_assistidas
     FROM historico_de_visualizacao
     WHERE fk_obra_codigo = obra_codigo_param;
 
-    -- 2. Conta a quantidade de contas que assistiram a obra (tendo registro no histórico)
     SELECT COUNT(DISTINCT fk_conta_cod)
     INTO total_contas_assistindo
     FROM historico_de_visualizacao

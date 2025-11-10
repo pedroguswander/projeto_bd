@@ -5,6 +5,7 @@ import VerDetalheAvaliacao from './VerDetalheAvaliacao';
 
 // Importe o CSS da Home para usar os estilos de card
 import '../pages/Home.css'; 
+import { MediaNotasObrasChart } from './MediaNotasObrasChart';
 
 function Views() {
   return (
@@ -19,6 +20,11 @@ function Views() {
           <h3>View I</h3>
           <VerDetalheAvaliacao />
         </div>
+
+        <div className="dashboard-card card-medium">
+          <MediaNotasObrasChart />
+        </div>
+
 
         {/* Exemplo de outro card que você poderia adicionar
         <div className="dashboard-card card-medium">

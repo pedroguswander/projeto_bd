@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import InserirUsuario from './components/InserirUsuario';
 import VerDetalheAvaliacao from './components/VerDetalheAvaliacao';
 import UsuarioStatusConta from './components/UsuarioStatusConta';
+import { MediaNotasObrasChart } from './components/MediaNotasObrasChart';
 
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
@@ -36,6 +37,11 @@ const router = createBrowserRouter([
   {
     path: '/horas-assistidas-obra',
     element: <HorasAssistidasPorObra />,
+    errorElement: <div>Página não encontrada</div>,
+  },
+    {
+    path: '/medias-das-notas',
+    element: <MediaNotasObrasChart />,
     errorElement: <div>Página não encontrada</div>,
   },
 ]);
