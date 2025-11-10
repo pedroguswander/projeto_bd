@@ -80,4 +80,6 @@ public class ObraServiceImpl implements ObraService {
 
     @Override
     public Map<String, Object> obterMetricasVisualizacao(int codigoObra) { return obraRepository.obterMetricasVisualizacao(codigoObra); }
+
+    public List<Map<String, Object>> calcularMedias(Integer obraCodigo) { return obraRepository.calcularMedias(obraCodigo); }
 }

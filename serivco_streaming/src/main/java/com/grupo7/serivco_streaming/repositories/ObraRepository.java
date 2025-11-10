@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,6 +53,38 @@ public class ObraRepository {
         // Usando queryForMap para retornar diretamente um Map da única linha de resultado.
         // O Spring fará o mapeamento automático dos tipos (DECIMAL para Double, INT para Integer).
         return jdbc.queryForMap(selectVariablesSql);
+    }
+
+    public List<Map<String, Object>> calcularMedias(Integer obraCodigo) {
+        // A query calcula a média das notas agrupada por obra.
+        // LEFT JOIN é usado para incluir obras que não têm avaliações (AVG resultará em NULL).
+        String sqlBase = """
+            SELECT
+                o.codigo,
+                o.nome,
+                -- Garante que o valor nulo (sem avaliações) ou a média seja retornado formatado
+                COALESCE(CAST(AVG(a.nota) AS DECIMAL(3, 2)), 0.00) AS media_nota
+            FROM
+                obra o
+            LEFT JOIN
+                avaliacao a ON o.codigo = a.fk_obra_codigo
+        """;
+
+        StringBuilder sqlBuilder = new StringBuilder(sqlBase);
+        List<Object> params = new ArrayList<>();
+
+        // Adiciona a cláusula WHERE se um filtro de obra for fornecido
+        if (obraCodigo != null) {
+            // O filtro é aplicado aqui, antes do GROUP BY
+            sqlBuilder.append(" WHERE o.codigo = ? ");
+            params.add(obraCodigo);
+        }
+
+        // Agrupa e ordena
+        sqlBuilder.append(" GROUP BY o.codigo, o.nome ORDER BY o.codigo");
+
+        // Utiliza queryForList, que retorna List<Map<String, Object>>, eliminando a necessidade de DTO.
+        return jdbc.queryForList(sqlBuilder.toString(), params.toArray());
     }
 
     public int insert(Obra obra) {
