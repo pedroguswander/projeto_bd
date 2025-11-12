@@ -154,6 +154,14 @@ CREATE TABLE pesquisa_streaming (
                                     preco_ideal_menos VARCHAR(50),
                                     FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id)
 );
+CREATE TABLE IF NOT EXISTS log_reclamacoes (
+                                               log_id INT PRIMARY KEY AUTO_INCREMENT,
+                                               usuario_id INT NOT NULL,
+                                               reclamacao_id INT NOT NULL,
+                                               data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                               acao VARCHAR(10) NOT NULL
+);
+
 
 INSERT INTO genero (nome) VALUES
                               ('Ação'), ('Comédia'), ('Drama'), ('Ficção Científica'), ('Terror'),
