@@ -1,7 +1,7 @@
 package com.grupo7.serivco_streaming.services;
 
 import com.grupo7.serivco_streaming.dto.Obra;
-import com.grupo7.serivco_streaming.exception.ResourceNotFoundException; // Precisamos criar esta exceção
+import com.grupo7.serivco_streaming.exception.ResourceNotFoundException;
 import com.grupo7.serivco_streaming.repositories.ObraRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +24,15 @@ public class ObraServiceImpl implements ObraService {
         if (obra.nome == null || obra.nome.isBlank()) {
             throw new IllegalArgumentException("O nome da obra não pode ser vazio.");
         }
+
+        // --- INÍCIO DA LÓGICA DO TRIGGER "prevent_duplicate_obra" ---
+        // Verificamos se uma obra com este nome já existe
+        if (obraRepository.findByName(obra.nome).isPresent()) {
+            // Lança uma exceção com a mesma mensagem do seu trigger SQL
+            throw new IllegalArgumentException("ERRO: Nao e permitido inserir obras com nomes duplicados.");
+        }
+        // --- FIM DA LÓGICA DO TRIGGER ---
+
         int generatedId = obraRepository.insert(obra);
         obra.codigo = generatedId;
         return obra;
@@ -43,6 +52,12 @@ public class ObraServiceImpl implements ObraService {
     public Obra update(int codigo, Obra obra) {
         obraRepository.findById(codigo)
                 .orElseThrow(() -> new ResourceNotFoundException("Obra não encontrada com o código: " + codigo));
+
+        // VERIFICAÇÃO DE DUPLICIDADE NO UPDATE (BÔNUS)
+        Optional<Obra> obraExistenteComNome = obraRepository.findByName(obra.nome);
+        if (obraExistenteComNome.isPresent() && obraExistenteComNome.get().codigo != codigo) {
+            throw new IllegalArgumentException("ERRO: Já existe outra obra com este nome.");
+        }
 
         obra.codigo = codigo;
         obraRepository.update(obra);
@@ -81,5 +96,6 @@ public class ObraServiceImpl implements ObraService {
     @Override
     public Map<String, Object> obterMetricasVisualizacao(int codigoObra) { return obraRepository.obterMetricasVisualizacao(codigoObra); }
 
+    @Override
     public List<Map<String, Object>> calcularMedias(Integer obraCodigo) { return obraRepository.calcularMedias(obraCodigo); }
 }

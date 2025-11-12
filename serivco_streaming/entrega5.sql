@@ -196,3 +196,12 @@ SELECT nome, CALCULAR_MEDIA_OBRA(codigo) AS Nota_Media FROM obra WHERE codigo = 
 -- Teste do Trigger (impedir_avaliacao_dupla):
 -- O comando ABAIXO deve falhar (gerar um erro de sinalização):
 -- INSERT INTO avaliacao (fk_usuario_id, fk_obra_codigo, nota, data_avaliacao, texto) VALUES (1, 1, 1, '2025-11-04', 'Teste duplicado');
+USE StreamingAtualizado2;
+
+CREATE TABLE IF NOT EXISTS log_reclamacoes (
+                                               log_id INT PRIMARY KEY AUTO_INCREMENT,
+                                               usuario_id INT NOT NULL,
+                                               reclamacao_id INT NOT NULL,
+                                               data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                               acao VARCHAR(10) NOT NULL
+);
