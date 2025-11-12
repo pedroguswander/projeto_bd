@@ -5,7 +5,7 @@ import VerDetalheAvaliacao from './VerDetalheAvaliacao';
 
 // Importe o CSS da Home para usar os estilos de card
 import '../pages/Home.css'; 
-import { MediaNotasObrasChart } from './MediaNotasObrasChart';
+import { MediaNotasObras} from './MediaNotasObras';
 
 function Views() {
   return (
@@ -15,14 +15,14 @@ function Views() {
       <section className="dashboard-grid">
         {/* Você pode adicionar quantos cards de consulta quiser aqui */}
         
-        <div className="dashboard-card card-full-width"> 
+        <div className="dashboard-card card-large"> 
           {/* Usei uma classe nova 'card-full-width' para a tabela */}
           <h3>View I</h3>
           <VerDetalheAvaliacao />
         </div>
 
         <div className="dashboard-card card-medium">
-          <MediaNotasObrasChart />
+          <MediaNotasObras />
         </div>
 
 
