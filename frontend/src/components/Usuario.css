@@ -1,0 +1,127 @@
+.usuario-container {
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+.usuario-modal {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 600px;
+  padding: 24px 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.usuario-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.usuario-modal-header h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.usuario-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #777;
+  transition: color 0.2s;
+}
+
+.usuario-close-btn:hover {
+  color: #000;
+}
+
+.usuario-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.usuario-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.usuario-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.usuario-input:focus {
+  outline: none;
+  border-color: #0052cc;
+  box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2);
+}
+
+.usuario-row {
+  display: flex;
+  gap: 8px;
+}
+
+.usuario-row .usuario-input {
+  flex: 1;
+}
+
+.usuario-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.usuario-btn-cancelar,
+.usuario-btn-salvar {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.usuario-btn-cancelar {
+  background-color: #f3f4f6;
+  color: #333;
+}
+
+.usuario-btn-cancelar:hover {
+  background-color: #e5e7eb;
+}
+
+.usuario-btn-salvar {
+  background-color: #1f3b8f;
+  color: white;
+}
+
+.usuario-btn-salvar:hover {
+  background-color: #162c6e;
+}
+
+@media (max-width: 640px) {
+  .usuario-modal {
+    width: 90%;
+    padding: 20px;
+  }
+}
