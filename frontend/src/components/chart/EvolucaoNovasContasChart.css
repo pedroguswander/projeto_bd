@@ -1,0 +1,11 @@
+.evolucao-chart-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.evolucao-chart-loading,
+.evolucao-chart-error {
+  text-align: center;
+  padding: 16px;
+  color: #374151;
+}

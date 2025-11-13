@@ -19,6 +19,7 @@ import Procedures from '../components/Procedures';
 import InserirObra from '../components/InserirObra';
 import AtualizarObra from '../components/AtualizarObra';
 import DeletarObra from '../components/DeletarObra';
+import EvolucaoNovasContas from '../components/EvolucaoNovasContas';
 
 function Home() {
   const [openMenu, setOpenMenu] = useState(null);
@@ -164,12 +165,19 @@ function Home() {
             >
               Procedures
             </button>
+            <button
+              className={`tab-button ${activeTab === 'power_bi' ? 'active' : ''}`}
+              onClick={() => setActiveTab('power_bi')}
+            >
+              Power BI
+            </button>
           </nav>
 
           <div className="tab-content">
             {activeTab === 'dashboard' && <Dashboard />} 
             {activeTab === 'consultas' && <Views />}
             {activeTab === 'procedures' && <Procedures />}
+            {activeTab === 'power_bi' && <EvolucaoNovasContas />}
           </div>
 
         </main>

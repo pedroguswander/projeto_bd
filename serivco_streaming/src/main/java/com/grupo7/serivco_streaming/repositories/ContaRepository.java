@@ -49,6 +49,26 @@ public class ContaRepository {
         return jdbc.queryForList(sql);
     }
 
+    public List<Map<String, Object>> getAccountCountsByMonth() {
+        String sql = """
+            SELECT
+                DATE_FORMAT(data_criacao, '%Y-%m') AS Ano_Mes_Criacao,
+                COUNT(codigo) AS Total_Contas
+            FROM
+                conta
+            WHERE
+                data_criacao IS NOT NULL
+            GROUP BY
+                Ano_Mes_Criacao
+            ORDER BY
+                Ano_Mes_Criacao;
+        """;
+
+        // Usa queryForList para obter uma lista de Mapas
+        // O Spring JDBC mapeia automaticamente as colunas para as chaves do Map.
+        return jdbc.queryForList(sql);
+    }
+
     public void atualizarStatusConta(int usuarioId, String novoStatus) {
 
         // Crie um Map contendo os parâmetros de entrada da Stored Procedure

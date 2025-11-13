@@ -10,7 +10,7 @@ import { HorasAssistidasPorObra } from './HorasAssistidasPorObra';
 function Procedures() {
   return (
     <>
-      <h1>Views</h1>
+      <h1>Procedures</h1>
 
       <section className="dashboard-grid">
         {/* Você pode adicionar quantos cards de consulta quiser aqui */}

@@ -66,4 +66,9 @@ public class ContaController {
         }
         // *Seria bom adicionar construtores e o toString, mas simplificado aqui.
     }
+
+    @GetMapping("/contagem-mensal")
+    public List<Map<String, Object>> getContagemMensalDeContas() {
+        return contaService.getMonthlyAccountCreationCounts();
+    }
 }

@@ -61,6 +61,7 @@ CREATE TABLE episodio (
 
 CREATE TABLE conta (
                        codigo INT PRIMARY KEY AUTO_INCREMENT,
+                       data_criacao DATE,
                        data_expiracao DATE,
                        icone VARCHAR(100),
                        status_assinatura VARCHAR(50),
@@ -424,3 +425,25 @@ INSERT INTO pesquisa_streaming (
       (28, 'andrea.araujo@fundaj.gov.br', 'Servidor público', 'Região Nordeste', 'Feminino', 'Entre 50 e 70 anos', '4 a 5', 'Netflix, Amazon Prime Video, Globo play', NULL, 'Ação, Drama, Documentário, Romance', 'Diariamente', 'Até 4 horas', 4, 4, 'TV', 'Entre R$30,00 e R$50,00'),
       (29, 'robertaaraujogusmao@gmail.com', 'Autônomo(a)', 'Região Nordeste', 'Feminino', 'Entre 50 e 70 anos', '3', 'Netflix, Amazon Prime Video, Globo play', 'Limitação de telas', 'Ação, Drama, Documentário', 'Semanalmente', 'Mais que 4 horas', 4, 4, 'TV, Smartphone', 'Entre R$15,00 e R$30,00'),
       (30, 'lucasgbcorreia@gmail.com', 'Estudante', 'Região Nordeste', 'Masculino', 'Entre 18 e 30 anos', '4 a 5', 'Netflix, Amazon Prime Video, Disney+, HBO Max, Globo play', 'Preço elevado, Propagandas', 'Ação, Comédia, Terror', 'Diariamente', 'Mais que 4 horas', 3, 4, 'TV, Smartphone', 'Entre R$15,00 e R$30,00');
+
+INSERT INTO conta (data_expiracao, icone, status_assinatura, fk_usuario_id, fk_administrador_id, data_criacao) VALUES
+                                                                                                                   ('2026-05-01', 'avatar31.png', 'Ativa', NULL, 1, '2024-01-10'), -- Janeiro
+                                                                                                                   ('2026-06-15', 'avatar32.png', 'Ativa', NULL, 1, '2024-01-25'),
+                                                                                                                   ('2026-07-20', 'avatar33.png', 'Ativa', NULL, 4, '2024-02-05'), -- Fevereiro
+                                                                                                                   ('2026-08-10', 'avatar34.png', 'Pendente', NULL, 4, '2024-02-28'),
+                                                                                                                   ('2026-09-05', 'avatar35.png', 'Cancelada', NULL, 7, '2024-03-01'), -- Março
+                                                                                                                   ('2026-10-18', 'avatar36.png', 'Ativa', NULL, 7, '2024-03-15'),
+                                                                                                                   ('2026-11-22', 'avatar37.png', 'Ativa', NULL, 9, '2024-04-03'), -- Abril
+                                                                                                                   ('2026-12-04', 'avatar38.png', 'Ativa', NULL, 9, '2024-04-29'),
+                                                                                                                   ('2027-01-09', 'avatar39.png', 'Ativa', NULL, 11, '2024-05-14'), -- Maio
+                                                                                                                   ('2027-02-17', 'avatar40.png', 'Pendente', NULL, 13, '2024-05-20'),
+                                                                                                                   ('2027-03-24', 'avatar41.png', 'Ativa', NULL, 14, '2024-06-08'), -- Junho
+                                                                                                                   ('2027-04-06', 'avatar42.png', 'Ativa', NULL, 15, '2024-06-19'),
+                                                                                                                   ('2027-05-11', 'avatar43.png', 'Expirada', NULL, 15, '2024-07-02'), -- Julho
+                                                                                                                   ('2027-06-16', 'avatar44.png', 'Ativa', NULL, 16, '2024-07-27'),
+                                                                                                                   ('2027-07-29', 'avatar45.png', 'Ativa', NULL, 17, '2024-08-01'), -- Agosto
+                                                                                                                   ('2027-08-03', 'avatar46.png', 'Ativa', NULL, 18, '2024-08-25'),
+                                                                                                                   ('2027-09-19', 'avatar47.png', 'Ativa', NULL, 20, '2024-09-09'), -- Setembro
+                                                                                                                   ('2027-10-14', 'avatar48.png', 'Pendente', NULL, 20, '2024-09-30'),
+                                                                                                                   ('2027-11-20', 'avatar49.png', 'Ativa', NULL, 25, '2024-10-17'), -- Outubro
+                                                                                                                   ('2027-12-25', 'avatar50.png', 'Ativa', NULL, 28, '2024-11-05'); --
