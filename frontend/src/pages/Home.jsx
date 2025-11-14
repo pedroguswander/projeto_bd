@@ -59,6 +59,7 @@ function Home() {
 
             <li className="menu-header">Gerenciar Entidades</li>
 
+            {/* AQUI ESTÁ A ALTERAÇÃO: O menu 'pesquisa' foi simplificado */}
             <li className={`menu-item-dropdown ${openMenu === 'pesquisa' ? 'open' : ''}`}>
               <div className="menu-item" onClick={() => handleMenuClick('pesquisa')}>
                 <div className="menu-item-content">
@@ -68,8 +69,7 @@ function Home() {
               </div>
               <ul className="submenu">
                 <li><a onClick={() => setUsuarioPesquisaModalOpen(true)}>Adicionar</a></li>
-                <li><Link to="/usuarios/atualizar">Atualizar</Link></li>
-                <li><Link to="/usuarios/deletar">Deletar</Link></li>
+                {/* As linhas para Atualizar e Deletar foram removidas desta lista */}
               </ul>
             </li>
 
