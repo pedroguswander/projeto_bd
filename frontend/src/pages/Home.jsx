@@ -14,7 +14,6 @@ import { AtualizarUsuario } from '../components/AtualizarUsuario'
 import { DeletarUsuario } from '../components/DeletarUsuario'
 
 import Dashboard from '../components/Dashboard'; 
-import Views from '../components/Views';
 import Procedures from '../components/Procedures';
 import InserirObra from '../components/InserirObra';
 import AtualizarObra from '../components/AtualizarObra';
@@ -154,16 +153,10 @@ function Home() {
               Pesquisa
             </button>
             <button
-              className={`tab-button ${activeTab === 'consultas' ? 'active' : ''}`}
-              onClick={() => setActiveTab('consultas')}
-            >
-              Views
-            </button>
-            <button
               className={`tab-button ${activeTab === 'procedures' ? 'active' : ''}`}
               onClick={() => setActiveTab('procedures')}
             >
-              Gerenciamento
+              Procedimentos
             </button>
             <button
               className={`tab-button ${activeTab === 'power_bi' ? 'active' : ''}`}
@@ -175,7 +168,6 @@ function Home() {
 
           <div className="tab-content">
             {activeTab === 'dashboard' && <Dashboard />} 
-            {activeTab === 'consultas' && <Views />}
             {activeTab === 'procedures' && <Procedures />}
             {activeTab === 'power_bi' && <PowerBI />}
           </div>

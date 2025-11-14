@@ -106,7 +106,6 @@ export const MediaNotasObrasChart = ({ obraCodigo = null }) => {
 
   return (
     <div className="p-4 bg-white shadow rounded-2xl">
-      <h2 className="text-xl font-semibold mb-4 text-center">Média das Notas</h2>
       <Bar data={chartData} options={options} />
     </div>
   );

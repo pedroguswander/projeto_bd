@@ -6,6 +6,7 @@ import UsuarioStatusConta from './UsuarioStatusConta';
 // Importe o CSS da Home para usar os estilos de card
 import '../pages/Home.css'; 
 import { HorasAssistidasPorObra } from './HorasAssistidasPorObra';
+import VerDetalheAvaliacao from './VerDetalheAvaliacao'; 
 
 function Procedures() {
   return (
@@ -14,6 +15,12 @@ function Procedures() {
 
       <section className="dashboard-grid">
         {/* Você pode adicionar quantos cards de consulta quiser aqui */}
+
+        <div className="dashboard-card card-large"> 
+          {/* Usei uma classe nova 'card-full-width' para a tabela */}
+          <h3>View I</h3>
+          <VerDetalheAvaliacao />
+        </div>
         
         <div className="dashboard-card card-full-width"> 
           {/* Usei uma classe nova 'card-full-width' para a tabela */}

@@ -23,7 +23,7 @@ export const MediaNotasObras = () => {
 
   return (
     <div className="p-6 bg-gray-50 rounded-2xl shadow-md max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center">Médias das Notas por Obra</h1>
+      <h2>Médias das Notas por Obra</h2>
 
       <form onSubmit={handleBuscar} className="flex items-center justify-center mb-6 gap-2">
         <input
