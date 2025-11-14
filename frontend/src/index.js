@@ -14,6 +14,7 @@ import {BrowserRouter} from "react-router-dom";
 import { createBrowserRouter, RouterProvider }  from "react-router-dom"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HorasAssistidasPorObra } from './components/HorasAssistidasPorObra';
+import AnaliseValorPlanosChart from './components/chart/AnaliseValorPlanosChart';
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,11 @@ const router = createBrowserRouter([
     {
     path: '/evolucao-novas-contas',
     element: <EvolucaoNovasContas />,
+    errorElement: <div>Página não encontrada</div>,
+  },
+      {
+    path: '/analise-valor-planos',
+    element: <AnaliseValorPlanosChart />,
     errorElement: <div>Página não encontrada</div>,
   },
 ]);

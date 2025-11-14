@@ -5,6 +5,7 @@ import com.grupo7.serivco_streaming.services.PlanoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,5 +23,11 @@ public class PlanoController {
         NivelPlano nivel = planoService.getClassificacaoPlano(tipoPlano);
         // Retorna um JSON simples com a descrição do nível
         return ResponseEntity.ok(Map.of("nivel", nivel.getDescricao()));
+    }
+
+    @GetMapping("/analise-valor")
+    public List<Map<String, Object>> getAnaliseValor() {
+        // O Spring serializará esta lista de mapas diretamente para um array JSON
+        return planoService.getNormalizedPlanoValues();
     }
 }

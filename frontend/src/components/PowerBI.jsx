@@ -10,6 +10,7 @@ import DistribuicaoObrasPorGeneroChart from "./chart/DistribuicaoObrasPorGeneroC
 // Importe o CSS da Home para usar os estilos de card
 import '../pages/Home.css'; 
 import { MediaNotasObras} from './MediaNotasObras';
+import AnaliseValorPlanosChart from './chart/AnaliseValorPlanosChart';
 
 function PowerBI() {
   return (
@@ -30,6 +31,10 @@ function PowerBI() {
         <div className="dashboard-card card-medium">
           <MediaNotasObras />
         </div>
+
+        <AnaliseValorPlanosChart />
+
+
 
 
       </section>

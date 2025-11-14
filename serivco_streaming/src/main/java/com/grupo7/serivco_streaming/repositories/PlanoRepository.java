@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -25,6 +27,14 @@ public class PlanoRepository {
         p.possuiAnuncio = rs.getBoolean("possui_anuncio");
         return p;
     };
+
+    public List<Map<String, Object>> buscarAnaliseValor() {
+        // A query seleciona todas as colunas da sua VIEW
+        String sql = "SELECT * FROM analise_valor_plano";
+
+        // Retorna a lista de mapas, conforme o requisito
+        return jdbc.queryForList(sql);
+    }
 
     public Optional<Plano> findByTipo(String tipoPlano) {
         try {
