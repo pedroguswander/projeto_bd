@@ -19,7 +19,7 @@ import Procedures from '../components/Procedures';
 import InserirObra from '../components/InserirObra';
 import AtualizarObra from '../components/AtualizarObra';
 import DeletarObra from '../components/DeletarObra';
-import EvolucaoNovasContas from '../components/EvolucaoNovasContas';
+import PowerBI from '../components/PowerBI';
 
 function Home() {
   const [openMenu, setOpenMenu] = useState(null);
@@ -151,7 +151,7 @@ function Home() {
               className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`}
               onClick={() => setActiveTab('dashboard')}
             >
-              Dashboard
+              Pesquisa
             </button>
             <button
               className={`tab-button ${activeTab === 'consultas' ? 'active' : ''}`}
@@ -163,7 +163,7 @@ function Home() {
               className={`tab-button ${activeTab === 'procedures' ? 'active' : ''}`}
               onClick={() => setActiveTab('procedures')}
             >
-              Procedures
+              Gerenciamento
             </button>
             <button
               className={`tab-button ${activeTab === 'power_bi' ? 'active' : ''}`}
@@ -177,7 +177,7 @@ function Home() {
             {activeTab === 'dashboard' && <Dashboard />} 
             {activeTab === 'consultas' && <Views />}
             {activeTab === 'procedures' && <Procedures />}
-            {activeTab === 'power_bi' && <EvolucaoNovasContas />}
+            {activeTab === 'power_bi' && <PowerBI />}
           </div>
 
         </main>
