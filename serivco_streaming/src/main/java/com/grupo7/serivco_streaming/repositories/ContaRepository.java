@@ -1,97 +1,137 @@
 package com.grupo7.serivco_streaming.repositories;
 
+import com.grupo7.serivco_streaming.dto.Conta; // Importe o novo modelo
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper; // Usado para mapear resultados para o POJO
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import org.springframework.jdbc.support.GeneratedKeyHolder; // Para pegar o ID gerado no INSERT
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource; // Importa o DataSource
+import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-/**
- * Repository responsável pelas operações de persistência da Conta,
- * utilizando chamada direta a Stored Procedures.
- */
 @Repository
 public class ContaRepository {
 
     private final SimpleJdbcCall atualizarStatusCall;
     private final JdbcTemplate jdbc;
 
+    // SQLs para o CRUD (sem data_criacao)
+    private static final String SQL_INSERT = "INSERT INTO conta (data_expiracao, icone, status_assinatura, fk_usuario_id, fk_administrador_id) VALUES (?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE conta SET data_expiracao = ?, icone = ?, status_assinatura = ?, fk_usuario_id = ?, fk_administrador_id = ? WHERE codigo = ?";
+    private static final String SQL_FIND_BY_ID = "SELECT * FROM conta WHERE codigo = ?";
+    private static final String SQL_FIND_ALL = "SELECT * FROM conta";
+    private static final String SQL_DELETE_BY_ID = "DELETE FROM conta WHERE codigo = ?";
+
+
     @Autowired
-    // Injete o DataSource para inicializar o SimpleJdbcCall
-    // O Spring Boot configura o DataSource automaticamente
     public ContaRepository(DataSource dataSource, JdbcTemplate jdbc) {
-        // Configura o SimpleJdbcCall para chamar a Stored Procedure
         this.atualizarStatusCall = new SimpleJdbcCall(dataSource)
                 .withProcedureName("ATUALIZAR_STATUS_CONTA");
         this.jdbc = jdbc;
     }
 
-    /**
-     * Chama a Stored Procedure ATUALIZAR_STATUS_CONTA para atualizar o status
-     * da assinatura de um usuário.
-     *
-     * @param usuarioId O ID do usuário cuja conta será atualizada.
-     * @param novoStatus O novo status da assinatura ('Ativa', 'Pendente', etc.).
-     * @return O número de linhas afetadas (retornado implicitamente pela procedure,
-     * mas o método execute do SimpleJdbcCall retorna void ou um mapa vazio).
-     * Em DMLs (UPDATE/DELETE), geralmente é verificado se a chamada não gerou uma exceção.
-     */
+    // ### MÉTODOS EXISTENTES ###
 
     public List<Map<String, Object>> buscarTodasContasDetalhesSemDTO() {
         String sql = "SELECT u.nome, u.email, u.usuario_id, c.data_expiracao, c.status_assinatura, c.codigo " +
                 "FROM usuario u JOIN conta c ON u.usuario_id = c.fk_usuario_id";
-
-        // O método queryForList() executa a SQL e retorna o resultado
-        // em um formato genérico (List<Map<String, Object>>).
-        return jdbc.queryForList(sql);
-    }
-
-    public List<Map<String, Object>> getAccountCountsByMonth() {
-        String sql = """
-            SELECT
-                DATE_FORMAT(data_criacao, '%Y-%m') AS Ano_Mes_Criacao,
-                COUNT(codigo) AS Total_Contas
-            FROM
-                conta
-            WHERE
-                data_criacao IS NOT NULL
-            GROUP BY
-                Ano_Mes_Criacao
-            ORDER BY
-                Ano_Mes_Criacao;
-        """;
-
-        // Usa queryForList para obter uma lista de Mapas
-        // O Spring JDBC mapeia automaticamente as colunas para as chaves do Map.
         return jdbc.queryForList(sql);
     }
 
     public void atualizarStatusConta(int usuarioId, String novoStatus) {
-
-        // Crie um Map contendo os parâmetros de entrada da Stored Procedure
-        // As chaves devem corresponder aos nomes dos parâmetros (case-insensitive para o MySQL)
         java.util.Map<String, Object> params = new java.util.HashMap<>();
         params.put("p_usuario_id", usuarioId);
         params.put("p_novo_status", novoStatus);
 
         try {
-            // Executa a Stored Procedure
-            // O SimpleJdbcCall trata a conexão e a chamada SQL por baixo dos panos.
             atualizarStatusCall.execute(params);
-
-            // Se a procedure retornar a exceção SQLSTATE '45000' (Erro: Status de assinatura inválido),
-            // uma exceção do Spring DataAccess (como BadSqlGrammarException ou similar) será lançada.
-
         } catch (org.springframework.dao.DataAccessException e) {
-            // Você pode capturar e re-lançar uma exceção de negócio mais amigável aqui.
-            // Exemplo:
             if (e.getMessage() != null && e.getMessage().contains("Status de assinatura inválido")) {
                 throw new IllegalArgumentException("O status fornecido é inválido: " + novoStatus, e);
             }
-            throw e; // Re-lança outras exceções de acesso a dados
+            throw e;
         }
+    }
+
+    // ### NOVOS MÉTODOS CRUD ###
+
+    /**
+     * CREATE (Insert)
+     * Insere uma nova conta e retorna o objeto Conta com o ID gerado.
+     */
+    public Conta create(Conta conta) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
+            ps.setDate(1, conta.getDataExpiracao());
+            ps.setString(2, conta.getIcone());
+            ps.setString(3, conta.getStatusAssinatura());
+            ps.setObject(4, conta.getFkUsuarioId());
+            ps.setObject(5, conta.getFkAdministradorId());
+            return ps;
+        }, keyHolder);
+
+        // Define o ID gerado no objeto conta
+        if (keyHolder.getKey() != null) {
+            conta.setCodigo(keyHolder.getKey().intValue());
+        }
+        return conta;
+    }
+
+    /**
+     * READ (Select by ID)
+     * Busca uma conta pelo seu 'codigo'.
+     */
+    public Optional<Conta> findById(int id) {
+        try {
+            Conta conta = jdbc.queryForObject(SQL_FIND_BY_ID,
+                    new BeanPropertyRowMapper<>(Conta.class),
+                    id);
+            return Optional.ofNullable(conta);
+        } catch (EmptyResultDataAccessException e) {
+            // Retorna vazio se o ID não for encontrado
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * READ (Select All)
+     * Retorna uma lista de todas as contas.
+     */
+    public List<Conta> findAll() {
+        return jdbc.query(SQL_FIND_ALL, new BeanPropertyRowMapper<>(Conta.class));
+    }
+
+    /**
+     * UPDATE (Update)
+     * Atualiza uma conta existente com base no 'codigo'.
+     */
+    public int update(Conta conta) {
+        // Retorna o número de linhas afetadas
+        return jdbc.update(SQL_UPDATE,
+                conta.getDataExpiracao(),
+                conta.getIcone(),
+                conta.getStatusAssinatura(),
+                conta.getFkUsuarioId(),
+                conta.getFkAdministradorId(),
+                conta.getCodigo());
+    }
+
+    /**
+     * DELETE (Delete)
+     * Deleta uma conta pelo 'codigo'.
+     */
+    public int deleteById(int id) {
+        // Retorna o número de linhas afetadas
+        return jdbc.update(SQL_DELETE_BY_ID, id);
     }
 }

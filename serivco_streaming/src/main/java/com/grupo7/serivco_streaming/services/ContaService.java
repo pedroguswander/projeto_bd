@@ -1,16 +1,15 @@
 package com.grupo7.serivco_streaming.services;
 
+import com.grupo7.serivco_streaming.dto.Conta; // Importe o modelo
 import com.grupo7.serivco_streaming.repositories.ContaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional; // Importar Optional
 
-/**
- * Service responsável pela lógica de negócio relacionada à Conta.
- */
-@Service // Marca a classe como um Service do Spring
+@Service
 public class ContaService {
 
     private final ContaRepository contaRepository;
@@ -20,71 +19,66 @@ public class ContaService {
         this.contaRepository = contaRepository;
     }
 
+    // ### MÉTODOS EXISTENTES ###
+
     public List<Map<String, Object>> buscarDetalhesContas() {
-        // Chama o método do Repository que retorna o Map genérico
         return contaRepository.buscarTodasContasDetalhesSemDTO();
     }
 
-    /**
-     * Atualiza o status da assinatura de um usuário.
-     * Envolve a validação do status e a chamada ao Repositório.
-     * * @param usuarioId O ID do usuário.
-     * @param novoStatus O novo status da conta.
-     * @throws IllegalArgumentException Se o status for inválido (vindo do Repository).
-     */
     public void atualizarStatus(int usuarioId, String novoStatus) {
-
-        // *Nota: A validação de status já está na Stored Procedure e é tratada no Repository.
-        // Se houvesse lógica de negócio adicional (ex: enviar email ao atualizar para 'Cancelada'),
-        // ela iria aqui.
-
-        // Chama o método do Repository, delegando a execução da Stored Procedure
+        // Lógica de negócio (se houver) iria aqui.
         contaRepository.atualizarStatusConta(usuarioId, novoStatus);
     }
 
-    public List<Map<String, Object>> getMonthlyAccountCreationCounts() {
-        // Obtém os dados brutos do repositório.
-        List<Map<String, Object>> raw = contaRepository.getAccountCountsByMonth();
 
-        // Transforma cada registro em um Map com campos separados: quantidade, mes, ano
-        java.util.List<Map<String, Object>> transformed = new java.util.ArrayList<>();
+    // ### NOVOS MÉTODOS CRUD ###
 
-        for (Map<String, Object> row : raw) {
-            Object anoMesObj = row.get("Ano_Mes_Criacao");
-            Object totalObj = row.get("Total_Contas");
+    /**
+     * CREATE
+     * Cria uma nova conta.
+     */
+    public Conta criarConta(Conta conta) {
+        // Validações de negócio (ex: verificar se fkUsuarioId já existe) iriam aqui.
+        return contaRepository.create(conta);
+    }
 
-            String anoMes = anoMesObj != null ? anoMesObj.toString() : null;
-            Integer ano = null;
-            Integer mes = null;
+    /**
+     * READ (By ID)
+     * Busca uma conta por ID.
+     */
+    public Optional<Conta> buscarContaPorId(int id) {
+        return contaRepository.findById(id);
+    }
 
-            if (anoMes != null && anoMes.contains("-")) {
-                String[] parts = anoMes.split("-", 2);
-                try {
-                    ano = Integer.parseInt(parts[0]);
-                    mes = Integer.parseInt(parts[1]);
-                } catch (NumberFormatException e) {
-                    // Se parsing falhar, apenas deixamos ano/mes nulos
-                }
-            }
+    /**
+     * READ (All)
+     * Lista todas as contas.
+     */
+    public List<Conta> listarTodasContas() {
+        return contaRepository.findAll();
+    }
 
-            Integer quantidade = null;
-            if (totalObj instanceof Number) {
-                quantidade = ((Number) totalObj).intValue();
-            } else if (totalObj != null) {
-                try {
-                    quantidade = Integer.parseInt(totalObj.toString());
-                } catch (NumberFormatException ignored) {
-                }
-            }
+    /**
+     * UPDATE
+     * Atualiza uma conta. Retorna 'true' se foi bem-sucedido.
+     */
+    public boolean atualizarConta(int id, Conta conta) {
+        // Garante que o ID do objeto é o mesmo do path (URL)
+        conta.setCodigo(id);
 
-            java.util.Map<String, Object> item = new java.util.HashMap<>();
-            item.put("quantidade", quantidade);
-            item.put("mes", mes);
-            item.put("ano", ano);
+        // O método update do jdbc retorna o n° de linhas afetadas
+        int linhasAfetadas = contaRepository.update(conta);
 
-            transformed.add(item);
-        }
+        // Se linhasAfetadas > 0, a atualização funcionou
+        return linhasAfetadas > 0;
+    }
 
-        return transformed;
+    /**
+     * DELETE
+     * Deleta uma conta. Retorna 'true' se foi bem-sucedido.
+     */
+    public boolean deletarConta(int id) {
+        int linhasAfetadas = contaRepository.deleteById(id);
+        return linhasAfetadas > 0;
     }
 }
