@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import EvolucaoNovasContasChart from "./chart/EvolucaoNovasContasChart";
 import "./EvolucaoNovasContas.css";
 import useEvolucaoNovasContas from "../hooks/useEvolucaoNovasContas";
+import DistribuicaoObrasPorGeneroChart from "./chart/DistribuicaoObrasPorGeneroChart";
 
 export default function EvolucaoNovasContas({ defaultYear = 2024 }) {
   const [year, setYear] = useState(defaultYear);
@@ -54,7 +55,10 @@ export default function EvolucaoNovasContas({ defaultYear = 2024 }) {
         <div className="evolucao-chart">
           <EvolucaoNovasContasChart ano={year} />
         </div>
+
       </div>
+      <DistribuicaoObrasPorGeneroChart />
+
     </>
   );
 }

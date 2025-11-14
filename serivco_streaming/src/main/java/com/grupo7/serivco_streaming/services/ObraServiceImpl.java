@@ -98,4 +98,7 @@ public class ObraServiceImpl implements ObraService {
 
     @Override
     public List<Map<String, Object>> calcularMedias(Integer obraCodigo) { return obraRepository.calcularMedias(obraCodigo); }
+
+    @Override
+    public List<Map<String, Object>> findDistribuicaoPorGenero() { return obraRepository.findDistribuicaoPorGenero(); }
 }

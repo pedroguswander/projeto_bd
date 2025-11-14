@@ -105,4 +105,16 @@ public class ObraController {
         // Retorna 200 OK com a lista de mapas.
         return ResponseEntity.ok(medias);
     }
+
+    @GetMapping("/distribuicao/genero")
+    public ResponseEntity<List<Map<String, Object>>> getDistribuicaoPorGenero() {
+        List<Map<String, Object>> distribuicao = obraService.findDistribuicaoPorGenero();
+
+        if (distribuicao.isEmpty()) {
+            // Retorna 204 No Content se não houver dados, ou um 200 OK com lista vazia.
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(distribuicao);
+    }
 }

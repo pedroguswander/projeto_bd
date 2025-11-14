@@ -32,4 +32,6 @@ public interface ObraService {
     public Optional<Obra> findByName(String nome);
 
     public List<Map<String, Object>> calcularMedias(Integer obraCodigo);
+
+    public List<Map<String, Object>> findDistribuicaoPorGenero();
 }

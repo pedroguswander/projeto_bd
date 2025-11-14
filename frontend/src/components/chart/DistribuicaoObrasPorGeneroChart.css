@@ -1,0 +1,100 @@
+/* src/components/DistribuicaoObrasPorGeneroChart.css */
+
+.dobg-chart-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  width: 100%;
+}
+
+.dobg-chart-header h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+.dobg-chart-body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.dobg-chart-wrapper {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  margin: 20px;
+  flex-shrink: 0;
+}
+
+.dobg-chart-legend-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 0;
+  max-height: 250px;
+  overflow-y: auto;
+  flex-grow: 1;
+  margin-left: 20px;
+}
+
+.dobg-legend-item {
+  display: flex;
+  align-items: center;
+}
+
+.dobg-legend-color-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dobg-legend-label {
+  font-size: 1em;
+  color: #555;
+}
+
+.dobg-chart-container {
+  padding: 20px;
+  text-align: center;
+  font-size: 1.1em;
+  color: #666;
+}
+
+.dobg-chart-container.error {
+  color: #d9534f;
+}
+
+.dobg-chart-container.no-data {
+  color: #f0ad4e;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .dobg-chart-body {
+    flex-direction: column;
+  }
+
+  .dobg-chart-wrapper {
+    margin: 10px auto;
+  }
+
+  .dobg-chart-legend-custom {
+    margin-left: 0;
+    margin-top: 20px;
+    align-items: flex-start;
+    max-height: none;
+    width: 100%;
+  }
+}

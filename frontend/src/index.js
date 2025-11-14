@@ -6,6 +6,7 @@ import VerDetalheAvaliacao from './components/VerDetalheAvaliacao';
 import UsuarioStatusConta from './components/UsuarioStatusConta';
 import { MediaNotasObrasChart } from './components/MediaNotasObrasChart';
 import { InserirUsuario } from './components/InserirUsuario';
+import DistribuicaoObrasPorGeneroChart from './components/chart/DistribuicaoObrasPorGeneroChart';
 import EvolucaoNovasContas from './components/EvolucaoNovasContas';
 
 import reportWebVitals from './reportWebVitals';
@@ -41,8 +42,8 @@ const router = createBrowserRouter([
     errorElement: <div>Página não encontrada</div>,
   },
     {
-    path: '/medias-das-notas',
-    element: <MediaNotasObrasChart />,
+    path: '/distribuicao-obra-genero',
+    element: <DistribuicaoObrasPorGeneroChart />,
     errorElement: <div>Página não encontrada</div>,
   },
     {

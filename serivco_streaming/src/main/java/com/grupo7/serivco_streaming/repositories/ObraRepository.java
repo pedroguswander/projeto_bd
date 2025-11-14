@@ -106,6 +106,25 @@ public class ObraRepository {
         return key == null ? 0 : key.intValue();
     }
 
+    public List<Map<String, Object>> findDistribuicaoPorGenero() {
+        // A consulta SQL que utilizamos anteriormente
+        String sql = "SELECT " +
+                "    g.nome AS genero, " +
+                "    COUNT(o.codigo) AS total_obras " +
+                "FROM " +
+                "    genero g " +
+                "JOIN " +
+                "    obra o ON g.genero_PK = o.fk_genero_genero_PK " +
+                "GROUP BY " +
+                "    g.nome " +
+                "ORDER BY " +
+                "    total_obras DESC LIMIT 5";
+
+        // Usamos queryForList para retornar uma List<Map<String, Object>> bruta
+        // sem a necessidade de RowMapper.
+        return jdbc.queryForList(sql);
+    }
+
     public List<String> getUsuariosSemPlano() {
         return jdbc.queryForList("SELECT * from usuarios_sem_plano", String.class);
     }
