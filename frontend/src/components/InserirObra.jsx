@@ -4,6 +4,7 @@ import { useCreateObra } from '../hooks/useCreateObra'; // Importando o Hook
 
 function InserirObra({ onClose }) {
   // Hook de criação
+  // apiError agora contém a string de erro do backend, se houver.
   const { createObra, isLoading, error: apiError } = useCreateObra();
   
   // O estado inicial reflete o novo DTO
@@ -20,7 +21,9 @@ function InserirObra({ onClose }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     // O valor de 'obraTIPO' e 'fkGeneroGeneroPK' deve ser tratado como número
-    const newValue = (name === 'obraTIPO' || name === 'fkGeneroGeneroPK' || name === 'qntTemporadas') ? parseInt(value, 10) : value;
+    const newValue = (name === 'obraTIPO' || name === 'fkGeneroGeneroPK' || name === 'qntTemporadas') 
+      ? parseInt(value, 10) 
+      : value;
 
     setFormData(prev => ({ ...prev, [name]: newValue }));
   };
@@ -28,12 +31,14 @@ function InserirObra({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // O hook lança o erro, mas não precisamos fazer nada no catch aqui,
+      // pois o estado 'apiError' será atualizado e o erro exibido no JSX.
       await createObra(formData);
       console.log('Obra criada com sucesso!');
       onClose(); // Fecha o modal após salvar
     } catch (err) {
-      // O erro já é tratado e logado pelo hook
-      console.log("Falha ao criar obra.");
+      // O erro já está sendo tratado e o estado 'apiError' atualizado no hook.
+      console.log("Falha ao criar obra. Mensagem exibida no alerta.");
     }
   };
 
@@ -48,6 +53,13 @@ function InserirObra({ onClose }) {
           <button onClick={onClose} className="close-button">&times;</button>
         </div>
         <form onSubmit={handleSubmit} className="modal-body">
+          {/* Exibição de Erro como Caixa Vermelha (BTN ALERT) */}
+          {apiError && (
+            <div className="alert-error-box">
+              ⚠️ **{apiError}**
+            </div>
+          )}
+          
           {/* Campo Nome */}
           <div className="form-group">
             <label htmlFor="nome">Título da Obra</label>
@@ -101,9 +113,6 @@ function InserirObra({ onClose }) {
               <input type="number" id="qntTemporadas" name="qntTemporadas" min="1" value={formData.qntTemporadas} onChange={handleChange} required disabled={isLoading} />
             </div>
           )}
-
-          {/* Exibição de Erro */}
-          {apiError && <p className="error-text">Erro: {apiError.message || 'Não foi possível criar a obra.'}</p>}
 
           <div className="modal-footer">
             <button type="button" onClick={onClose} className="button-secondary" disabled={isLoading}>

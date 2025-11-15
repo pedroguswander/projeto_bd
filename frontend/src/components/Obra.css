@@ -159,3 +159,28 @@ button {
   text-align: center;
   margin-top: 8px;
 }
+
+/* Dentro de Obra.css */
+
+/* Estilo para a caixa de alerta de erro */
+.alert-error-box {
+    padding: 12px;
+    margin-top: 15px;
+    border: 1px solid #d44941; /* Borda vermelha escura */
+    background-color: #fcebeb; /* Fundo vermelho claro */
+    color: #a94442; /* Texto vermelho escuro */
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Opcional: Estilo para alinhar o form-row */
+.form-row {
+    display: flex;
+    gap: 20px; /* Espaçamento entre os campos */
+}
+
+.form-row .form-group {
+    flex: 1;
+}

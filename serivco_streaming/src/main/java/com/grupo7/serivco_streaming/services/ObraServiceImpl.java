@@ -27,10 +27,10 @@ public class ObraServiceImpl implements ObraService {
 
         // --- INÍCIO DA LÓGICA DO TRIGGER "prevent_duplicate_obra" ---
         // Verificamos se uma obra com este nome já existe
-        if (obraRepository.findByName(obra.nome).isPresent()) {
+        /*if (obraRepository.findByName(obra.nome).isPresent()) {
             // Lança uma exceção com a mesma mensagem do seu trigger SQL
             throw new IllegalArgumentException("ERRO: Nao e permitido inserir obras com nomes duplicados.");
-        }
+        }*/
         // --- FIM DA LÓGICA DO TRIGGER ---
 
         int generatedId = obraRepository.insert(obra);

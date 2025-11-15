@@ -2,6 +2,7 @@ package com.grupo7.serivco_streaming.controllers;
 
 import com.grupo7.serivco_streaming.dto.Obra;
 import com.grupo7.serivco_streaming.services.ObraService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +22,16 @@ public class ObraController {
     }
 
     @PostMapping
-    public ResponseEntity<Obra> createObra(@RequestBody Obra body) {
-        Obra obraCriada = obraService.create(body);
-        URI location = URI.create("/obras/" + obraCriada.codigo);
-        return ResponseEntity.created(location).body(obraCriada);
+    public ResponseEntity<?> createObra(@RequestBody Obra body) {
+        try {
+            Obra obraCriada = obraService.create(body);
+            URI location = URI.create("/obras/" + obraCriada.codigo);
+            return ResponseEntity.created(location).body(obraCriada);
+        }
+        catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERRO: Nao e permitido inserir obras com nomes duplicados.");
+        }
     }
 
     @GetMapping
