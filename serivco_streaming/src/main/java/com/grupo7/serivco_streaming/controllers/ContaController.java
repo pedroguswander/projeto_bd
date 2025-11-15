@@ -143,6 +143,11 @@ public class ContaController {
         }
     }
 
+    @GetMapping("/contagem-mensal")
+    public List<Map<String, Object>> getContagemMensalDeContas() {
+        return contaService.getMonthlyAccountCreationCounts();
+    }
+
 
     // Classe auxiliar existente
     @Getter

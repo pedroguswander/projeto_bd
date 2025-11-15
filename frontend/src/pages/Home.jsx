@@ -39,6 +39,7 @@ import DeletarObra from '../components/DeletarObra';
 import InserirConta from '../components/InserirConta';
 import AtualizarConta from '../components/AtualizarConta';
 import DeletarConta from '../components/DeletarConta';
+import PowerBI from '../components/PowerBI';
 
 function Home() {
   const [openMenu, setOpenMenu] = useState(null);
@@ -182,16 +183,16 @@ function Home() {
                 Dashboard
               </button>
               <button
-                  className={`tab-button ${activeTab === 'consultas' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('consultas')}
-              >
-                Views
-              </button>
-              <button
                   className={`tab-button ${activeTab === 'procedures' ? 'active' : ''}`}
                   onClick={() => setActiveTab('procedures')}
               >
                 Procedures
+              </button>
+              <button
+                  className={`tab-button ${activeTab === 'power_bi' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('power_bi')}
+              >
+                Power BI
               </button>
             </nav>
 
@@ -199,15 +200,9 @@ function Home() {
             <div className="tab-content">
               {activeTab === 'dashboard' && <Dashboard />}
 
-              {/* * =================================================================
-              * ERRO 1 CORRIGIDO:
-              * A linha abaixo foi COMENTADA para parar o erro de compilação.
-              * =================================================================
-              */
-              }
-              {/* {activeTab === 'consultas' && <Views />} */}
-
               {activeTab === 'procedures' && <Procedures />}
+
+              {activeTab === 'power_bi' && <PowerBI />}
             </div>
 
           </main>
