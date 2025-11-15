@@ -20,3 +20,4 @@ export const useMetricasObra = (codigoObra) => {
     staleTime: 5 * 60 * 1000,
   });
 };
+

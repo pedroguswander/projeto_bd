@@ -12,26 +12,24 @@ import BuscarObraPalavraChave from './BuscarObraPalavraChave';
 function Procedures() {
   return (
     <>
-      <h1>Procedures</h1>
+      <h1>Procedures / Views / Consultas</h1>
 
       <section className="dashboard-grid">
         {/* Você pode adicionar quantos cards de consulta quiser aqui */}
 
         <div className="dashboard-card card-large"> 
           {/* Usei uma classe nova 'card-full-width' para a tabela */}
-          <h3>Encontre obras por palavra-chave</h3>
+          <h2>Encontre obras por palavra-chave</h2>
           <BuscarObraPalavraChave />
         </div>
 
         <div className="dashboard-card card-large"> 
           {/* Usei uma classe nova 'card-full-width' para a tabela */}
-          <h3>View I</h3>
           <VerDetalheAvaliacao />
         </div>
         
         <div className="dashboard-card card-full-width"> 
           {/* Usei uma classe nova 'card-full-width' para a tabela */}
-          <h3>Procedure I</h3>
           <UsuarioStatusConta />
         </div>
 
@@ -47,7 +45,6 @@ function Procedures() {
       </section>
         <div className="dashboard-card card-full-width"> 
           {/* Usei uma classe nova 'card-full-width' para a tabela */}
-          <h3>Procedure II</h3>
           <HorasAssistidasPorObra />
         </div>
     </>

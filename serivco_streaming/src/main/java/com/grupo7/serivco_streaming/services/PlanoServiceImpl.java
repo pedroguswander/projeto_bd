@@ -65,26 +65,24 @@ public class PlanoServiceImpl implements PlanoService {
 
     @Override
     public List<Map<String, Object>> getNormalizedPlanoValues() {
+        // ... (Inicialização do rawData, minValues e maxValues - SEM MUDANÇAS AQUI) ...
+
         List<Map<String, Object>> rawData = planoRepository.buscarAnaliseValor();
 
         if (rawData.isEmpty()) {
             return rawData;
         }
 
-        // 1. Encontrar o Min e o Max para cada métrica
+        // 1. Encontrar o Min e o Max para cada métrica (MANTIDO)
         Map<String, Double> minValues = new HashMap<>();
         Map<String, Double> maxValues = new HashMap<>();
 
-        // Inicializa min/max com os valores do primeiro elemento
-        // e define as chaves que serão normalizadas
         for (String key : NORMALIZATION_BEHAVIOR.keySet()) {
-            // Acessa o valor e converte para double (garantindo que seja um tipo numérico)
             double initialValue = ((Number) rawData.get(0).get(key)).doubleValue();
             minValues.put(key, initialValue);
             maxValues.put(key, initialValue);
         }
 
-        // Itera sobre o restante dos dados para encontrar os extremos
         for (Map<String, Object> row : rawData) {
             for (String key : NORMALIZATION_BEHAVIOR.keySet()) {
                 double currentValue = ((Number) row.get(key)).doubleValue();
@@ -98,11 +96,15 @@ public class PlanoServiceImpl implements PlanoService {
             }
         }
 
-        // 2. Aplicar a Normalização (Min-Max Scaling)
+        // --- NOVO PARÂMETRO PARA EVITAR O ZERO ---
+        final double OFFSET_MINIMO = 1.0;
+        final double ESCALA_MAXIMA = 100.0;
+        final double RANGE_NORMALIZADO = ESCALA_MAXIMA - OFFSET_MINIMO; // 99.0
+
+        // 2. Aplicar a Normalização (Min-Max Scaling) com Offset
         return rawData.stream().map(rawMap -> {
             Map<String, Object> normalizedMap = new HashMap<>();
 
-            // Copia a chave principal (nome do plano)
             normalizedMap.put("plano", rawMap.get("plano"));
 
             for (String key : NORMALIZATION_BEHAVIOR.keySet()) {
@@ -113,21 +115,23 @@ public class PlanoServiceImpl implements PlanoService {
 
                 // Evita divisão por zero se todos os valores forem idênticos (Max == Min)
                 if (max == min) {
-                    normalizedValue = 100.0; // Se todos são iguais, pontua 100%
+                    normalizedValue = ESCALA_MAXIMA; // Se todos são iguais, pontua 100%
                 } else {
                     double range = max - min;
 
-                    // Normalização Direta: X_norm = (X - Min) / Range
+                    // Normalização Direta AJUSTADA:
+                    // X_norm = (((X - Min) / Range) * 99.0) + 1.0
                     if (NORMALIZATION_BEHAVIOR.get(key)) {
-                        normalizedValue = (value - min) / range * 100;
+                        normalizedValue = (((value - min) / range) * RANGE_NORMALIZADO) + OFFSET_MINIMO;
                     }
-                    // Normalização Inversa: X_norm = (Max - X) / Range
+                    // Normalização Inversa AJUSTADA:
+                    // X_norm = (((Max - X) / Range) * 99.0) + 1.0
                     else {
-                        normalizedValue = (max - value) / range * 100;
+                        normalizedValue = (((max - value) / range) * RANGE_NORMALIZADO) + OFFSET_MINIMO;
                     }
                 }
 
-                // Formata o valor para ter 2 casas decimais e armazena na chave 'key_normalizado'
+                // Formata o valor para ter 2 casas decimais
                 normalizedMap.put(key, Math.round(normalizedValue * 100.0) / 100.0);
             }
             return normalizedMap;

@@ -186,7 +186,7 @@ function Home() {
                   className={`tab-button ${activeTab === 'procedures' ? 'active' : ''}`}
                   onClick={() => setActiveTab('procedures')}
               >
-                Procedures
+                Procedimentos/Views/Consultas
               </button>
               <button
                   className={`tab-button ${activeTab === 'power_bi' ? 'active' : ''}`}
