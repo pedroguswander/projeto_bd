@@ -136,24 +136,27 @@ CREATE TABLE reclama (
 );
 
 CREATE TABLE pesquisa_streaming (
-                                    id_resposta INT PRIMARY KEY AUTO_INCREMENT,
-                                    fk_usuario_id INT,
-                                    email VARCHAR(255),
-                                    horas_semanais VARCHAR(50),
-                                    frequencia_uso VARCHAR(50),
-                                    servicos_utilizados TEXT,
-                                    dispositivos_utilizados TEXT,
-                                    satisfacao_geral INT CHECK (satisfacao_geral BETWEEN 1 AND 5),
-                                    satisfacao_recomendacao INT CHECK (satisfacao_recomendacao BETWEEN 1 AND 5),
-                                    motivo_insatisfacao TEXT,
-                                    genero VARCHAR(50),
-                                    faixa_etaria VARCHAR(50),
-                                    ocupacao VARCHAR(100),
-                                    regiao_residencia VARCHAR(100),
-                                    qtd_assinaturas VARCHAR(20),
-                                    generos_assistidos TEXT,
-                                    preco_ideal_menos VARCHAR(50),
-                                    FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id)
+    id_resposta INT PRIMARY KEY AUTO_INCREMENT,
+    fk_usuario_id INT NOT NULL, 
+    email VARCHAR(255) NOT NULL UNIQUE, 
+    
+    ocupacao VARCHAR(100) NULL,
+    regiao_residencia VARCHAR(100) NULL,
+    genero VARCHAR(50) NULL,
+    faixa_etaria VARCHAR(50) NULL,
+    qtd_assinaturas VARCHAR(20) NULL,
+    servicos_utilizados TEXT NULL, 
+    motivo_insatisfacao TEXT NULL, 
+    generos_assistidos TEXT NULL, 
+    frequencia_uso VARCHAR(50) NULL,
+    horas_semanais VARCHAR(50) NULL,
+    dispositivos_utilizados TEXT NULL, 
+    preco_ideal_menos VARCHAR(50) NULL,
+
+    satisfacao_geral INT NULL CHECK (satisfacao_geral BETWEEN 1 AND 5),
+    satisfacao_recomendacao INT NULL CHECK (satisfacao_recomendacao BETWEEN 1 AND 5),
+
+    FOREIGN KEY (fk_usuario_id) REFERENCES usuario(usuario_id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS log_reclamacoes (
                                                log_id INT PRIMARY KEY AUTO_INCREMENT,

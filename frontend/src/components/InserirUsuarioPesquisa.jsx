@@ -93,33 +93,60 @@ function InserirUsuarioPesquisa({ onClose }) {
           throw new Error("ID do usuário não foi retornado após a criação.");
       }
 
-      // 2. Coletar dados para a tabela 'pesquisa'
+      // =========================================================================
+      // CORREÇÃO APLICADA AQUI
+      // O objeto 'dadosPesquisa' agora usa 'camelCase' para corresponder
+      // exatamente ao DTO 'PesquisaStreaming.java' do backend.
+      // =========================================================================
       const dadosPesquisa = {
-        fk_usuario_id: usuarioId, // ID do usuário que acabamos de criar
+        // Chaves que já estavam corretas
+        fk_usuario_id: usuarioId,
         email: formData.email,
-        
-        // Campos de PESQUISA
         ocupacao: formData.ocupacao || null,
-        regiao_residencia: formData.regiao_residencia || null,
         genero: formData.genero || null,
-        faixa_etaria: formData.faixa_etaria || null,
-        qtd_assinaturas: formData.qtd_assinaturas ? Number(formData.qtd_assinaturas) : null,
         
-        // Campos de múltipla seleção: convertendo array para string separada por vírgula
-        servicos_utilizados: formData.servicos_utilizados.join(', ') || null, 
-        motivo_insatisfacao: formData.motivo_insatisfacao.join(', ') || null,
-        generos_assistidos: formData.generos_assistidos.join(', ') || null,
-        dispositivos_utilizados: formData.dispositivos_utilizados.join(', ') || null,
+        // --- CORREÇÕES (de snake_case para camelCase) ---
 
-        frequencia_uso: formData.frequencia_uso || null,
-        horas_semanais: formData.horas_semanais || null,
+        // O Java espera 'regiaoResidencia'
+        regiaoResidencia: formData.regiao_residencia || null,
         
-        // Campos de Satisfação (convertendo para número)
-        satisfacao_geral: formData.satisfacao_geral ? Number(formData.satisfacao_geral) : null,
-        satisfacao_recomendacao: formData.satisfacao_recomendacao ? Number(formData.satisfacao_recomendacao) : null,
+        // O Java espera 'faixaEtaria'
+        faixaEtaria: formData.faixa_etaria || null,
         
-        preco_ideal_menos: formData.preco_ideal_menos || null,
+        // O Java espera 'quantidadeAssinaturas'
+        quantidadeAssinaturas: formData.qtd_assinaturas ? Number(formData.qtd_assinaturas) : null,
+        
+        // O Java espera 'servicosUtilizados'
+        servicosUtilizados: formData.servicos_utilizados.join(', ') || null, 
+        
+        // O Java espera 'motivosInsatisfacao'
+        motivosInsatisfacao: formData.motivo_insatisfacao.join(', ') || null,
+        
+        // O Java espera 'generosAssistidos'
+        generosAssistidos: formData.generos_assistidos.join(', ') || null,
+        
+        // O Java espera 'dispositivosUtilizados'
+        dispositivosUtilizados: formData.dispositivos_utilizados.join(', ') || null,
+        
+        // O Java espera 'frequenciaUso'
+        frequenciaUso: formData.frequencia_uso || null,
+        
+        // O Java espera 'horasSemanais'
+        horasSemanais: formData.horas_semanais || null,
+        
+        // O Java espera 'satisfacaoGeral'
+        satisfacaoGeral: formData.satisfacao_geral ? Number(formData.satisfacao_geral) : null,
+        
+        // O Java espera 'satisfacaoRecomendacoes'
+        satisfacaoRecomendacoes: formData.satisfacao_recomendacao ? Number(formData.satisfacao_recomendacao) : null,
+        
+        // O Java espera 'precoIdealMensal' (o seu DTO estava assim)
+        precoIdealMensal: formData.preco_ideal_menos || null,
       };
+      // =========================================================================
+      // FIM DA CORREÇÃO
+      // =========================================================================
+
 
       // **Chama useInserirPesquisa**
       await mutacaoPesquisa.mutateAsync(dadosPesquisa);

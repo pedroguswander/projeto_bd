@@ -63,51 +63,28 @@ public class PesquisaStreamingRepository {
     };
 
     public List<PesquisaRawDTO> getPrecoIdealEQuantidadeAssinaturas() {
-        // SQL para selecionar apenas as colunas necessárias
         String sql = "SELECT preco_ideal_menos, qtd_assinaturas FROM pesquisa_streaming";
-
-        // Usamos BeanPropertyRowMapper para mapear o resultado (snake_case)
-        // para o nosso DTO (camelCase) automaticamente.
         return jdbc.query(sql, new BeanPropertyRowMapper<>(PesquisaRawDTO.class));
     }
 
-// Assumindo que você tem uma classe PesquisaStreaming
-// e que 'jdbc' é uma instância de JdbcTemplate
     public Map<String, Double> getMediaSatisfacaoPorGenero() {
-
-        // Consulta para a média de satisfação de "Masculino"
         String sqlMasculino = "SELECT AVG(satisfacao_geral) FROM pesquisa_streaming WHERE genero = 'Masculino'";
-
-        // Consulta para a média de satisfação de "Feminino"
         String sqlFeminino = "SELECT AVG(satisfacao_geral) FROM pesquisa_streaming WHERE genero = 'Feminino'";
-
-        // Mapa para armazenar os resultados
         Map<String, Double> medias = new HashMap<>();
 
         try {
-            // Executa a primeira consulta e armazena o resultado.
-            // Usamos queryForObject com Double.class para obter diretamente o valor da média (que é um número real).
             Double mediaMasculino = jdbc.queryForObject(sqlMasculino, Double.class);
-
-            // Executa a segunda consulta e armazena o resultado.
             Double mediaFeminino = jdbc.queryForObject(sqlFeminino, Double.class);
-
-            // Adiciona os resultados ao mapa.
             medias.put("media_masculino", mediaMasculino != null ? mediaMasculino : 0.0);
             medias.put("media_feminino", mediaFeminino != null ? mediaFeminino : 0.0);
-
         } catch (Exception e) {
-            // Log ou tratamento de exceção adequado (ex: se a tabela não existe ou erro de SQL)
             System.err.println("Erro ao calcular a média de satisfação por gênero: " + e.getMessage());
-            // Retorna um mapa vazio ou com valores default em caso de erro.
             return Map.of("media_masculino", 0.0, "media_feminino", 0.0);
         }
-
         return medias;
     }
 
     public Map<String, Long> getStreamingHoursCountsByValue() {
-        // A consulta SQL: seleciona o valor literal e conta quantas vezes ele aparece.
         String sql = """
             SELECT 
                 horas_semanais, 
@@ -120,14 +97,12 @@ public class PesquisaStreamingRepository {
                 horas_semanais
             """;
 
-        // Mapeador de Linha para a combinação de horas_semanais (String) e COUNT (Long)
         List<Map.Entry<String, Long>> results = jdbc.query(sql, (rs, rowNum) -> {
             String horas = rs.getString("horas_semanais");
             Long count = rs.getLong("contagem");
             return Map.entry(horas, count);
         });
 
-        // Converte a lista de entradas (entries) em um mapa (Map<String, Long>)
         return results.stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
@@ -135,6 +110,10 @@ public class PesquisaStreamingRepository {
                 ));
     }
 
+    
+    // =================================================================================
+    // MÉTODO INSERT CORRIGIDO
+    // =================================================================================
     public int insert(PesquisaStreaming p) {
         String sql = """
     INSERT INTO pesquisa_streaming (fk_usuario_id ,email, ocupacao, regiao_residencia, genero, faixa_etaria,
@@ -142,87 +121,88 @@ public class PesquisaStreamingRepository {
     frequencia_uso, horas_semanais, satisfacao_geral, satisfacao_recomendacao,
     dispositivos_utilizados, preco_ideal_menos)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-""";
+    """;
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            // Funções auxiliares para evitar repetição (Java 8+)
-            // Trata null em Strings: Se o valor for null, usa uma string vazia ("")
-            // Se a coluna for NOT NULL no BD, "" é melhor que null, que geraria exceção.
-            // AS PROPRIEDADES AGORA SÃO ACESSADAS DIRETAMENTE (p.propriedade)
-            String regiao = p.regiaoResidencia == null ? "" : p.regiaoResidencia;
-            String faixa = p.faixaEtaria == null ? "" : p.faixaEtaria;
-            String qtdAss = p.quantidadeAssinaturas == null ? "" : p.quantidadeAssinaturas;
-            String servicos = p.servicosUtilizados == null ? "" : p.servicosUtilizados;
-            String generos = p.generosAssistidos == null ? "" : p.generosAssistidos;
-            String freq = p.frequenciaUso == null ? "" : p.frequenciaUso;
-            String horas = p.horasSemanais == null ? "" : p.horasSemanais;
-            String disp = p.dispositivosUtilizados == null ? "" : p.dispositivosUtilizados;
-            String preco = p.precoIdealMensal == null ? "" : p.precoIdealMensal;
-
-            // ** A coluna motivo_insatisfacao DEVE ser tratada com setNull se puder ser NULL no BD **
+            // Garantir que campos NOT NULL tenham valor
+            String email = p.email == null ? "" : p.email; // Assumindo que email é NOT NULL
             String motivo = p.motivosInsatisfacao;
 
-            // 1. fk_usuario_id
+            // 1. fk_usuario_id (NOT NULL)
             ps.setInt(1, p.fk_usuario_id);
 
-            // 2. email
-            ps.setString(2, p.email == null ? "" : p.email);
+            // 2. email (NOT NULL)
+            ps.setString(2, email);
 
-            // 3. ocupacao
-            ps.setString(3, p.ocupacao == null ? "" : p.ocupacao);
+            // --- CAMPOS QUE ACEITAM NULL ---
+            // Agora que o DDL SQL aceita NULL, podemos passar o valor do DTO diretamente.
+            // O JDBC (ps.setString) saberá como enviar NULL se o valor for null.
 
-            // 4. regiao_residencia
-            ps.setString(4, regiao);
+            // 3. ocupacao (NULL)
+            ps.setString(3, p.ocupacao);
 
-            // 5. genero
-            ps.setString(5, p.genero == null ? "" : p.genero);
+            // 4. regiao_residencia (NULL)
+            ps.setString(4, p.regiaoResidencia);
 
-            // 6. faixa_etaria
-            ps.setString(6, faixa);
+            // 5. genero (NULL)
+            ps.setString(5, p.genero);
 
-            // 7. qtd_assinaturas
-            ps.setString(7, qtdAss);
+            // 6. faixa_etaria (NULL)
+            ps.setString(6, p.faixaEtaria);
 
-            // 8. servicos_utilizados
-            ps.setString(8, servicos);
+            // 7. qtd_assinaturas (NULL)
+            ps.setString(7, p.quantidadeAssinaturas);
 
-            // 9. motivo_insatisfacao (Permite NULL, usa setNull se a string for nula ou vazia)
+            // 8. servicos_utilizados (NULL)
+            ps.setString(8, p.servicosUtilizados);
+
+            // 9. motivo_insatisfacao (TEXT NULL) - Tratamento especial para ""
             if (motivo == null || motivo.trim().isEmpty()) {
                 ps.setNull(9, java.sql.Types.VARCHAR);
             } else {
                 ps.setString(9, motivo);
             }
 
-            // 10. generos_assistidos
-            ps.setString(10, generos);
+            // 10. generos_assistidos (NULL)
+            ps.setString(10, p.generosAssistidos);
 
-            // 11. frequencia_uso
-            ps.setString(11, freq);
+            // 11. frequencia_uso (NULL)
+            ps.setString(11, p.frequenciaUso);
 
-            // 12. horas_semanais
-            ps.setString(12, horas);
+            // 12. horas_semanais (NULL)
+            ps.setString(12, p.horasSemanais);
 
-            // 13. satisfacao_geral
-            if (p.satisfacaoGeral == null) ps.setInt(13, java.sql.Types.INTEGER);
-            else ps.setInt(13, p.satisfacaoGeral);
+            // 13. satisfacao_geral (INT NULL) - CORREÇÃO CRÍTICA
+            if (p.satisfacaoGeral == null) {
+                ps.setNull(13, java.sql.Types.INTEGER); // <-- CORRIGIDO
+            } else {
+                ps.setInt(13, p.satisfacaoGeral);
+            }
 
-            // 14. satisfacao_recomendacao
-            if (p.satisfacaoRecomendacoes == null) ps.setNull(14, java.sql.Types.INTEGER);
-            else ps.setInt(14, p.satisfacaoRecomendacoes);
+            // 14. satisfacao_recomendacao (INT NULL)
+            if (p.satisfacaoRecomendacoes == null) {
+                ps.setNull(14, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(14, p.satisfacaoRecomendacoes);
+            }
 
-            // 15. dispositivos_utilizados
-            ps.setString(15, disp);
+            // 15. dispositivos_utilizados (NULL)
+            ps.setString(15, p.dispositivosUtilizados);
 
-            // 16. preco_ideal_menos
-            ps.setString(16, preco);
+            // 16. preco_ideal_menos (NULL)
+            ps.setString(16, p.precoIdealMensal);
 
             return ps;
         }, kh);
         Number key = kh.getKey();
         return key == null ? 0 : key.intValue();
     }
+    // =================================================================================
+    // FIM DO MÉTODO INSERT CORRIGIDO
+    // =================================================================================
+
 
     // READ
     public List<PesquisaStreaming> findAll() {
@@ -250,13 +230,17 @@ public class PesquisaStreamingRepository {
 
     // UPDATE
     public int update(int id, PesquisaStreaming p) {
+        // O método update também deve ser verificado para tratar NULLs se você usá-lo
         String sql = """
             UPDATE pesquisa_streaming SET email = ?, ocupacao = ?, regiao_residencia = ?, genero = ?,
-            faixa_etaria = ?, quantidade_assinaturas = ?, servicos_utilizados = ?, motivos_insatisfacao = ?,
+            faixa_etaria = ?, qtd_assinaturas = ?, servicos_utilizados = ?, motivo_insatisfacao = ?,
             generos_assistidos = ?, frequencia_uso = ?, horas_semanais = ?, satisfacao_geral = ?,
-            satisfacao_recomendacoes = ?, dispositivos_utilizados = ?, preco_ideal_mensal = ?
+            satisfacao_recomendacoes = ?, dispositivos_utilizados = ?, preco_ideal_menos = ?
             WHERE id_resposta = ?
         """;
+        // NOTA: O update abaixo está passando os valores do DTO diretamente.
+        // Se algum for null, o JDBC tentará enviar NULL.
+        // Isso SÓ funciona agora que o DDL SQL foi corrigido.
         return jdbc.update(sql, p.email, p.ocupacao, p.regiaoResidencia, p.genero, p.faixaEtaria,
                 p.quantidadeAssinaturas, p.servicosUtilizados, p.motivosInsatisfacao, p.generosAssistidos,
                 p.frequenciaUso, p.horasSemanais, p.satisfacaoGeral, p.satisfacaoRecomendacoes,
@@ -266,6 +250,7 @@ public class PesquisaStreamingRepository {
     public int delete(int id) {
         return jdbc.update("DELETE FROM pesquisa_streaming WHERE id_resposta = ?", id);
     }
+
     public Map<String, Map<String, Long>> getGeneroPorAssistido() {
         String sql = """
             SELECT 
@@ -274,7 +259,7 @@ public class PesquisaStreamingRepository {
                 COUNT(*) AS total
             FROM pesquisa_streaming p
             JOIN JSON_TABLE(
-                CONCAT('[\"', REPLACE(p.generos_assistidos, ',', '\",\"'), '\"]'),
+                CONCAT('["', REPLACE(p.generos_assistidos, ',', '","'), '"]'),
                 "$[*]" COLUMNS (genero_assistido VARCHAR(255) PATH "$")
             ) j
             WHERE 
@@ -306,6 +291,7 @@ public class PesquisaStreamingRepository {
 
         return agrupado;
     }
+
     public Map<String, Long> getTotalPorGenero() {
         String sql = """
             SELECT genero, COUNT(*) AS total
@@ -325,6 +311,7 @@ public class PesquisaStreamingRepository {
 
         return totals;
     }
+
     public Map<String, Map<String, Long>> getGeneroPorHorasSemanais() {
         String sql = """
             SELECT
@@ -365,6 +352,7 @@ public class PesquisaStreamingRepository {
 
         return agrupado;
     }
+
     public Map<String, Map<String, Long>> getDispositivosPorGeneroAssistido() {
         String sql = """
             SELECT
@@ -414,6 +402,4 @@ public class PesquisaStreamingRepository {
 
         return agrupado;
     }
-
-
 }
