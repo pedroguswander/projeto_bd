@@ -287,6 +287,9 @@ function InserirUsuarioPesquisa({ onClose }) {
             >
               <option value="">Selecione a região</option>
               <option value="Região Nordeste">Região Nordeste</option>
+              <option value="Região Sudeste">Região Sudeste</option>
+              <option value="Região Norte">Região Sudeste</option>
+              <option value="Região Centro-Oeste">Região Centro-Oeste</option>
               <option value="Região Sul">Região Sul</option>
               <option value="Estados Unidos">Estados Unidos</option>
               {/* Adicione outras regiões se existirem */}
