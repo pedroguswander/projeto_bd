@@ -56,34 +56,32 @@ public class ObraRepository {
     }
 
     public List<Map<String, Object>> calcularMedias(Integer obraCodigo) {
-        // A query calcula a média das notas agrupada por obra.
-        // LEFT JOIN é usado para incluir obras que não têm avaliações (AVG resultará em NULL).
+        // 1. Consulta Base: Seleciona todas as obras e chama a função para calcular a média de cada uma.
+        //    A função CALCULAR_MEDIA_OBRA(o.codigo) substitui o LEFT JOIN e o AVG(a.nota).
         String sqlBase = """
-            SELECT
-                o.codigo,
-                o.nome,
-                -- Garante que o valor nulo (sem avaliações) ou a média seja retornado formatado
-                COALESCE(CAST(AVG(a.nota) AS DECIMAL(3, 2)), 0.00) AS media_nota
-            FROM
-                obra o
-            LEFT JOIN
-                avaliacao a ON o.codigo = a.fk_obra_codigo
-        """;
+        SELECT
+            o.codigo,
+            o.nome,
+            CALCULAR_MEDIA_OBRA(o.codigo) AS media_nota
+        FROM
+            obra o
+    """;
 
         StringBuilder sqlBuilder = new StringBuilder(sqlBase);
         List<Object> params = new ArrayList<>();
 
-        // Adiciona a cláusula WHERE se um filtro de obra for fornecido
+        // 2. Adiciona a cláusula WHERE se um filtro de obra for fornecido.
+        //    O filtro é aplicado diretamente na tabela `obra`.
         if (obraCodigo != null) {
-            // O filtro é aplicado aqui, antes do GROUP BY
             sqlBuilder.append(" WHERE o.codigo = ? ");
             params.add(obraCodigo);
         }
 
-        // Agrupa e ordena
-        sqlBuilder.append(" GROUP BY o.codigo, o.nome ORDER BY o.codigo");
+        // 3. Ordena os resultados.
+        sqlBuilder.append(" ORDER BY o.codigo");
 
-        // Utiliza queryForList, que retorna List<Map<String, Object>>, eliminando a necessidade de DTO.
+        // Utiliza queryForList para retornar List<Map<String, Object>>.
+        // O resultado final é o mesmo da implementação anterior.
         return jdbc.queryForList(sqlBuilder.toString(), params.toArray());
     }
 

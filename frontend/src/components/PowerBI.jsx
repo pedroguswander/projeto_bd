@@ -28,9 +28,8 @@ function PowerBI() {
         
         <DistribuicaoObrasPorGeneroChart />
 
-        <div className="dashboard-card card-medium">
           <MediaNotasObras />
-        </div>
+
 
         <div className="dashboard-card card-medium">
              <PlanoRadarChart />

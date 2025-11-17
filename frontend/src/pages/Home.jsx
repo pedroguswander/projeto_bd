@@ -230,7 +230,7 @@ function Home() {
         {/* Modais de Obra (Mantidos) */}
         {isObraModalOpen && <InserirObra onClose={() => setObraModalOpen(false)} />}
         {isObraAtualizarOpen && <AtualizarObra onClose={() => setObraAtualizarOpen(false)} />}
-        {isObraDeletarOpen && <DeletarOba onClose={() => setObraDeletarOpen(false)} />}
+        {isObraDeletarOpen && <DeletarObra onClose={() => setObraDeletarOpen(false)} />}
 
         {/* Modal de Gênero (Adicionados e Corrigido o bug de 'InserirUsuarioPesquisa') */}
         {isGeneroModalOpen && <InserirGenero onClose={() => setGeneroModalOpen(false)} />}

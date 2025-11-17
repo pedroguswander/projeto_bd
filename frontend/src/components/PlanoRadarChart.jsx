@@ -19,7 +19,7 @@ const options = {
         title: {
             display: true,
             text: 'Análise Comparativa de Planos de Assinatura',
-            font: { size: 18 }
+            font: { size: 20 }
         },
         // --- HOVER SIMPLES (TOOLTIP) CUSTOMIZADO ---
         tooltip: {
@@ -85,6 +85,7 @@ export function PlanoRadarChart() {
     // 2. Renderiza o Chart.js
     return (
         <div style={{ width: '600px', height: '600px', margin: 'auto' }}>
+            <h2></h2>
             <Radar data={chartData} options={options} />
         </div>
     );
