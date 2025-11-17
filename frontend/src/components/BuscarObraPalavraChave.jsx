@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+// Importando o ícone de lupa do React Icons
+import { FaSearch } from "react-icons/fa"; 
 import useBuscarObra from "../hooks/useBuscarObraPalavraChave";
 import "./BuscarObraPalavraChave.css";
 
@@ -14,17 +16,29 @@ export default function BuscarObraPalavraChave() {
   }
 
   return (
-    <div className="buscar-obra-container">
-      <form className="buscar-obra-form" onSubmit={onSubmit}>
-        <input
-          className="buscar-obra-input"
-          placeholder="Digite palavra-chave da obra..."
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          aria-label="buscar-obra"
-        />
-        <button type="submit" className="buscar-obra-btn">Buscar</button>
-      </form>
+    // O container principal agora cobre a tela para centralizar o conteúdo
+    <div className="analisador-wrapper"> 
+      
+      {/* Título SIMPLIFICADO: Apenas "Pesquisar Obra" */}
+      <header className="analisador-header-simples">
+        <h1>Pesquisar Obra</h1>
+      </header>
+      
+      <div className="buscar-obra-container">
+        <form className="buscar-obra-form" onSubmit={onSubmit}>
+          <input
+            className="buscar-obra-input"
+            // Adicionando um exemplo no placeholder, como na imagem
+            placeholder="Buscar obra por nome (ex: A Viagem de Chihiro)" 
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            aria-label="buscar-obra"
+          />
+          <button type="submit" className="buscar-obra-btn-icon">
+            <FaSearch size={20} />
+          </button>
+        </form>
+      </div>
 
       <div className="buscar-obra-results">
         {isLoading && <div className="buscar-loading">Carregando resultados...</div>}

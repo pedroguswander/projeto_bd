@@ -19,7 +19,6 @@ function Procedures() {
 
         <div className="dashboard-card card-large"> 
           {/* Usei uma classe nova 'card-full-width' para a tabela */}
-          <h2>Encontre obras por palavra-chave</h2>
           <BuscarObraPalavraChave />
         </div>
 
