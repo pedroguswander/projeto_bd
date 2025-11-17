@@ -6,17 +6,11 @@ import {
 } from 'react-icons/fa';
 import { SlEnvolopeLetter } from "react-icons/sl";
 import { MdLocalMovies, MdAnimation } from "react-icons/md";
+// O Link é mantido caso você precise dele para navegação real
 import { Link } from 'react-router-dom';
 
-// Componentes CRUD de Usuário
+// Componentes CRUD de Usuário (Importação corrigida)
 import InserirUsuarioPesquisa from '../components/InserirUsuarioPesquisa';
-/*
- * =================================================================
- * CORREÇÃO DE ERRO DE COMPILAÇÃO:
- * Alterado de 'import InserirUsuario' para 'import { InserirUsuario }'
- * para corresponder ao seu arquivo 'InserirUsuario.jsx'.
- * =================================================================
- */
 import { InserirUsuario } from '../components/InserirUsuario';
 import { AtualizarUsuario } from '../components/AtualizarUsuario';
 import { DeletarUsuario } from '../components/DeletarUsuario';
@@ -26,12 +20,12 @@ import InserirObra from '../components/InserirObra';
 import AtualizarObra from '../components/AtualizarObra';
 import DeletarObra from '../components/DeletarObra';
 
-// === Imports de CONTA (Adicionados) ===
+// Componentes CRUD de CONTA
 import InserirConta from '../components/InserirConta';
 import AtualizarConta from '../components/AtualizarConta';
 import DeletarConta from '../components/DeletarConta';
 
-// === Imports de GÊNERO (Adicionados) ===
+// Componentes CRUD de GÊNERO
 import InserirGenero from '../components/InserirGenero';
 import AtualizarGenero from '../components/AtualizarGenero';
 import DeletarGenero from '../components/DeletarGenero';
@@ -50,7 +44,7 @@ function Home() {
   const [isUsuarioAtualizarModalOpen, setUsuarioAtualizarModalOpen] = useState(false);
   const [isUsuarioDeletarModalOpen, setUsuarioDeletarModalOpen] = useState(false);
 
-  // === Estados de CONTA (Adicionados) ===
+  // Estados de MODAL para CONTA
   const [isContaModalOpen, setContaModalOpen] = useState(false);
   const [isContaAtualizarOpen, setContaAtualizarOpen] = useState(false);
   const [isContaDeletarOpen, setContaDeletarOpen] = useState(false);
@@ -60,16 +54,22 @@ function Home() {
   const [isObraAtualizarOpen, setObraAtualizarOpen] = useState(false);
   const [isObraDeletarOpen, setObraDeletarOpen] = useState(false);
 
-  // === Estados de GÊNERO (Adicionados) ===
+  // Estados de MODAL para GÊNERO
   const [isGeneroModalOpen, setGeneroModalOpen] = useState(false);
   const [isGeneroAtualizarOpen, setGeneroAtualizarOpen] = useState(false);
   const [isGeneroDeletarOpen, setGeneroDeletarOpen] = useState(false);
 
-  // Estado para controlar a aba ativa (Mantido)
+  // Estado para controlar a aba ativa
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const handleMenuClick = (menuKey) => {
     setOpenMenu(openMenu === menuKey ? null : menuKey);
+  };
+
+  // Função auxiliar para o onClick dos links da sidebar
+  const handleLinkClick = (e, action) => {
+    e.preventDefault(); // Impede o link de navegar
+    action(); // Executa a ação (ex: setModalOpen(true))
   };
 
   return (
@@ -89,7 +89,7 @@ function Home() {
 
               <li className="menu-header">Gerenciar Entidades</li>
 
-              {/* Gerenciar Pesquisa (CORREÇÃO DE SINTAXE className) */}
+              {/* Gerenciar Pesquisa (Sintaxe e Acessibilidade Corrigidos) */}
               <li className={`menu-item-dropdown ${openMenu === 'pesquisa' ? 'open' : ''}`}>
                 <div className="menu-item" onClick={() => handleMenuClick('pesquisa')}>
                   <div className="menu-item-content">
@@ -98,11 +98,12 @@ function Home() {
                   <FaChevronDown className="dropdown-icon" />
                 </div>
                 <ul className="submenu">
-                  <li><a onClick={() => setUsuarioPesquisaModalOpen(true)}>Adicionar</a></li>
+                  {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setUsuarioPesquisaModalOpen(true))}>Adicionar</a></li>
                 </ul>
               </li>
 
-              {/* Gerenciar Usuário (CORREÇÃO DE SINTAXE className) */}
+              {/* Gerenciar Usuário (Sintaxe e Acessibilidade Corrigidos) */}
               <li className={`menu-item-dropdown ${openMenu === 'usuarios' ? 'open' : ''}`}>
                 <div className="menu-item" onClick={() => handleMenuClick('usuarios')}>
                   <div className="menu-item-content">
@@ -111,13 +112,14 @@ function Home() {
                   <FaChevronDown className="dropdown-icon" />
                 </div>
                 <ul className="submenu">
-                  <li><a onClick={() => setUsuarioModalOpen(true)}>Adicionar</a></li>
-                  <li><a onClick={() => setUsuarioAtualizarModalOpen(true)}>Atualizar</a></li>
-                  <li><a onClick={() => setUsuarioDeletarModalOpen(true)}>Deletar</a></li>
+                  {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setUsuarioModalOpen(true))}>Adicionar</a></li>
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setUsuarioAtualizarModalOpen(true))}>Atualizar</a></li>
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setUsuarioDeletarModalOpen(true))}>Deletar</a></li>
                 </ul>
               </li>
 
-              {/* Gerenciar Contas (CORRIGIDO) */}
+              {/* Gerenciar Contas (Sintaxe e Acessibilidade Corrigidos) */}
               <li className={`menu-item-dropdown ${openMenu === 'contas' ? 'open' : ''}`}>
                 <div className="menu-item" onClick={() => handleMenuClick('contas')}>
                   <div className="menu-item-content">
@@ -126,13 +128,14 @@ function Home() {
                   <FaChevronDown className="dropdown-icon" />
                 </div>
                 <ul className="submenu">
-                  <li><a onClick={() => setContaModalOpen(true)}>Adicionar</a></li>
-                  <li><a onClick={() => setContaAtualizarOpen(true)}>Atualizar</a></li>
-                  <li><a onClick={() => setContaDeletarOpen(true)}>Deletar</a></li>
+                  {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setContaModalOpen(true))}>Adicionar</a></li>
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setContaAtualizarOpen(true))}>Atualizar</a></li>
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setContaDeletarOpen(true))}>Deletar</a></li>
                 </ul>
               </li>
 
-              {/* Gerenciar Obras (CORREÇÃO DE SINTAXE className) */}
+              {/* Gerenciar Obras (Sintaxe e Acessibilidade Corrigidos) */}
               <li className={`menu-item-dropdown ${openMenu === 'obras' ? 'open' : ''}`}>
                 <div className="menu-item" onClick={() => handleMenuClick('obras')}>
                   <div className="menu-item-content">
@@ -141,13 +144,14 @@ function Home() {
                   <FaChevronDown className="dropdown-icon" />
                 </div>
                 <ul className="submenu">
-                  <li><a onClick={() => setObraModalOpen(true)}>Adicionar</a></li>
-                  <li><a onClick={() => setObraAtualizarOpen(true)}>Atualizar</a></li>
-                  <li><a onClick={() => setObraDeletarOpen(true)}>Deletar</a></li>
+                  {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setObraModalOpen(true))}>Adicionar</a></li>
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setObraAtualizarOpen(true))}>Atualizar</a></li>
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setObraDeletarOpen(true))}>Deletar</a></li>
                 </ul>
               </li>
 
-              {/* Gerenciar Gêneros (CORRIGIDO) */}
+              {/* Gerenciar Gêneros (Sintaxe e Acessibilidade Corrigidos) */}
               <li className={`menu-item-dropdown ${openMenu === 'generos' ? 'open' : ''}`}>
                 <div className="menu-item" onClick={() => handleMenuClick('generos')}>
                   <div className="menu-item-content">
@@ -156,9 +160,10 @@ function Home() {
                   <FaChevronDown className="dropdown-icon" />
                 </div>
                 <ul className="submenu">
-                  <li><a onClick={() => setGeneroModalOpen(true)}>Adicionar</a></li>
-                  <li><a onClick={() => setGeneroAtualizarOpen(true)}>Atualizar</a></li>
-                  <li><a onClick={() => setGeneroDeletarOpen(true)}>Deletar</a></li>
+                  {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setGeneroModalOpen(true))}>Adicionar</a></li>
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setGeneroAtualizarOpen(true))}>Atualizar</a></li>
+                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setGeneroDeletarOpen(true))}>Deletar</a></li>
                 </ul>
               </li>
             </ul>
@@ -176,7 +181,7 @@ function Home() {
               </div>
             </header>
 
-            {/* NAVEGAÇÃO DAS ABAS (PowerBI MANTIDO - CORREÇÃO DE SINTAXE className) */}
+            {/* NAVEGAÇÃO DAS ABAS (PowerBI Mantido - Sintaxe Corrigida) */}
             <nav className="tab-navigation">
               <button
                   className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`}
@@ -198,7 +203,7 @@ function Home() {
               </button>
             </nav>
 
-            {/* CONTEÚDO DAS ABAS (PowerBI MANTIDO) */}
+            {/* CONTEÚDO DAS ABAS (PowerBI Mantido) */}
             <div className="tab-content">
               {activeTab === 'dashboard' && <Dashboard />}
               {activeTab === 'procedures' && <Procedures />}
@@ -225,7 +230,7 @@ function Home() {
         {/* Modais de Obra (Mantidos) */}
         {isObraModalOpen && <InserirObra onClose={() => setObraModalOpen(false)} />}
         {isObraAtualizarOpen && <AtualizarObra onClose={() => setObraAtualizarOpen(false)} />}
-        {isObraDeletarOpen && <DeletarObra onClose={() => setObraDeletarOpen(false)} />}
+        {isObraDeletarOpen && <DeletarOba onClose={() => setObraDeletarOpen(false)} />}
 
         {/* Modal de Gênero (Adicionados e Corrigido o bug de 'InserirUsuarioPesquisa') */}
         {isGeneroModalOpen && <InserirGenero onClose={() => setGeneroModalOpen(false)} />}
