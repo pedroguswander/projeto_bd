@@ -102,7 +102,7 @@ const UsuarioStatusConta = () => {
   );
 };
 
-// --- Componente CardUsuario Atualizado com Classes CSS ---
+// --- Componente CardUsuario ATUALIZADO (com remoção dos campos) ---
 const CardUsuario = ({
   usuario,
   isEditing,
@@ -117,20 +117,21 @@ const CardUsuario = ({
     usuario_id,
     nome_usuario,
     email,
-    tipo_conta,
+    // tipo_conta foi removido
     status_assinatura,
-    data_criacao_conta,
+    // data_criacao_conta foi removido
   } = usuario;
 
   // Função auxiliar para estilizar o status (AGORA RETORNA CLASSES CSS)
   const getStatusStyle = (status) => {
     switch (status) {
-      case 'ATIVA':
+      case 'Ativa': // Ajustado para corresponder ao STATUSES_ASSINATURA
         return 'status-ativa';
-      case 'CANCELADA':
+      case 'Cancelada':
         return 'status-cancelada';
-      case 'PENDENTE':
+      case 'Pendente':
         return 'status-pendente';
+      case 'Expirada': // Ajustado para corresponder ao STATUSES_ASSINATURA
       case 'BLOQUEADA':
         return 'status-bloqueada';
       default:
@@ -145,14 +146,18 @@ const CardUsuario = ({
       <p className="card-email">{email}</p>
 
       <div className="card-info">
-        <p className="info-item">
-          **Tipo de Conta:** <span className="info-value">{tipo_conta}</span>
-        </p>
-        <p className="info-item">
-          **Data de Criação:** <span className="info-value">{new Date(data_criacao_conta).toLocaleDateString()}</span>
-        </p>
+        {/*
+          REMOVIDOS:
+          - Tipo de Conta
+          - Data de Criação
+        */}
+        
+        {/*
+          STATUS ATUAL:
+          - Removido os asteriscos (**)
+        */}
         <p className="info-item status-line">
-          **Status Atual:**
+          <span className="info-label">Status Atual:</span> {/* Texto sem ** */}
           <span
             // Usa a classe 'card-status-badge' para o formato de pílula
             className={`card-status-badge ${getStatusStyle(status_assinatura)}`}
