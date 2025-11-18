@@ -36,12 +36,42 @@ body {
 
 /*
   ==============================================
+  ESTILOS DA BARRA DE PESQUISA
+  ==============================================
+*/
+.search-bar-container {
+  margin-bottom: 32px;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem; 
+  box-sizing: border-box; 
+  transition: border-color 0.3s, box-shadow 0.3s;
+  color: #1f2937;
+}
+
+.search-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+  outline: none;
+}
+
+/*
+  ==============================================
   Grid de Cards Responsivo
   ==============================================
 */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr); /* 1 coluna por padrão (mobile) */
+  grid-template-columns: repeat(1, 1fr); 
   gap: 24px;
 }
 
@@ -79,7 +109,7 @@ body {
 }
 
 .card-title {
-  font-size: 1.25rem; /* 20px */
+  font-size: 1.25rem; 
   font-weight: 700;
   color: #1e40af;
   border-bottom: 1px solid #e5e7eb;
@@ -89,7 +119,7 @@ body {
 }
 
 .card-email {
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.875rem; 
   color: #4b5563;
   margin-bottom: 16px;
   line-height: 1.6;
@@ -102,12 +132,17 @@ body {
 .info-item {
   font-size: 0.875rem;
   color: #374151;
-  margin-bottom: 8px; /* Simula o 'space-y-2' */
+  margin-bottom: 8px;
   line-height: 1.6;
 }
 
 .info-item:last-child {
   margin-bottom: 0;
+}
+
+.info-label {
+  font-weight: 400; 
+  margin-right: 8px; 
 }
 
 .info-value {
@@ -125,13 +160,12 @@ body {
   ==============================================
 */
 .card-status-badge {
-  margin-left: 8px;
   padding: 4px 10px;
-  border-radius: 16px; /* Pill shape */
+  border-radius: 16px; 
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-size: 0.75rem; /* 12px */
+  font-size: 0.75rem; 
 }
 
 /* Cores dinâmicas do Status */
@@ -172,7 +206,7 @@ button {
 }
 
 button:active {
-  transform: scale(0.98); /* Efeito de clique */
+  transform: scale(0.98); 
 }
 
 /* Botão Mudar Status (Ação Principal) */
@@ -219,9 +253,9 @@ button:disabled {
 }
 
 /*
-  ==============================================
+  =============================================
   Estilo de Formulário e Botões Responsivos
-  ==============================================
+  =============================================
 */
 .card-form {
   margin-top: 16px;
@@ -257,26 +291,26 @@ button:disabled {
 /* Grupo de botões (Mobile-first: empilhados) */
 .form-button-group {
   display: flex;
-  flex-direction: column; /* Empilhados */
+  flex-direction: column; 
   gap: 8px;
   margin-top: 12px;
 }
 
 .form-button-group > button {
-  width: 100%; /* Ocupam 100% da largura */
+  width: 100%; 
 }
 
 /* Em telas maiores (ex: 640px+), botões ficam lado a lado */
 @media (min-width: 640px) {
   .form-button-group {
-    flex-direction: row; /* Lado a lado */
+    flex-direction: row; 
     gap: 12px;
   }
 }
 
 /*
   ==============================================
-  Estilos de Estado (Loading/Error)
+  Estilos de Estado (Loading/Error/Mensagens)
   ==============================================
 */
 .loading-state {
@@ -290,9 +324,35 @@ button:disabled {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
-  border: 1px solid #fca5a5; /* red-300 */
-  background-color: #fee2e2; /* red-100 */
-  color: #b91c1c; /* red-700 */
+  border: 1px solid #fca5a5; 
+  background-color: #fee2e2; 
+  color: #b91c1c; 
   border-radius: 8px;
   font-weight: 500;
+}
+
+/* Mensagem de Instrução Inicial (Quando o campo está vazio) */
+.initial-instruction-message {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    text-align: center;
+    font-size: 1.1em;
+    color: #4b5563;
+    background-color: #eef2ff; 
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Mensagem de Nenhum Resultado (Quando a pesquisa não encontra nada) */
+.no-results-message {
+    grid-column: 1 / -1; 
+    text-align: center;
+    color: #888;
+    padding: 30px;
+    font-size: 1.1em;
+    background-color: #f7f7f9; 
+    border-radius: 8px;
+    border: 1px dashed #d1d5db; 
 }
