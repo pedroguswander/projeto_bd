@@ -16,6 +16,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HorasAssistidasPorObra } from './components/HorasAssistidasPorObra';
 import { PlanoRadarChart } from './components/PlanoRadarChart.jsx'
 import BuscarObraPalavraChave from './components/BuscarObraPalavraChave';
+import BuscarObrasPorGenero from './components/BuscarObrasPorGenero.jsx';
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,11 @@ const router = createBrowserRouter([
       {
     path: '/analise-valor-planos',
     element: <PlanoRadarChart />,
+    errorElement: <div>Página não encontrada</div>,
+  },
+  {
+    path: '/obras-por-genero',
+    element: <BuscarObrasPorGenero />,
     errorElement: <div>Página não encontrada</div>,
   },
 ]);

@@ -8,6 +8,7 @@ import '../pages/Home.css';
 import { HorasAssistidasPorObra } from './HorasAssistidasPorObra';
 import VerDetalheAvaliacao from './VerDetalheAvaliacao'; 
 import BuscarObraPalavraChave from './BuscarObraPalavraChave';
+import BuscarObrasPorGenero from './BuscarObrasPorGenero';
 
 function Procedures() {
   return (
@@ -20,6 +21,11 @@ function Procedures() {
         <div className="dashboard-card card-large"> 
           {/* Usei uma classe nova 'card-full-width' para a tabela */}
           <BuscarObraPalavraChave />
+        </div>
+
+        <div className="dashboard-card card-large"> 
+          {/* Usei uma classe nova 'card-full-width' para a tabela */}
+          <BuscarObrasPorGenero />
         </div>
 
         <div className="dashboard-card card-large"> 
