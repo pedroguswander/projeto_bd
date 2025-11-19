@@ -1,5 +1,3 @@
-# Serviço de Streaming
-
 Este é um projeto de serviço de streaming. Este README provê as instruções necessárias para configurar e rodar a aplicação localmente.
 
 ---
@@ -34,6 +32,20 @@ A aplicação usa o MySQL para persistir os dados. Siga os passos abaixo para co
         * Criar o *schema* (`database`) chamado **`Streaming`**.
         * Criar as tabelas necessárias.
         * Inserir dados iniciais de teste.
+
+---
+
+## 💻 Entregas da Disciplina de Banco de Dados
+
+Esta seção detalha os componentes de **SQL Avançado** desenvolvidos como parte da disciplina de Banco de Dados, que são essenciais para o funcionamento do serviço de streaming.
+
+| Componente | Tipo | Função | Localização |
+| :--- | :--- | :--- | :--- |
+| **vw_detalhes_avaliação** | **View** | Enumera detalhes da avaliação de um usuário (funcionalidade do site). | `entrega 4.sql` |
+| **obra palavra chave** | **Consulta SQL** | Permite a busca de obras por palavra-chave (presente na interface). | `ObraRepository` |
+| **ATUALIZAR STATUS CONTA** | **Stored Function** | Atualiza o status da conta de um usuário. | `entrega 5.sql` |
+| **Obter Métricas Visualização Obra** | **Stored Procedure** | Retorna métricas de visualização para uma determinada obra. | `entrega 5.sql` |
+| **CALCULAR_MEDIA_OBRA** | **Stored Function** | Calcula a nota média de avaliação de uma obra. | `entrega 4.sql` |
 
 ---
 
