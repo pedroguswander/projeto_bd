@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import './Home.css';
 import {
-  FaFilm, FaUsers, FaUserCog, FaTags, FaSearch,
+  FaUserCog, FaSearch,
   FaUserCircle, FaChartBar, FaChevronDown,
 } from 'react-icons/fa';
 import { SlEnvolopeLetter } from "react-icons/sl";
 import { MdLocalMovies, MdAnimation } from "react-icons/md";
 // O Link é mantido caso você precise dele para navegação real
-import { Link } from 'react-router-dom';
 
 // Componentes CRUD de Usuário (Importação corrigida)
 import InserirUsuarioPesquisa from '../components/InserirUsuarioPesquisa';
@@ -67,9 +66,9 @@ function Home() {
   };
 
   // Função auxiliar para o onClick dos links da sidebar
-  const handleLinkClick = (e, action) => {
-    e.preventDefault(); // Impede o link de navegar
-    action(); // Executa a ação (ex: setModalOpen(true))
+  const handleSubmenuAction = (action) => {
+    action();
+    setOpenMenu(null);
   };
 
   return (
@@ -99,7 +98,7 @@ function Home() {
                 </div>
                 <ul className="submenu">
                   {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setUsuarioPesquisaModalOpen(true))}>Adicionar</a></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setUsuarioPesquisaModalOpen(true))}>Adicionar</button></li>
                 </ul>
               </li>
 
@@ -113,9 +112,9 @@ function Home() {
                 </div>
                 <ul className="submenu">
                   {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setUsuarioModalOpen(true))}>Adicionar</a></li>
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setUsuarioAtualizarModalOpen(true))}>Atualizar</a></li>
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setUsuarioDeletarModalOpen(true))}>Deletar</a></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setUsuarioModalOpen(true))}>Adicionar</button></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setUsuarioAtualizarModalOpen(true))}>Atualizar</button></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setUsuarioDeletarModalOpen(true))}>Deletar</button></li>
                 </ul>
               </li>
 
@@ -129,9 +128,9 @@ function Home() {
                 </div>
                 <ul className="submenu">
                   {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setContaModalOpen(true))}>Adicionar</a></li>
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setContaAtualizarOpen(true))}>Atualizar</a></li>
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setContaDeletarOpen(true))}>Deletar</a></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setContaModalOpen(true))}>Adicionar</button></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setContaAtualizarOpen(true))}>Atualizar</button></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setContaDeletarOpen(true))}>Deletar</button></li>
                 </ul>
               </li>
 
@@ -145,9 +144,9 @@ function Home() {
                 </div>
                 <ul className="submenu">
                   {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setObraModalOpen(true))}>Adicionar</a></li>
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setObraAtualizarOpen(true))}>Atualizar</a></li>
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setObraDeletarOpen(true))}>Deletar</a></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setObraModalOpen(true))}>Adicionar</button></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setObraAtualizarOpen(true))}>Atualizar</button></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setObraDeletarOpen(true))}>Deletar</button></li>
                 </ul>
               </li>
 
@@ -161,9 +160,9 @@ function Home() {
                 </div>
                 <ul className="submenu">
                   {/* CORRIGIDO: Adicionado href="#" e e.preventDefault() */}
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setGeneroModalOpen(true))}>Adicionar</a></li>
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setGeneroAtualizarOpen(true))}>Atualizar</a></li>
-                  <li><a href="#" onClick={(e) => handleLinkClick(e, () => setGeneroDeletarOpen(true))}>Deletar</a></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setGeneroModalOpen(true))}>Adicionar</button></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setGeneroAtualizarOpen(true))}>Atualizar</button></li>
+                  <li><button type="button" className="submenu-button" onClick={() => handleSubmenuAction(() => setGeneroDeletarOpen(true))}>Deletar</button></li>
                 </ul>
               </li>
             </ul>

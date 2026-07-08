@@ -107,18 +107,24 @@ body {
   padding: 8px 0;
 }
 
-.submenu li a {
+.submenu-button {
   display: block;
+  width: 100%;
   padding: 10px 10px 10px 50px;
   color: #e0e1dd;
-  text-decoration: none;
   font-size: 14px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.submenu li a:hover {
+.submenu-button:hover,
+.submenu-button:focus-visible {
   background-color: #415a77;
   color: #ffffff;
+  outline: none;
 }
 
 /* ================================== */

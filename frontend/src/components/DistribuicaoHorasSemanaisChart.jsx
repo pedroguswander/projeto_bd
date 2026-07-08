@@ -1,5 +1,3 @@
-// src/components/DistribuicaoHorasSemanaisChart/DistribuicaoHorasSemanaisChart.jsx
-
 import React, { useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import {
@@ -7,108 +5,108 @@ import {
   ArcElement,
   Tooltip,
   Legend,
-  Title
+  Title,
 } from 'chart.js';
-// Importa o plugin de rótulos de dados
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useHorasSemanais } from '../hooks/useHorasSemanais';
 
-// Certifique-se de que o caminho do hook está correto
-import { useHorasSemanais } from '../hooks/useHorasSemanais'; // Ajustei o caminho relativo
-
-// Registra os elementos necessários do Chart.js, INCLUINDO o plugin
 ChartJS.register(ArcElement, Tooltip, Legend, Title, ChartDataLabels);
 
-/**
- * Mapeia as chaves da API (labels) para as cores exatas da imagem de exemplo.
- */
+const HORAS_ORDER = ['Raramente', 'Até 2 horas', 'Até 4 horas', 'Mais que 4 horas'];
+
 const COLOR_MAP = {
-  // Cores baseadas na sua imagem de exemplo:
-  'Menos de 2 horas': '#00aaff', // Azul
-  'Até 2 horas': '#ff4d4d',      // Vermelho
-  'Até 4 horas': '#ff9900',      // Laranja
-  'Mais que 4 horas': '#66ff66', // Verde
-  'default': '#cccccc'           // Cor padrão
+  Raramente: '#94a3b8',
+  'Até 2 horas': '#3b82f6',
+  'Até 4 horas': '#f59e0b',
+  'Mais que 4 horas': '#22c55e',
+  default: '#cbd5e1',
+};
+
+const fixText = (value) => {
+  const replacements = {
+    'AtÃ© 2 horas': 'Até 2 horas',
+    'AtÃÂ© 2 horas': 'Até 2 horas',
+    'AtÃ© 4 horas': 'Até 4 horas',
+    'AtÃÂ© 4 horas': 'Até 4 horas',
+  };
+
+  return replacements[value] || value;
 };
 
 export const DistribuicaoHorasSemanaisChart = () => {
   const { data: apiData, isLoading, isError, error } = useHorasSemanais();
 
-  /**
-   * Transforma os dados da API para o formato do Chart.js.
-   */
   const chartData = useMemo(() => {
     if (!apiData) {
       return null;
     }
 
-    const labels = Object.keys(apiData);
-    const dataValues = Object.values(apiData);
-    const backgroundColors = labels.map(label => COLOR_MAP[label] || COLOR_MAP['default']);
+    const normalized = Object.entries(apiData).reduce((acc, [label, value]) => {
+      const normalizedLabel = fixText(label);
+      acc[normalizedLabel] = (acc[normalizedLabel] || 0) + value;
+      return acc;
+    }, {});
+
+    const labels = HORAS_ORDER.filter((label) => normalized[label] > 0);
+    const dataValues = labels.map((label) => normalized[label]);
 
     return {
-      labels: labels,
+      labels,
       datasets: [
         {
-          label: 'Nº de Respostas',
+          label: 'Respostas',
           data: dataValues,
-          backgroundColor: backgroundColors,
-          borderColor: '#ffffff', // Borda branca entre as fatias
+          backgroundColor: labels.map((label) => COLOR_MAP[label] || COLOR_MAP.default),
+          borderColor: '#ffffff',
           borderWidth: 2,
         },
       ],
     };
   }, [apiData]);
 
-  // Opções de configuração do gráfico
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          boxWidth: 14,
+          boxHeight: 14,
+          padding: 14,
+        },
       },
       title: {
         display: true,
-        text: 'Análise da Distribuição de uso de tela (semanal)',
-        font: {
-          size: 18,
-        },
-        padding: {
-          bottom: 20,
-        }
+        text: 'Distribuição de horas semanais de streaming',
+        font: { size: 16 },
+        padding: { bottom: 18 },
       },
       tooltip: {
         callbacks: {
-          // Customiza o tooltip para mostrar porcentagem
-          label: function(context) {
-            const label = context.label || '';
+          label: (context) => {
             const value = context.parsed;
-            const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-            const percentage = ((value / total) * 100).toFixed(1) + '%';
-            return `${label}: ${value} (${percentage})`;
-          }
-        }
+            const total = context.chart.data.datasets[0].data.reduce((sum, item) => sum + item, 0);
+            const percentage = total ? ((value / total) * 100).toFixed(1) : '0.0';
+            return `${context.label}: ${value} respostas (${percentage}%)`;
+          },
+        },
       },
-      // === NOVO: Configuração do Plugin DataLabels ===
       datalabels: {
-        color: '#ffffff', // Cor da fonte: branca
+        color: '#ffffff',
         font: {
           weight: 'bold',
-          size: 14, // Tamanho da fonte para destaque
-          family: 'Helvetica, Arial, sans-serif', // Família da fonte
+          size: 13,
+          family: 'Helvetica, Arial, sans-serif',
         },
         formatter: (value, context) => {
-          // Calcula e retorna o valor em porcentagem
-          const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-          const percentage = (value / total) * 100;
-          return percentage.toFixed(1) + '%';
+          const total = context.chart.data.datasets[0].data.reduce((sum, item) => sum + item, 0);
+          const percentage = total ? (value / total) * 100 : 0;
+          return percentage < 6 ? '' : `${percentage.toFixed(1)}%`;
         },
       },
-      // =============================================
     },
   };
-
-  // --- Renderização do Componente ---
 
   if (isLoading) {
     return <div>Carregando dados do gráfico...</div>;
@@ -118,16 +116,13 @@ export const DistribuicaoHorasSemanaisChart = () => {
     return <div>Erro ao carregar dados: {error.message}</div>;
   }
 
-  if (!chartData) {
+  if (!chartData || chartData.labels.length === 0) {
     return <div>Sem dados para exibir.</div>;
   }
 
   return (
-    // É importante definir uma altura para o container do gráfico
-    <div style={{ position: 'relative', height: '400px', width: '400px', margin: 'auto' }}>
+    <div style={{ position: 'relative', height: '360px', width: '100%', maxWidth: '460px', margin: 'auto' }}>
       <Pie data={chartData} options={chartOptions} />
     </div>
   );
 };
-
-// export default DistribuicaoHorasSemanaisChart;

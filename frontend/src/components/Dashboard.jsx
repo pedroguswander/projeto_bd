@@ -8,8 +8,6 @@ import { GeneroPorHorasChart } from './GeneroPorHorasChart';
 
 import { DispositivosPorGeneroChart } from './DispositivosPorGeneroChart'; 
 
-import { useTotaisPorGenero } from '../hooks/useTotalPorGenero';
-
 import '../pages/Home.css'; 
 
 function Dashboard() {

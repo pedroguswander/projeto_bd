@@ -89,8 +89,6 @@ export const MediaNotasObras = () => {
     setFiltro(null);
   };
 
-  const isSearching = !!filtro;
-
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Médias das Notas por Obra</h2>
@@ -125,7 +123,7 @@ export const MediaNotasObras = () => {
             <XCircle size={18} /> Limpar
           </button>
         )}
-      </div>
+      </form>
 
       {/* Renderiza o Gráfico */}
       <MediaNotasObrasChart obraCodigo={filtro} />

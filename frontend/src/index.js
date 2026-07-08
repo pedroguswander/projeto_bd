@@ -4,13 +4,11 @@ import './index.css';
 import Home from './pages/Home';
 import VerDetalheAvaliacao from './components/VerDetalheAvaliacao';
 import UsuarioStatusConta from './components/UsuarioStatusConta';
-import { MediaNotasObrasChart } from './components/MediaNotasObrasChart';
 import { InserirUsuario } from './components/InserirUsuario';
 import DistribuicaoObrasPorGeneroChart from './components/chart/DistribuicaoObrasPorGeneroChart';
 import EvolucaoNovasContas from './components/EvolucaoNovasContas';
 
 import reportWebVitals from './reportWebVitals';
-import {BrowserRouter} from "react-router-dom";
 import { createBrowserRouter, RouterProvider }  from "react-router-dom"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HorasAssistidasPorObra } from './components/HorasAssistidasPorObra';

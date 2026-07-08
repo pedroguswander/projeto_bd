@@ -11,9 +11,8 @@ export default function EvolucaoNovasContas({ defaultYear = 2024 }) {
   const years = Array.from({ length: 7 }, (_, i) => defaultYear - (5 - i));
 
   // Usa o hook para obter dados e totais
-  const { data, isLoading, isError } = useEvolucaoNovasContas(year);
+  const { data } = useEvolucaoNovasContas(year);
 
-  const counts = data?.countsByMonth ? data.countsByMonth.map((d) => d.quantidade) : [];
   const yearTotal = data?.yearTotal ?? 0;
   const previousYearTotal = data?.previousYearTotal ?? 0;
 

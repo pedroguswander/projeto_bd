@@ -1,8 +1,5 @@
 import React from 'react';
 
-// Importe o componente de consulta que criamos anteriormente
-import VerDetalheAvaliacao from './VerDetalheAvaliacao'; 
-
 import EvolucaoNovasContas from '../components/EvolucaoNovasContas';
 
 import DistribuicaoObrasPorGeneroChart from "./chart/DistribuicaoObrasPorGeneroChart";

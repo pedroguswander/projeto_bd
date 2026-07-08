@@ -85,7 +85,6 @@ export function PlanoRadarChart() {
     // 2. Renderiza o Chart.js
     return (
         <div style={{ width: '600px', height: '600px', margin: 'auto' }}>
-            <h2></h2>
             <Radar data={chartData} options={options} />
         </div>
     );

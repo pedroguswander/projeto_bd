@@ -1,78 +1,66 @@
-Este é um projeto de serviço de streaming. Este README provê as instruções necessárias para configurar e rodar a aplicação localmente.
+# Projeto BD - Servico de Streaming
 
----
+## Rodando com Docker
 
-## 🚀 Pré-requisitos
+O jeito principal de rodar o projeto agora e pelo Docker Compose. Ele sobe:
 
-Para rodar este projeto, você precisará ter o seguinte software instalado em sua máquina:
+- MySQL 8.4 em um container proprio
+- Backend Spring Boot conectado nesse MySQL
+- Frontend React
 
-* **Java Development Kit (JDK)** (versão recomendada: 17 ou superior)
-* **MySQL Server** (Qualquer versão recente deve funcionar.)
-* **Maven** (Para gerenciar as dependências e o build do projeto.)
+```bash
+docker compose up --build
+```
 
----
+Servicos expostos:
 
-## ⚙️ Configuração do Banco de Dados
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:8080`
+- MySQL: `localhost:3307`
 
-A aplicação usa o MySQL para persistir os dados. Siga os passos abaixo para configurar o banco de dados:
+Dentro da rede Docker, o backend nao usa `localhost` para acessar o banco. Ele usa o host interno `db`, configurado no `docker-compose.yml`:
 
-1.  **Instalar o MySQL:** Se você ainda não tem, instale o **MySQL Server** na sua máquina.
-2.  **Acessar o MySQL:** Abra seu cliente MySQL (como MySQL Workbench, DBeaver, ou linha de comando) e conecte-se.
+```yaml
+DB_HOST: db
+DB_PORT: 3306
+DB_NAME: StreamingAtualizado2
+```
 
-    * A aplicação está configurada para se conectar em `jdbc:mysql://localhost:3306/Streaming` com as seguintes credenciais:
-        * **Usuário:** `root`
-        * **Senha:** `1234`
+O `localhost` que aparece em `serivco_streaming/src/main/resources/application.properties` e apenas fallback para quando o backend for executado fora do Docker.
 
-    **⚠️ Importante:** Se você usa outras credenciais para o seu usuário `root` ou se não quer usar o `root`, você deve criar um usuário ou alterar as configurações no arquivo de propriedades do Spring para as suas credenciais.
+## Banco no Docker
 
-3.  **Executar o Script SQL:**
-    * Localize o arquivo **`createAndInsert.sql`** na raiz do projeto (ou no local onde ele estiver armazenado).
-    * **Execute todo o conteúdo deste script** no seu MySQL.
-    * Este script irá:
-        * Criar o *schema* (`database`) chamado **`Streaming`**.
-        * Criar as tabelas necessárias.
-        * Inserir dados iniciais de teste.
+Na primeira subida, o MySQL executa automaticamente os scripts em `/docker-entrypoint-initdb.d`:
 
----
+- `serivco_streaming/createAndInsertAtualizado.sql`
+- `docker/mysql/init/02-views-routines-triggers.sql`
 
-## 💻 Entregas da Disciplina de Banco de Dados
+Esse segundo script concentra indices, views, functions, procedures e triggers usados pelo backend.
 
-Esta seção detalha os componentes de **SQL Avançado** desenvolvidos como parte da disciplina de Banco de Dados, que são essenciais para o funcionamento do serviço de streaming.
+Os dados ficam persistidos no volume Docker `streaming_mysql_data`. Por isso, os scripts de inicializacao so rodam quando o volume ainda nao existe. Para recriar o banco do zero:
 
-| Componente | Tipo | Função | Localização |
-| :--- | :--- | :--- | :--- |
-| **vw_detalhes_avaliação** | **View** | Enumera detalhes da avaliação de um usuário (funcionalidade do site). | `entrega 4.sql` |
-| **obra palavra chave** | **Consulta SQL** | Permite a busca de obras por palavra-chave (presente na interface). | `ObraRepository` |
-| **ATUALIZAR STATUS CONTA** | **Stored Function** | Atualiza o status da conta de um usuário. | `entrega 5.sql` |
-| **Obter Métricas Visualização Obra** | **Stored Procedure** | Retorna métricas de visualização para uma determinada obra. | `entrega 5.sql` |
-| **CALCULAR_MEDIA_OBRA** | **Stored Function** | Calcula a nota média de avaliação de uma obra. | `entrega 4.sql` |
+```bash
+docker compose down -v
+docker compose up --build
+```
 
----
+## Configuracao
 
-## 🛠️ Executando a Aplicação
+Crie um `.env` a partir de `.env.example` se quiser mudar portas, nome do banco ou senha:
 
-Com o banco de dados configurado e populado, você pode iniciar a aplicação:
+```env
+DB_NAME=StreamingAtualizado2
+DB_USER=root
+DB_PASSWORD=1234
+MYSQL_PORT=3307
+BACKEND_PORT=8080
+FRONTEND_PORT=3000
+```
 
-1.  **Baixar o Projeto:** Clone o repositório ou baixe o código-fonte do projeto para sua máquina.
-2.  **Abrir o Projeto:** Abra o projeto em sua IDE favorita (IntelliJ IDEA, Eclipse, VS Code, etc.).
-3.  **Compilar e Rodar:**
-    * **Via IDE:** Use a função de "Run" da sua IDE no arquivo principal da aplicação (geralmente uma classe que contém o método `main` e a anotação `@SpringBootApplication`).
-    * **Via Linha de Comando (Maven):** Navegue até o diretório raiz do projeto no terminal e execute os seguintes comandos:
+## Rodando sem Docker
 
-        ```bash
-        # Limpa e empacota o projeto em um arquivo JAR
-        mvn clean package
-        
-        # Executa o arquivo JAR gerado na pasta 'target'
-        # O nome do arquivo pode variar, substitua-o pelo nome correto
-        java -jar target/nome-do-seu-jar.jar 
-        ```
+Se voce quiser rodar o backend direto pela IDE/Maven, ai sim precisa ter um MySQL local compativel com os valores de fallback do `application.properties`, ou definir as variaveis `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD` no ambiente.
 
-4.  **Acesso:** Após a inicialização bem-sucedida, a aplicação estará rodando. Normalmente, o servidor estará disponível em `http://localhost:8080/`. Consulte a documentação da API ou a interface web, se houver, para os próximos passos.
+## Entregas SQL
 
----
-
-### 💡 Solução de Problemas Comuns
-
-* **Erro de Conexão com o Banco de Dados:** Verifique se o **MySQL Server** está em execução e se as credenciais (`username` e `password`) e a URL (`localhost:3306`) no arquivo de configuração do Spring (seja ele `application.properties` ou `application.yml`) correspondem ao seu setup local.
-* **"Porta 8080 já está em uso":** Se outra aplicação estiver usando a porta 8080, você pode alterar a porta de execução do projeto no arquivo de configuração do Spring (adicionando a linha `server.port=NOVA_PORTA`).
+Os arquivos SQL originais da disciplina continuam em `serivco_streaming/`. Para o ambiente Docker, o que e carregado automaticamente fica referenciado no `docker-compose.yml`.
